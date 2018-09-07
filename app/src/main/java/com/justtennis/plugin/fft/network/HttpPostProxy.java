@@ -1,24 +1,21 @@
 package com.justtennis.plugin.fft.network;
 
-import org.apache.commons.httpclient.Cookie;
+import com.justtennis.plugin.fft.StreamTool;
+import com.justtennis.plugin.fft.network.tool.NetworkTool;
+
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
-import org.apache.commons.httpclient.cookie.CookieSpec;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,8 +35,6 @@ public class HttpPostProxy {
     private static final int    LOGON_PORT = 80;
     private static final String LOGON_METHOD = "https";
 
-    private static CookieSpec cookiespec = CookiePolicy.getDefaultSpec();
-
     public static void main(String[] args) {
         try {
             post("https://kodejava.org", "", new HashMap<String, String>());
@@ -54,7 +49,7 @@ public class HttpPostProxy {
         client.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
         HttpMethod method = new PostMethod(root + path);
 
-        showCookies(client);
+        NetworkTool.showCookies(client, LOGON_SITE, LOGON_PORT);
 
         for(String key : data.keySet()) {
             String d = data.get(key);
@@ -73,9 +68,9 @@ public class HttpPostProxy {
         try {
             client.executeMethod(method);
 
-            showCookies(client);
+            NetworkTool.showCookies(client, LOGON_SITE, LOGON_PORT);
 
-            while (isRedirect(method)) {
+            while (NetworkTool.isRedirect(method)) {
                 Header[] responseHeaders = method.getResponseHeaders();
                 method.releaseConnection();
 
@@ -98,11 +93,11 @@ public class HttpPostProxy {
                 method.setRequestHeader("Cookie", strCookie.toString());
                 client.executeMethod(method);
 
-                showCookies(client);
+                NetworkTool.showCookies(client, LOGON_SITE, LOGON_PORT);
             }
 
             System.out.println("HttpPostProxy - Status Code = " + method.getStatusCode());
-            String body = readStream(method.getResponseBodyAsStream());
+            String body = StreamTool.readStream(method.getResponseBodyAsStream());
             System.out.println("HttpPostProxy - Response = " + body);
             System.out.println("HttpPostProxy - Response = " + body.length());
         } catch (IOException e) {
@@ -113,45 +108,5 @@ public class HttpPostProxy {
             }
         }
         return method;
-    }
-
-    private static void showCookies(HttpClient client) {
-        System.out.println("");
-        // See if we got any cookies
-        Cookie[] initcookies = cookiespec.match(LOGON_SITE, LOGON_PORT, "/", true, client.getState().getCookies());
-        System.out.println("HttpPostProxy - showCookies - Initial set of cookies:");
-        if (initcookies.length == 0) {
-            System.out.println("HttpPostProxy - showCookes - None");
-        } else {
-            for (int i = 0; i < initcookies.length; i++) {
-                System.out.println("HttpPostProxy - showCookies - " + initcookies[i].toString());
-            }
-        }
-        System.out.println("");
-    }
-
-    private static boolean isRedirect(HttpMethod method) {
-        return method.getStatusCode() == HttpStatus.SC_MOVED_TEMPORARILY ||
-                method.getStatusCode() == HttpStatus.SC_MOVED_PERMANENTLY ||
-                method.getStatusCode() == HttpStatus.SC_SEE_OTHER ||
-                method.getStatusCode() == HttpStatus.SC_TEMPORARY_REDIRECT;
-    }
-
-    private static String readStream(InputStream inputStream) throws IOException {
-        BufferedReader in = null;
-        try {
-            in = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
-            String inputLine;
-            StringBuilder a = new StringBuilder();
-            while ((inputLine = in.readLine()) != null) {
-                a.append(inputLine);
-            }
-            in.close();
-            return a.toString();
-        } finally {
-            if (in != null) {
-                in.close();
-            }
-        }
     }
 }
