@@ -56,7 +56,8 @@ public class HttpGetProxy {
             ret.pathRedirect = method.getPath();
 
             if (ret.statusCode == HttpStatus.SC_OK) {
-                System.out.println("Response = " + StreamTool.readStream(method.getResponseBodyAsStream()));
+                ret.body = StreamTool.readStream(method.getResponseBodyAsStream());
+                System.out.println("Response = " + ret.body);
             } else {
                 while (NetworkTool.isRedirect(ret.statusCode)) {
                     method.releaseConnection();
@@ -83,7 +84,6 @@ public class HttpGetProxy {
 
         StringBuilder strCookie = new StringBuilder("");
         for(ResponseElement head : response.header) {
-            System.out.println("HttpGetProxy - initCookies head:" + head);
             if ("Set-Cookie".equals(head.name)) {
                 String value = head.value.split(";", 2)[0];
                 System.out.println(("HttpGetProxy - initCookies head:" + head + " value:" + value).trim());
