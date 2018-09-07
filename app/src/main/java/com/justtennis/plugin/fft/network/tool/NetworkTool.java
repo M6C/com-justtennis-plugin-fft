@@ -28,10 +28,10 @@ public class NetworkTool {
         System.out.println("");
     }
 
-    public static boolean isRedirect(HttpMethod method) {
-        return method.getStatusCode() == HttpStatus.SC_MOVED_TEMPORARILY ||
-                method.getStatusCode() == HttpStatus.SC_MOVED_PERMANENTLY ||
-                method.getStatusCode() == HttpStatus.SC_SEE_OTHER ||
-                method.getStatusCode() == HttpStatus.SC_TEMPORARY_REDIRECT;
+    public static boolean isRedirect(int statusCode) {
+        return statusCode == HttpStatus.SC_MOVED_TEMPORARILY ||
+                statusCode== HttpStatus.SC_MOVED_PERMANENTLY ||
+                statusCode== HttpStatus.SC_SEE_OTHER ||
+                statusCode == HttpStatus.SC_TEMPORARY_REDIRECT;
     }
 }

@@ -5,11 +5,8 @@ import android.support.annotation.NonNull;
 import com.justtennis.plugin.fft.network.HttpGetProxy;
 import com.justtennis.plugin.fft.network.HttpPostProxy;
 import com.justtennis.plugin.fft.network.ProxiedHttpsConnection;
+import com.justtennis.plugin.fft.network.model.ResponseHttp;
 
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.URI;
-import org.apache.commons.httpclient.methods.PostMethod;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -21,12 +18,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
-import java.net.InetSocketAddress;
-import java.net.Socket;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -91,37 +84,67 @@ public class FftService {
     }
 
     public static void submitForm(String login, String password) throws IOException {
-        String url1 = "https://mon-espace-tennis.fft.fr";
-        System.out.println("\r\n" + url1);
+        String root = "https://mon-espace-tennis.fft.fr";
+        System.out.println("\r\n" + root);
 
-        URL url = new URL(url1);
+        URL url = new URL(root);
         ProxiedResponse ret1 = readConnection(url);
         FormResponse form = parseContent(ret1.content);
         form.login.value = login;
         form.password.value = password;
         System.out.println("==============> connection Return:\r\n" + ret1.content);
 
-        String url2 = url1 + form.action;
         System.out.println("");
-        System.out.println("==============> Form Action:" + url2);
+        System.out.println("==============> Form Action:" + form.action);
 
-        url = new URL(url2);
         Map<String, String> data = new HashMap<>();
         data.put(form.button.name, form.button.value);
         data.put(form.login.name, form.login.value);
         data.put(form.password.name, form.password.value);
         data.putAll(form.input);
 
-        HttpMethod method = HttpPostProxy.post(url1, form.action, data);
-//        System.out.println("==============> Status Code: " + method.getStatusCode());
-//        System.out.println("==============> Response: " + method.getResponseBodyAsString());
+        ResponseHttp resPost = HttpPostProxy.post(root, form.action, data);
 
-        url2 = url1 + "/bloc_home/redirect/classement";
+        if (resPost.pathRedirect != null && !resPost.pathRedirect.isEmpty()) {
+            ResponseHttp resGetRedirect = HttpGetProxy.get(root, resPost.pathRedirect, resPost);
+
+            ResponseHttp resClassement = HttpGetProxy.get(root, "/bloc_home/redirect/classement", resPost);
+        }
+
+//        while (NetworkTool.isRedirect(resPost.statusCode)) {
+//
+//            String urlTmp = root + resPost.pathRedirect;
+//
+//            System.out.println("HttpPostProxy - Move to pathRedirect = " + urlTmp);
+//            StringBuilder strCookie = new StringBuilder("");
+//            for(String key : resPost.header.keySet()) {
+//                if ("Set-Cookie".equals(key)) {
+//                    String value = resPost.header.get(key).split(";", 2)[0];
+//                    System.out.println(("HttpPostProxy - Add header = key:" + key + " value:" + value).trim());
+//                    if (strCookie.length()>0) {
+//                        strCookie.append("; ");
+//                    }
+//                    strCookie.append(value);
+//                }
+//            }
+//            resPost = new GetMethod(urlTmp);
+//
+//            System.out.println("HttpPostProxy - Cookie = " + strCookie);
+//            resPost.getParams().setCookiePolicy(CookiePolicy.IGNORE_COOKIES);
+//            resPost.setRequestHeader("Cookie", strCookie.toString());
+//            client.executeMethod(resPost);
+//
+//            NetworkTool.showCookies(client, LOGON_SITE, LOGON_PORT);
+//        }
+
+
+//        System.out.println("==============> Status Code: " + resPost.getStatusCode());
+//        System.out.println("==============> Response: " + resPost.getResponseBodyAsString());
 
         //        ProxiedResponse ret2 = readConnection(url, "POST", data);
 //        System.out.println("==============> connection Return:\r\n" + ret2.content);
 
-//        doSubmit(url1, form);
+//        doSubmit(root, form);
 
 //        conn.setRequestMethod("POST");
 //        conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");

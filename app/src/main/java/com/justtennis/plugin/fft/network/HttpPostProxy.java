@@ -1,6 +1,8 @@
 package com.justtennis.plugin.fft.network;
 
 import com.justtennis.plugin.fft.StreamTool;
+import com.justtennis.plugin.fft.network.model.ResponseElement;
+import com.justtennis.plugin.fft.network.model.ResponseHttp;
 import com.justtennis.plugin.fft.network.tool.NetworkTool;
 
 import org.apache.commons.httpclient.Credentials;
@@ -12,7 +14,6 @@ import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
-import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
 
 import java.io.IOException;
@@ -43,10 +44,14 @@ public class HttpPostProxy {
         }
     }
 
-    public static HttpMethod post(String root, String path, Map<String, String> data) throws URIException {
+    public static ResponseHttp post(String root, String path, Map<String, String> data) throws URIException {
+        ResponseHttp ret = new ResponseHttp();
         HttpClient client = new HttpClient();
         client.getHostConfiguration().setHost(LOGON_SITE, LOGON_PORT, LOGON_METHOD);
         client.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
+
+        System.out.println("HttpPostProxy - url: " + root + path);
+
         HttpMethod method = new PostMethod(root + path);
 
         NetworkTool.showCookies(client, LOGON_SITE, LOGON_PORT);
@@ -70,36 +75,12 @@ public class HttpPostProxy {
 
             NetworkTool.showCookies(client, LOGON_SITE, LOGON_PORT);
 
-            while (NetworkTool.isRedirect(method)) {
-                Header[] responseHeaders = method.getResponseHeaders();
-                method.releaseConnection();
+            addResponseHeader(ret, method);
+            ret.statusCode = method.getStatusCode();
+            ret.pathRedirect = method.getPath();
+            ret.body = StreamTool.readStream(method.getResponseBodyAsStream());
 
-                String urlTmp = root + method.getPath();
-
-                System.out.println("HttpPostProxy - Move to path = " + urlTmp);
-                method = new GetMethod(urlTmp);
-                StringBuilder strCookie = new StringBuilder("");
-                for(Header header : responseHeaders) {
-                    if ("Set-Cookie".equals(header.getName())) {
-                        System.out.println(("HttpPostProxy - Add header = " + header).trim());
-                        if (strCookie.length()>0) {
-                            strCookie.append("; ");
-                        }
-                        strCookie.append(header.getValue().split(";", 2)[0]);
-                    }
-                }
-                System.out.println("HttpPostProxy - Cookie = " + strCookie);
-                method.getParams().setCookiePolicy(CookiePolicy.IGNORE_COOKIES);
-                method.setRequestHeader("Cookie", strCookie.toString());
-                client.executeMethod(method);
-
-                NetworkTool.showCookies(client, LOGON_SITE, LOGON_PORT);
-            }
-
-            System.out.println("HttpPostProxy - Status Code = " + method.getStatusCode());
-            String body = StreamTool.readStream(method.getResponseBodyAsStream());
-            System.out.println("HttpPostProxy - Response = " + body);
-            System.out.println("HttpPostProxy - Response = " + body.length());
+            logResponse(ret);
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -107,6 +88,23 @@ public class HttpPostProxy {
                 method.releaseConnection();
             }
         }
-        return method;
+        return ret;
+    }
+
+    private static void addResponseHeader(ResponseHttp ret, HttpMethod method) {
+        Header[] responseHeaders = method.getResponseHeaders();
+        for(Header header : responseHeaders) {
+            System.out.println("HttpPostProxy - addResponseHeader name:" + header.getName() + " value:" + header.getValue());
+            ResponseElement head = new ResponseElement();
+            head.name = header.getName();
+            head.value = header.getValue();
+            ret.header.add(head);
+        }
+    }
+
+    private static void logResponse(ResponseHttp ret) {
+        System.out.println("HttpPostProxy - Status Code = " + ret.statusCode);
+        System.out.println("HttpPostProxy - Response = " + ret.body);
+        System.out.println("HttpPostProxy - Response = " + (ret.body != null ? ret.body.length() : 0));
     }
 }
