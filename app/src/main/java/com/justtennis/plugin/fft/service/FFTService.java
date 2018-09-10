@@ -11,11 +11,11 @@ import com.justtennis.plugin.fft.parser.FormParser;
 import java.io.IOException;
 import java.util.Map;
 
-public class FftService {
+public class FFTService {
 
     private static final String URL_ROOT = "https://mon-espace-tennis.fft.fr";
 
-    private FftService() {
+    private FFTService() {
     }
 
     public static LoginFormResponse getLoginForm(String login, String password) {

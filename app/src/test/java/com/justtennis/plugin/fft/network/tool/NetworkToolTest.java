@@ -2,8 +2,7 @@ package com.justtennis.plugin.fft.network.tool;
 
 import com.justtennis.plugin.fft.model.LoginFormResponse;
 import com.justtennis.plugin.fft.network.model.ResponseHttp;
-import com.justtennis.plugin.fft.network.tool.NetworkTool;
-import com.justtennis.plugin.fft.service.FftService;
+import com.justtennis.plugin.fft.service.FFTService;
 
 import junit.framework.TestCase;
 
@@ -26,9 +25,9 @@ public class NetworkToolTest extends TestCase {
     public static void testInitCookies() throws IOException {
         HttpMethod method = new GetMethod(URL_ROOT + "/bloc_home/redirect/classement");
 
-        LoginFormResponse response = FftService.getLoginForm(LOGIN, PASWD);
+        LoginFormResponse response = FFTService.getLoginForm(LOGIN, PASWD);
 
-        ResponseHttp form = FftService.submitFormLogin(response);
+        ResponseHttp form = FFTService.submitFormLogin(response);
 
         NetworkTool.initCookies(method, form);
 
@@ -47,5 +46,6 @@ public class NetworkToolTest extends TestCase {
         assertTrue(NetworkTool.isRedirect(HttpStatus.SC_MOVED_PERMANENTLY));
         assertTrue(NetworkTool.isRedirect(HttpStatus.SC_SEE_OTHER));
         assertTrue(NetworkTool.isRedirect(HttpStatus.SC_TEMPORARY_REDIRECT));
+        assertFalse(NetworkTool.isRedirect(HttpStatus.SC_OK));
     }
 }
