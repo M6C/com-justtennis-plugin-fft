@@ -1,7 +1,6 @@
 package com.justtennis.plugin.fft.network;
 
 import com.justtennis.plugin.fft.StreamTool;
-import com.justtennis.plugin.fft.network.model.ResponseElement;
 import com.justtennis.plugin.fft.network.model.ResponseHttp;
 import com.justtennis.plugin.fft.network.tool.NetworkTool;
 
@@ -12,7 +11,6 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
-import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.commons.httpclient.methods.GetMethod;
 
 import java.io.IOException;
@@ -39,7 +37,7 @@ public class HttpGetProxy {
 
         System.out.println("HttpGetProxy - url: " + root + path);
 
-        initCookies(method, http);
+        NetworkTool.initCookies(method, http);
 
         HostConfiguration config = client.getHostConfiguration();
         config.setProxy(PROXY_HOST, PROXY_PORT);
@@ -75,27 +73,5 @@ public class HttpGetProxy {
         }
 
         return ret;
-    }
-
-    private static void initCookies(HttpMethod method, ResponseHttp response) {
-        if (method == null || response == null) {
-            return;
-        }
-
-        StringBuilder strCookie = new StringBuilder("");
-        for(ResponseElement head : response.header) {
-            if ("Set-Cookie".equals(head.name)) {
-                String value = head.value.split(";", 2)[0];
-                System.out.println(("HttpGetProxy - initCookies head:" + head + " value:" + value).trim());
-                if (strCookie.length()>0) {
-                    strCookie.append("; ");
-                }
-                strCookie.append(value);
-            }
-        }
-
-        System.out.println("HttpGetProxy - initCookies - Cookie = " + strCookie);
-        method.getParams().setCookiePolicy(CookiePolicy.IGNORE_COOKIES);
-        method.setRequestHeader("Cookie", strCookie.toString());
     }
 }
