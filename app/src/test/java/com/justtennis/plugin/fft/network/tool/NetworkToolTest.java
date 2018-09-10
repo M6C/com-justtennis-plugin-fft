@@ -1,4 +1,4 @@
-package com.justtennis.plugin.fft.network;
+package com.justtennis.plugin.fft.network.tool;
 
 import com.justtennis.plugin.fft.model.LoginFormResponse;
 import com.justtennis.plugin.fft.network.model.ResponseHttp;
