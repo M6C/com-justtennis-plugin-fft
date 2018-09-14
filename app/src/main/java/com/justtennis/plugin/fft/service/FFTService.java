@@ -26,25 +26,33 @@ public class FFTService {
     }
 
     public static LoginFormResponse getLoginForm(String login, String password) {
+        LoginFormResponse ret = null;
         System.out.println("\r\n" + URL_ROOT);
 
         ResponseHttp respRoot = HttpGetProxy.get(URL_ROOT, "");
         System.out.println("==============> connection Return:\r\n" + respRoot.body);
 
-        LoginFormResponse form = FormParser.parseFormLogin(respRoot.body, new FFTLoginFormRequest());
-        form.login.value = login;
-        form.password.value = password;
+        if (!StringUtil.isBlank(respRoot.body)) {
+            ret = FormParser.parseFormLogin(respRoot.body, new FFTLoginFormRequest());
+            ret.login.value = login;
+            ret.password.value = password;
+        }
 
-        return form;
+        return ret;
     }
 
     public static ResponseHttp submitFormLogin(LoginFormResponse form) throws IOException {
+        ResponseHttp ret = null;
+
         System.out.println("");
         System.out.println("==============> Form Action:" + form.action);
 
         Map<String, String> data = LoginFormResponseConverter.toDataMap(form);
+        if (!StringUtil.isBlank(form.action)) {
+            ret = HttpPostProxy.post(URL_ROOT, form.action, data);
+        }
 
-        return HttpPostProxy.post(URL_ROOT, form.action, data);
+        return ret;
     }
 
     public static ResponseHttp navigateToFormRedirect(ResponseHttp loginFormResponse) {

@@ -35,17 +35,22 @@ public class InviteResolver {
         Uri mContacts = CONTENT_URI;
         String[] columns = new String[]{COLUMN_ID, COLUMN_ID_SAISON, COLUMN_ID_CLUB, COLUMN_ID_PLAYER, COLUMN_TIME, COLUMN_STATUS};
         Cursor cur = contentResolver.query(mContacts, columns, null, null, null);
-        Log.i(TAG, "query count:" + cur.getCount());
+        if (cur != null) {
+            Log.i(TAG, "query count:" + cur.getCount());
 
-        if (cur.moveToFirst()) {
-            StringBuilder msg = new StringBuilder();
-            do {
-                msg.append("\r\n");
-                for (String col : columns) {
-                    msg.append(cur.getString(cur.getColumnIndex(col))).append(" ");
-                }
-            } while (cur.moveToNext());
-            Log.i(TAG, "query result:" + msg.toString());
+            if (cur.moveToFirst()) {
+                StringBuilder msg = new StringBuilder();
+                do {
+                    msg.append("\r\n");
+                    for (String col : columns) {
+                        msg.append(cur.getString(cur.getColumnIndex(col))).append(" ");
+                    }
+                } while (cur.moveToNext());
+                Log.i(TAG, "query result:" + msg.toString());
+            }
+        }
+        else {
+            Log.w(TAG, "Invite Provider not found [" + CONTENT_URI.toString() + "]");
         }
     }
 }

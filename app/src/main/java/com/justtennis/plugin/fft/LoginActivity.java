@@ -16,6 +16,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -26,6 +27,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.justtennis.plugin.fft.model.RankingMatchResponse;
 import com.justtennis.plugin.fft.resolver.InviteResolver;
 import com.justtennis.plugin.fft.task.UserLoginTask;
 
@@ -43,6 +45,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * Id to identity READ_CONTACTS permission request.
      */
     private static final int REQUEST_READ_CONTACTS = 0;
+    private static final String TAG = LoginActivity.class.getName();
 
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
@@ -54,6 +57,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    private TextView mResponse;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +89,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+        mResponse = findViewById(R.id.tv_response);
     }
 
     @Override
@@ -191,7 +196,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private boolean isEmailValid(String email) {
         //TODO: Replace this with your own logic
-        return email.contains("@");
+        return email.length() > 4;//.contains("@");
     }
 
     private boolean isPasswordValid(String password) {
@@ -295,15 +300,36 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
 
         @Override
-        protected void onPostExecute(final Boolean success) {
+        protected void onPreExecute() {
+            mResponse.setText("");
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onPostExecute(final List<RankingMatchResponse.RankingItem> list) {
             mAuthTask = null;
             showProgress(false);
 
-            if (success) {
-                finish();
-            } else {
+            if (list == null) {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();
+            } else {
+                StringBuilder stb = new StringBuilder("Ranking Match:");
+                for (RankingMatchResponse.RankingItem item : list) {
+                    stb.append("\r\n")
+                            .append(" NAME:").append(item.name)
+                            .append(" YEAR:").append(item.year)
+                            .append(" RANKING:").append(item.ranking)
+                            .append(" VIC_DEF:").append(item.vicDef)
+                            .append(" WO:").append(item.wo)
+                            .append(" COEF:").append(item.coef)
+                            .append(" POINTS:").append(item.points)
+                            .append(" TOURNAMENT:").append(item.tournament)
+                            .append(" TYPE:").append(item.type)
+                            .append(" DATE:").append(item.date);
+                }
+                Log.d(TAG, stb.toString());
+                mResponse.setText(stb.toString());
             }
         }
 
