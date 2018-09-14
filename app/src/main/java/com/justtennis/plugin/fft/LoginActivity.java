@@ -26,6 +26,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.justtennis.plugin.fft.resolver.InviteResolver;
 import com.justtennis.plugin.fft.task.UserLoginTask;
 
 import java.util.ArrayList;
@@ -84,6 +85,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        InviteResolver.queryAll(getApplicationContext());
     }
 
     private void populateAutoComplete() {
@@ -270,7 +277,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         mEmailView.setAdapter(adapter);
     }
-
 
     private interface ProfileQuery {
         String[] PROJECTION = {
