@@ -42,7 +42,6 @@ public class HttpGetProxy implements IProxy {
 
         NetworkTool.initCookies(method, http);
 
-
         if (proxyHost != null && proxyPort > 0) {
             HostConfiguration config = client.getHostConfiguration();
             config.setProxy(proxyHost, proxyPort);

@@ -1,16 +1,22 @@
 package com.justtennis.plugin.fft.service;
 
 import com.justtennis.plugin.converter.LoginFormResponseConverter;
+import com.justtennis.plugin.converter.PalmaresMillesimeFormResponseConverter;
 import com.justtennis.plugin.fft.model.FFTLoginFormRequest;
 import com.justtennis.plugin.fft.model.FFTRankingListRequest;
 import com.justtennis.plugin.fft.model.FFTRankingMatchRequest;
 import com.justtennis.plugin.fft.model.LoginFormResponse;
+import com.justtennis.plugin.fft.model.PalmaresMillesimeRequest;
+import com.justtennis.plugin.fft.model.PalmaresMillesimeResponse;
+import com.justtennis.plugin.fft.model.PalmaresRequest;
+import com.justtennis.plugin.fft.model.PalmaresResponse;
 import com.justtennis.plugin.fft.model.RankingListResponse;
 import com.justtennis.plugin.fft.model.RankingMatchResponse;
 import com.justtennis.plugin.fft.network.HttpGetProxy;
 import com.justtennis.plugin.fft.network.HttpPostProxy;
 import com.justtennis.plugin.fft.network.model.ResponseHttp;
 import com.justtennis.plugin.fft.parser.FormParser;
+import com.justtennis.plugin.fft.parser.PalmaresParser;
 import com.justtennis.plugin.fft.parser.RankingParser;
 import com.justtennis.plugin.fft.skeleton.IProxy;
 
@@ -39,6 +45,7 @@ public class FFTService implements IProxy {
     }
 
     public LoginFormResponse getLoginForm(String login, String password) {
+        logMethod("getLoginForm");
         LoginFormResponse ret = null;
         System.out.println("\r\n" + URL_ROOT);
 
@@ -55,6 +62,7 @@ public class FFTService implements IProxy {
     }
 
     public ResponseHttp submitFormLogin(LoginFormResponse form) throws IOException {
+        logMethod("submitFormLogin");
         ResponseHttp ret = null;
 
         System.out.println("");
@@ -69,6 +77,7 @@ public class FFTService implements IProxy {
     }
 
     public ResponseHttp navigateToFormRedirect(ResponseHttp loginFormResponse) {
+        logMethod("navigateToFormRedirect");
         if (loginFormResponse.pathRedirect != null && !loginFormResponse.pathRedirect.isEmpty()) {
             return newHttpGetProxy().get(URL_ROOT, loginFormResponse.pathRedirect, loginFormResponse);
         }
@@ -76,10 +85,12 @@ public class FFTService implements IProxy {
     }
 
     public ResponseHttp navigateToRanking(ResponseHttp loginFormResponse) {
+        logMethod("navigateToRanking");
         return newHttpGetProxy().get(URL_ROOT, "/bloc_home/redirect/classement", loginFormResponse);
     }
 
     public RankingListResponse getRankingList(ResponseHttp loginFormResponse) {
+        logMethod("getRankingList");
         ResponseHttp respRoot = newHttpGetProxy().get(URL_ROOT, "/bloc_home/redirect/classement", loginFormResponse);
         System.out.println("==============> connection Return:\r\n" + respRoot.body);
 
@@ -87,12 +98,47 @@ public class FFTService implements IProxy {
     }
 
     public RankingMatchResponse getRankingMatch(ResponseHttp loginFormResponse, String id) {
+        logMethod("getRankingMatch");
         ResponseHttp respRoot = newHttpGetProxy().get(URL_ROOT, "/page_classement_ajax?id_bilan=" + id, loginFormResponse);
         if (!StringUtil.isBlank(respRoot.body)) {
             respRoot.body = format(respRoot.body);
             System.out.println("==============> getRankingMatch formated ranking.body:" + respRoot.body);
         }
         return RankingParser.parseRankingMatch(respRoot.body, new FFTRankingMatchRequest());
+    }
+
+    public PalmaresResponse getPalmares(ResponseHttp loginFormResponse) {
+        logMethod("getPalmares");
+        System.out.println("==============> body:" + loginFormResponse.body);
+        return PalmaresParser.parsePalmares(loginFormResponse.body, new PalmaresRequest());
+    }
+
+    public ResponseHttp navigateToPalmares(ResponseHttp loginFormResponse, PalmaresResponse palmaresResponse) {
+        logMethod("navigateToPalmares");
+        return newHttpGetProxy().get(URL_ROOT, palmaresResponse.action, loginFormResponse);
+    }
+
+    public PalmaresMillesimeResponse getPalmaresMillesime(ResponseHttp palamresResponseHttp) {
+        logMethod("getPalmaresMillesime");
+        System.out.println("==============> body:" + palamresResponseHttp.body);
+        return PalmaresParser.parsePalmaresMillesime(palamresResponseHttp.body, new PalmaresMillesimeRequest());
+    }
+
+    public ResponseHttp submitFormPalmaresMillesime(ResponseHttp loginFormResponse, PalmaresMillesimeResponse form) throws IOException {
+        logMethod("submitFormLogin");
+        ResponseHttp ret = null;
+
+        System.out.println("");
+        System.out.println("==============> Form Action:" + form.action);
+
+        form.select.value = form.millesimeSelected.value;
+
+        Map<String, String> data = PalmaresMillesimeFormResponseConverter.toDataMap(form);
+        if (!StringUtil.isBlank(form.action)) {
+            ret = newHttpPostProxy().post(URL_ROOT, form.action, data, loginFormResponse);
+        }
+
+        return ret;
     }
 
     private String format(String str) {
@@ -165,5 +211,12 @@ public class FFTService implements IProxy {
     public IProxy setProxyPw(String proxyPw) {
         this.proxyPw = proxyPw;
         return this;
+    }
+
+    private void logMethod(String method) {
+        System.out.println("\n==========================================================================");
+        System.out.println("==============> Method:" + method);
+        System.out.println("==========================================================================\r\n");
+
     }
 }

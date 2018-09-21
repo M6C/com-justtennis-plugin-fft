@@ -32,9 +32,10 @@ public class NetworkToolTest extends TestCase {
     public static void testInitCookies() throws IOException {
         HttpMethod method = new GetMethod(URL_ROOT + "/bloc_home/redirect/classement");
 
-        LoginFormResponse response = newFFTService().getLoginForm(LOGIN, PASWD);
+        FFTService fftService = newFFTService();
+        LoginFormResponse response = fftService.getLoginForm(LOGIN, PASWD);
 
-        ResponseHttp form = newFFTService().submitFormLogin(response);
+        ResponseHttp form = fftService.submitFormLogin(response);
 
         NetworkTool.initCookies(method, form);
 

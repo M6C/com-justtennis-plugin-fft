@@ -1,6 +1,8 @@
 package com.justtennis.plugin.fft.service;
 
 import com.justtennis.plugin.fft.model.LoginFormResponse;
+import com.justtennis.plugin.fft.model.PalmaresMillesimeResponse;
+import com.justtennis.plugin.fft.model.PalmaresResponse;
 import com.justtennis.plugin.fft.model.RankingListResponse;
 import com.justtennis.plugin.fft.model.RankingMatchResponse;
 import com.justtennis.plugin.fft.network.model.ResponseHttp;
@@ -119,6 +121,81 @@ public class FFTServiceTest extends TestCase {
             assertNotNull(item.type);
             assertNotNull(item.date);
         }
+    }
+
+    public static void testGetParmares() throws IOException {
+        FFTService fftService = newFFTService();
+        LoginFormResponse response = fftService.getLoginForm(LOGIN, PASWD);
+
+        ResponseHttp form = fftService.submitFormLogin(response);
+
+        ResponseHttp home = fftService.navigateToFormRedirect(form);
+
+        PalmaresResponse palmaresResponse = fftService.getPalmares(home);
+
+        assertNotNull(palmaresResponse);
+        assertNotNull(palmaresResponse.action);
+
+        ResponseHttp palmares = fftService.navigateToPalmares(form, palmaresResponse);
+        assertNotNull(palmares.body);
+    }
+
+    public static void testGetParmaresMillesime() throws IOException {
+        FFTService fftService = newFFTService();
+        LoginFormResponse response = fftService.getLoginForm(LOGIN, PASWD);
+
+        ResponseHttp form = fftService.submitFormLogin(response);
+
+        ResponseHttp home = fftService.navigateToFormRedirect(form);
+
+        PalmaresResponse palmaresResponse = fftService.getPalmares(home);
+
+        assertNotNull(palmaresResponse);
+        assertNotNull(palmaresResponse.action);
+
+        ResponseHttp palmares = fftService.navigateToPalmares(form, palmaresResponse);
+        assertNotNull(palmares.body);
+
+        PalmaresMillesimeResponse palmaresMillesimeResponse = fftService.getPalmaresMillesime(palmares);
+        assertNotNull(palmaresMillesimeResponse.action);
+        assertNotNull(palmaresMillesimeResponse.select);
+        assertNotNull(palmaresMillesimeResponse.select.name);
+        assertNotNull(palmaresMillesimeResponse.millesimeSelected);
+        assertEquals(palmaresMillesimeResponse.listMillesime.size(), 4);
+        assertEquals(palmaresMillesimeResponse.input.size(), 3);
+        assertTrue(palmaresMillesimeResponse.listMillesime.contains(palmaresMillesimeResponse.millesimeSelected));
+    }
+
+    public static void testSubmitFormPalmaresMillesime() throws IOException {
+        FFTService fftService = newFFTService();
+        LoginFormResponse response = fftService.getLoginForm(LOGIN, PASWD);
+
+        ResponseHttp form = fftService.submitFormLogin(response);
+
+        ResponseHttp home = fftService.navigateToFormRedirect(form);
+
+        PalmaresResponse palmaresResponse = fftService.getPalmares(home);
+
+        assertNotNull(palmaresResponse);
+        assertNotNull(palmaresResponse.action);
+
+        ResponseHttp palmares = fftService.navigateToPalmares(form, palmaresResponse);
+        assertNotNull(palmares.body);
+
+        PalmaresMillesimeResponse palmaresMillesimeResponse = fftService.getPalmaresMillesime(palmares);
+        assertTrue(palmaresMillesimeResponse.listMillesime.size() > 0);
+
+        for(PalmaresMillesimeResponse.Millesime millesime : palmaresMillesimeResponse.listMillesime) {
+            if (!millesime.equals(palmaresMillesimeResponse.millesimeSelected)) {
+                palmaresMillesimeResponse.millesimeSelected = millesime;
+                break;
+            }
+        }
+
+        ResponseHttp submitForm = fftService.submitFormPalmaresMillesime(form, palmaresMillesimeResponse);
+        assertNotNull(submitForm.body);
+        assertNotNull(submitForm.pathRedirect);
+        assertEquals(submitForm.header.size(), 13);
     }
 
     private static FFTService newFFTService() {

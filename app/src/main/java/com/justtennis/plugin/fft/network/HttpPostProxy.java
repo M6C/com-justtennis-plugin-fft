@@ -43,6 +43,10 @@ public class HttpPostProxy implements IProxy {
     }
 
     public ResponseHttp post(String root, String path, Map<String, String> data) throws URIException {
+        return post(root, path, data, null);
+    }
+
+    public ResponseHttp post(String root, String path, Map<String, String> data, ResponseHttp http) throws URIException {
         ResponseHttp ret = new ResponseHttp();
         HttpClient client = new HttpClient();
         if (site != null && port > 0 && method != null) {
@@ -53,6 +57,10 @@ public class HttpPostProxy implements IProxy {
         System.out.println("HttpPostProxy - url: " + root + path);
 
         HttpMethod method = new PostMethod(root + path);
+
+        if (http != null) {
+            NetworkTool.initCookies(method, http);
+        }
 
         if (site != null && port > 0) {
             NetworkTool.showCookies(client, site, port);
