@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -24,13 +25,16 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
 import com.justtennis.plugin.fft.model.RankingMatchResponse;
 import com.justtennis.plugin.fft.resolver.InviteResolver;
+import com.justtennis.plugin.fft.service.FFTService;
 import com.justtennis.plugin.fft.task.UserLoginTask;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,6 +44,11 @@ import static android.Manifest.permission.READ_CONTACTS;
  * A login screen that offers login via email/password.
  */
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
+
+    private static final String PROXY_USER = "pckh146";
+    private static final String PROXY_PW = "k5F+n7S!";
+    private static final String PROXY_HOST = "proxy-internet.net-courrier.extra.laposte.fr";
+    private static final int PROXY_PORT = 8080;
 
     /**
      * Id to identity READ_CONTACTS permission request.
@@ -58,6 +67,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private View mProgressView;
     private View mLoginFormView;
     private TextView mResponse;
+    private CheckBox mUseProxy;
+
+    private boolean userProxy;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +102,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
         mResponse = findViewById(R.id.tv_response);
+        mUseProxy = findViewById(R.id.chk_use_proxy);
     }
 
     @Override
@@ -330,6 +343,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 }
                 Log.d(TAG, stb.toString());
                 mResponse.setText(stb.toString());
+
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                intent.putExtra(MainActivity.EXTRA_LIST_RANKING, (Serializable)list);
+                startActivity(intent);
+                finish();
             }
         }
 
@@ -337,6 +355,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         protected void onCancelled() {
             mAuthTask = null;
             showProgress(false);
+        }
+
+        protected FFTService newFFTService() {
+            FFTService instance = super.newFFTService();
+            if (mUseProxy.isChecked()) {
+                instance.setProxyHost(PROXY_HOST)
+                        .setProxyPort(PROXY_PORT)
+                        .setProxyUser(PROXY_USER)
+                        .setProxyPw(PROXY_PW);
+            }
+            return instance;
         }
     }
 }

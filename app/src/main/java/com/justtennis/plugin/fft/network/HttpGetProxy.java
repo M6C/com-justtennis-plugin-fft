@@ -3,6 +3,7 @@ package com.justtennis.plugin.fft.network;
 import com.justtennis.plugin.fft.StreamTool;
 import com.justtennis.plugin.fft.network.model.ResponseHttp;
 import com.justtennis.plugin.fft.network.tool.NetworkTool;
+import com.justtennis.plugin.fft.skeleton.IProxy;
 
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.HostConfiguration;
@@ -15,22 +16,24 @@ import org.apache.commons.httpclient.methods.GetMethod;
 
 import java.io.IOException;
 
-public class HttpGetProxy {
-    private static final String proxyUser = "pckh146";
-    private static final String proxyPw = "k5F+n7S!";
+public class HttpGetProxy implements IProxy {
 
-    private static final String PROXY_HOST = "proxy-internet.net-courrier.extra.laposte.fr";
-    private static final int PROXY_PORT = 8080;
+    private String proxyHost;
+    private int    proxyPort;
+    private String proxyUser;
+    private String proxyPw;
 
-    public static void main(String[] args) {
-        get("https://kodejava.org", "");
+    private HttpGetProxy() {}
+
+    public static HttpGetProxy newInstance() {
+        return new HttpGetProxy();
     }
 
-    public static ResponseHttp get(String root, String path) {
+    public ResponseHttp get(String root, String path) {
         return get(root, path, null);
     }
 
-    public static ResponseHttp get(String root, String path, ResponseHttp http) {
+    public ResponseHttp get(String root, String path, ResponseHttp http) {
         ResponseHttp ret = new ResponseHttp();
         HttpClient client = new HttpClient();
         HttpMethod method = new GetMethod(root + path);
@@ -39,13 +42,17 @@ public class HttpGetProxy {
 
         NetworkTool.initCookies(method, http);
 
-        HostConfiguration config = client.getHostConfiguration();
-        config.setProxy(PROXY_HOST, PROXY_PORT);
 
-        Credentials credentials = new UsernamePasswordCredentials(proxyUser, proxyPw);
-        AuthScope authScope = new AuthScope(PROXY_HOST, PROXY_PORT);
+        if (proxyHost != null && proxyPort > 0) {
+            HostConfiguration config = client.getHostConfiguration();
+            config.setProxy(proxyHost, proxyPort);
+        }
 
-        client.getState().setProxyCredentials(authScope, credentials);
+        if (proxyHost != null && proxyPort > 0 && proxyUser != null && proxyPw != null) {
+            Credentials credentials = new UsernamePasswordCredentials(proxyUser, proxyPw);
+            AuthScope authScope = new AuthScope(proxyHost, proxyPort);
+            client.getState().setProxyCredentials(authScope, credentials);
+        }
 
         try {
             client.executeMethod(method);
@@ -73,5 +80,29 @@ public class HttpGetProxy {
         }
 
         return ret;
+    }
+
+    @Override
+    public IProxy setProxyHost(String proxyHost) {
+        this.proxyHost = proxyHost;
+        return this;
+    }
+
+    @Override
+    public IProxy setProxyPort(int proxyPort) {
+        this.proxyPort = proxyPort;
+        return this;
+    }
+
+    @Override
+    public IProxy setProxyUser(String proxyUser) {
+        this.proxyUser = proxyUser;
+        return this;
+    }
+
+    @Override
+    public IProxy setProxyPw(String proxyPw) {
+        this.proxyPw = proxyPw;
+        return this;
     }
 }

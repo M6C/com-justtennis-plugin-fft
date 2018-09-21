@@ -16,18 +16,25 @@ import java.io.IOException;
 
 public class NetworkToolTest extends TestCase {
 
+    private static final String PROXY_USER = "pckh146";
+    private static final String PROXY_PW = "k5F+n7S!";
+    private static final String PROXY_HOST = "proxy-internet.net-courrier.extra.laposte.fr";
+    private static final int PROXY_PORT = 8080;
+
     private static final String URL_ROOT = "https://mon-espace-tennis.fft.fr";
     private static final String LOGIN = "leandre.roca2006";
     private static final String PASWD = "lR123456789";
     private static final String LOGON_SITE = "mon-espace-tennis.fft.fr";
     private static final int    LOGON_PORT = 80;
 
+    private static final boolean useProxy = true;
+
     public static void testInitCookies() throws IOException {
         HttpMethod method = new GetMethod(URL_ROOT + "/bloc_home/redirect/classement");
 
-        LoginFormResponse response = FFTService.getLoginForm(LOGIN, PASWD);
+        LoginFormResponse response = newFFTService().getLoginForm(LOGIN, PASWD);
 
-        ResponseHttp form = FFTService.submitFormLogin(response);
+        ResponseHttp form = newFFTService().submitFormLogin(response);
 
         NetworkTool.initCookies(method, form);
 
@@ -47,5 +54,16 @@ public class NetworkToolTest extends TestCase {
         assertTrue(NetworkTool.isRedirect(HttpStatus.SC_SEE_OTHER));
         assertTrue(NetworkTool.isRedirect(HttpStatus.SC_TEMPORARY_REDIRECT));
         assertFalse(NetworkTool.isRedirect(HttpStatus.SC_OK));
+    }
+
+    private static FFTService newFFTService() {
+        FFTService instance = FFTService.newInstance();
+        if (useProxy) {
+            instance.setProxyHost(PROXY_HOST)
+                    .setProxyPort(PROXY_PORT)
+                    .setProxyUser(PROXY_USER)
+                    .setProxyPw(PROXY_PW);
+        }
+        return instance;
     }
 }

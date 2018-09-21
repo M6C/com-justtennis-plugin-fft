@@ -4,6 +4,7 @@ import com.justtennis.plugin.fft.StreamTool;
 import com.justtennis.plugin.fft.network.model.ResponseElement;
 import com.justtennis.plugin.fft.network.model.ResponseHttp;
 import com.justtennis.plugin.fft.network.tool.NetworkTool;
+import com.justtennis.plugin.fft.skeleton.IProxy;
 
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.Header;
@@ -25,36 +26,37 @@ import java.util.Map;
 // https://www.baeldung.com/httpclient-4-cookies
 // http://hc.apache.org/httpclient-3.x/cookies.html
 
-public class HttpPostProxy {
-    private static final String proxyUser = "pckh146";
-    private static final String proxyPw = "k5F+n7S!";
+public class HttpPostProxy implements IProxy {
 
-    private static final String PROXY_HOST = "proxy-internet.net-courrier.extra.laposte.fr";
-    private static final int PROXY_PORT = 8080;
+    private String proxyHost;
+    private int    proxyPort;
+    private String proxyUser;
+    private String proxyPw;
+    private String site;
+    private int    port;
+    private String method;
 
-    private static final String LOGON_SITE = "mon-espace-tennis.fft.fr";
-    private static final int    LOGON_PORT = 80;
-    private static final String LOGON_METHOD = "https";
+    private HttpPostProxy() {}
 
-    public static void main(String[] args) {
-        try {
-            post("https://kodejava.org", "", new HashMap<String, String>());
-        } catch (URIException e) {
-            e.printStackTrace();
-        }
+    public static HttpPostProxy newInstance() {
+        return new HttpPostProxy();
     }
 
-    public static ResponseHttp post(String root, String path, Map<String, String> data) throws URIException {
+    public ResponseHttp post(String root, String path, Map<String, String> data) throws URIException {
         ResponseHttp ret = new ResponseHttp();
         HttpClient client = new HttpClient();
-        client.getHostConfiguration().setHost(LOGON_SITE, LOGON_PORT, LOGON_METHOD);
+        if (site != null && port > 0 && method != null) {
+            client.getHostConfiguration().setHost(site, port, method);
+        }
         client.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
 
         System.out.println("HttpPostProxy - url: " + root + path);
 
         HttpMethod method = new PostMethod(root + path);
 
-        NetworkTool.showCookies(client, LOGON_SITE, LOGON_PORT);
+        if (site != null && port > 0) {
+            NetworkTool.showCookies(client, site, port);
+        }
 
         for(String key : data.keySet()) {
             String d = data.get(key);
@@ -62,18 +64,23 @@ public class HttpPostProxy {
             ((PostMethod)method).addParameter(key, d);
         }
 
-        HostConfiguration config = client.getHostConfiguration();
-        config.setProxy(PROXY_HOST, PROXY_PORT);
+        if (proxyHost != null && proxyPort > 0) {
+            HostConfiguration config = client.getHostConfiguration();
+            config.setProxy(proxyHost, proxyPort);
+        }
 
-        Credentials credentials = new UsernamePasswordCredentials(proxyUser, proxyPw);
-        AuthScope authScope = new AuthScope(PROXY_HOST, PROXY_PORT);
-
-        client.getState().setProxyCredentials(authScope, credentials);
+        if (proxyHost != null && proxyPort > 0 && proxyUser != null && proxyPw != null) {
+            Credentials credentials = new UsernamePasswordCredentials(proxyUser, proxyPw);
+            AuthScope authScope = new AuthScope(proxyHost, proxyPort);
+            client.getState().setProxyCredentials(authScope, credentials);
+        }
 
         try {
             client.executeMethod(method);
 
-            NetworkTool.showCookies(client, LOGON_SITE, LOGON_PORT);
+            if (site != null && port > 0) {
+                NetworkTool.showCookies(client, site, port);
+            }
 
             addResponseHeader(ret, method);
             ret.statusCode = method.getStatusCode();
@@ -91,7 +98,46 @@ public class HttpPostProxy {
         return ret;
     }
 
-    private static void addResponseHeader(ResponseHttp ret, HttpMethod method) {
+    @Override
+    public IProxy setProxyHost(String proxyHost) {
+        this.proxyHost = proxyHost;
+        return this;
+    }
+
+    @Override
+    public IProxy setProxyPort(int proxyPort) {
+        this.proxyPort = proxyPort;
+        return this;
+    }
+
+    @Override
+    public IProxy setProxyUser(String proxyUser) {
+        this.proxyUser = proxyUser;
+        return this;
+    }
+
+    @Override
+    public IProxy setProxyPw(String proxyPw) {
+        this.proxyPw = proxyPw;
+        return this;
+    }
+
+    public HttpPostProxy setSite(String site) {
+        this.site = site;
+        return this;
+    }
+
+    public HttpPostProxy setPort(int port) {
+        this.port = port;
+        return this;
+    }
+
+    public HttpPostProxy setMethod(String method) {
+        this.method = method;
+        return this;
+    }
+
+    private void addResponseHeader(ResponseHttp ret, HttpMethod method) {
         Header[] responseHeaders = method.getResponseHeaders();
         for(Header header : responseHeaders) {
             System.out.println("HttpPostProxy - addResponseHeader name:" + header.getName() + " value:" + header.getValue());
@@ -102,7 +148,7 @@ public class HttpPostProxy {
         }
     }
 
-    private static void logResponse(ResponseHttp ret) {
+    private void logResponse(ResponseHttp ret) {
         System.out.println("HttpPostProxy - Status Code = " + ret.statusCode);
         System.out.println("HttpPostProxy - Response = " + ret.body);
         System.out.println("HttpPostProxy - Response = " + (ret.body != null ? ret.body.length() : 0));

@@ -1,5 +1,6 @@
 package com.justtennis.plugin.fft.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,7 +8,7 @@ public class RankingMatchResponse {
 
     public List<RankingItem> rankingList = new ArrayList<>();
 
-    public static class RankingItem {
+    public static class RankingItem implements Serializable {
         public String name;
         public String year;
         public String ranking;

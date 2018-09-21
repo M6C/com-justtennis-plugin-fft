@@ -11,11 +11,19 @@ import java.io.IOException;
 
 public class FFTServiceTest extends TestCase {
 
+    private static final String PROXY_USER = "pckh146";
+    private static final String PROXY_PW = "k5F+n7S!";
+    private static final String PROXY_HOST = "proxy-internet.net-courrier.extra.laposte.fr";
+    private static final int PROXY_PORT = 8080;
+
     private static final String LOGIN = "leandre.roca2006";
     private static final String PASWD = "lR123456789";
 
+    private static final boolean useProxy = true;
+
     public static void testGetLoginForm(String login, String password) {
-        LoginFormResponse response = FFTService.getLoginForm(LOGIN, PASWD);
+        FFTService fftService = newFFTService();
+        LoginFormResponse response = fftService.getLoginForm(LOGIN, PASWD);
 
         assertNotNull(response.action);
         assertNotNull(response.button.name);
@@ -27,9 +35,10 @@ public class FFTServiceTest extends TestCase {
     }
 
     public static void testSubmitFormLogin() throws IOException {
-        LoginFormResponse response = FFTService.getLoginForm(LOGIN, PASWD);
+        FFTService fftService = newFFTService();
+        LoginFormResponse response = fftService.getLoginForm(LOGIN, PASWD);
 
-        ResponseHttp form = FFTService.submitFormLogin(response);
+        ResponseHttp form = fftService.submitFormLogin(response);
 
         assertNotNull(form.body);
         assertNotNull(form.pathRedirect);
@@ -37,11 +46,12 @@ public class FFTServiceTest extends TestCase {
     }
 
     public static void testNavigateToFormRedirect() throws IOException {
-        LoginFormResponse response = FFTService.getLoginForm(LOGIN, PASWD);
+        FFTService fftService = newFFTService();
+        LoginFormResponse response = fftService.getLoginForm(LOGIN, PASWD);
 
-        ResponseHttp form = FFTService.submitFormLogin(response);
+        ResponseHttp form = fftService.submitFormLogin(response);
 
-        ResponseHttp formRedirect = FFTService.navigateToFormRedirect(form);
+        ResponseHttp formRedirect = fftService.navigateToFormRedirect(form);
 
         assertNotNull(formRedirect);
         assertNotNull(formRedirect.body);
@@ -50,11 +60,12 @@ public class FFTServiceTest extends TestCase {
     }
 
     public static void testNavigateToRanking() throws IOException {
-        LoginFormResponse response = FFTService.getLoginForm(LOGIN, PASWD);
+        FFTService fftService = newFFTService();
+        LoginFormResponse response = fftService.getLoginForm(LOGIN, PASWD);
 
-        ResponseHttp form = FFTService.submitFormLogin(response);
+        ResponseHttp form = fftService.submitFormLogin(response);
 
-        ResponseHttp ranking = FFTService.navigateToRanking(form);
+        ResponseHttp ranking = fftService.navigateToRanking(form);
 
         assertNotNull(ranking);
         assertNotNull(ranking.body);
@@ -63,11 +74,12 @@ public class FFTServiceTest extends TestCase {
     }
 
     public static void testGetRankingList() throws IOException {
-        LoginFormResponse response = FFTService.getLoginForm(LOGIN, PASWD);
+        FFTService fftService = newFFTService();
+        LoginFormResponse response = fftService.getLoginForm(LOGIN, PASWD);
 
-        ResponseHttp form = FFTService.submitFormLogin(response);
+        ResponseHttp form = fftService.submitFormLogin(response);
 
-        RankingListResponse ranking = FFTService.getRankingList(form);
+        RankingListResponse ranking = fftService.getRankingList(form);
 
         assertNotNull(ranking);
         assertTrue("Ranking List must not be empty", ranking.rankingList.size() > 0);
@@ -81,17 +93,18 @@ public class FFTServiceTest extends TestCase {
     }
 
     public static void testGetRankingMatch() throws IOException {
-        LoginFormResponse response = FFTService.getLoginForm(LOGIN, PASWD);
+        FFTService fftService = newFFTService();
+        LoginFormResponse response = fftService.getLoginForm(LOGIN, PASWD);
 
-        ResponseHttp form = FFTService.submitFormLogin(response);
+        ResponseHttp form = fftService.submitFormLogin(response);
 
-        RankingListResponse rankingList = FFTService.getRankingList(form);
+        RankingListResponse rankingList = fftService.getRankingList(form);
 
         assertNotNull(rankingList);
         assertTrue("Ranking List must not be empty", rankingList.rankingList.size() > 0);
         RankingListResponse.RankingItem rank = rankingList.rankingList.get(0);
 
-        RankingMatchResponse ranking = FFTService.getRankingMatch(form, rank.id);
+        RankingMatchResponse ranking = fftService.getRankingMatch(form, rank.id);
         assertNotNull(ranking);
         assertTrue("Ranking List must not be empty", ranking.rankingList.size() > 0);
         for (RankingMatchResponse.RankingItem item : ranking.rankingList) {
@@ -106,5 +119,16 @@ public class FFTServiceTest extends TestCase {
             assertNotNull(item.type);
             assertNotNull(item.date);
         }
+    }
+
+    private static FFTService newFFTService() {
+        FFTService instance = FFTService.newInstance();
+        if (useProxy) {
+            instance.setProxyHost(PROXY_HOST)
+                    .setProxyPort(PROXY_PORT)
+                    .setProxyUser(PROXY_USER)
+                    .setProxyPw(PROXY_PW);
+        }
+        return instance;
     }
 }

@@ -21,14 +21,6 @@ public abstract class UserLoginTask extends AsyncTask<Void, Void, List<RankingMa
 
     private static final String TAG = UserLoginTask.class.getName();
 
-    /**
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
-     */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "foo@example.com:hello", "bar@example.com:world"
-    };
-
     private final String mEmail;
     private final String mPassword;
 
@@ -60,19 +52,20 @@ public abstract class UserLoginTask extends AsyncTask<Void, Void, List<RankingMa
 //        return true;
 
         try {
+            FFTService fftService = newFFTService();
             Log.d(TAG, "getLoginForm login:" + mEmail + " pwd:" + mPassword);
-            LoginFormResponse response = FFTService.getLoginForm(mEmail, mPassword);
+            LoginFormResponse response = fftService.getLoginForm(mEmail, mPassword);
             if (response != null && response.action != null && !response.action.isEmpty()) {
                 Log.d(TAG, "getLoginForm OK");
-                ResponseHttp form = FFTService.submitFormLogin(response);
+                ResponseHttp form = fftService.submitFormLogin(response);
                 if (isFormLoginConnected(form)) {
                     Log.d(TAG, "submitFormLogin OK");
-                    RankingListResponse rankingList = FFTService.getRankingList(form);
+                    RankingListResponse rankingList = fftService.getRankingList(form);
                     if (rankingList != null && !rankingList.rankingList.isEmpty()) {
                         Log.d(TAG, "getRankingList OK");
                         RankingListResponse.RankingItem rank = rankingList.rankingList.get(0);
 
-                        RankingMatchResponse ranking = FFTService.getRankingMatch(form, rank.id);
+                        RankingMatchResponse ranking = fftService.getRankingMatch(form, rank.id);
                         return ranking.rankingList;
                     } else {
                         Log.w(TAG, "getRankingList return empty");
@@ -101,5 +94,9 @@ public abstract class UserLoginTask extends AsyncTask<Void, Void, List<RankingMa
         }
         Log.d(TAG, "isFormLoginConnected:" + ret);
         return ret;
+    }
+
+    protected FFTService newFFTService() {
+        return FFTService.newInstance();
     }
 }

@@ -12,24 +12,37 @@ import com.justtennis.plugin.fft.network.HttpPostProxy;
 import com.justtennis.plugin.fft.network.model.ResponseHttp;
 import com.justtennis.plugin.fft.parser.FormParser;
 import com.justtennis.plugin.fft.parser.RankingParser;
+import com.justtennis.plugin.fft.skeleton.IProxy;
 
 import org.jsoup.helper.StringUtil;
 
 import java.io.IOException;
 import java.util.Map;
 
-public class FFTService {
+public class FFTService implements IProxy {
 
     private static final String URL_ROOT = "https://mon-espace-tennis.fft.fr";
+    private static final String LOGON_SITE = "mon-espace-tennis.fft.fr";
+    private static final int    LOGON_PORT = 80;
+    private static final String LOGON_METHOD = "https";
+
+    private String proxyHost;
+    private int    proxyPort;
+    private String proxyUser;
+    private String proxyPw;
 
     private FFTService() {
     }
 
-    public static LoginFormResponse getLoginForm(String login, String password) {
+    public static FFTService newInstance() {
+        return new FFTService();
+    }
+
+    public LoginFormResponse getLoginForm(String login, String password) {
         LoginFormResponse ret = null;
         System.out.println("\r\n" + URL_ROOT);
 
-        ResponseHttp respRoot = HttpGetProxy.get(URL_ROOT, "");
+        ResponseHttp respRoot = newHttpGetProxy().get(URL_ROOT, "");
         System.out.println("==============> connection Return:\r\n" + respRoot.body);
 
         if (!StringUtil.isBlank(respRoot.body)) {
@@ -41,7 +54,7 @@ public class FFTService {
         return ret;
     }
 
-    public static ResponseHttp submitFormLogin(LoginFormResponse form) throws IOException {
+    public ResponseHttp submitFormLogin(LoginFormResponse form) throws IOException {
         ResponseHttp ret = null;
 
         System.out.println("");
@@ -49,32 +62,32 @@ public class FFTService {
 
         Map<String, String> data = LoginFormResponseConverter.toDataMap(form);
         if (!StringUtil.isBlank(form.action)) {
-            ret = HttpPostProxy.post(URL_ROOT, form.action, data);
+            ret = newHttpPostProxy().post(URL_ROOT, form.action, data);
         }
 
         return ret;
     }
 
-    public static ResponseHttp navigateToFormRedirect(ResponseHttp loginFormResponse) {
+    public ResponseHttp navigateToFormRedirect(ResponseHttp loginFormResponse) {
         if (loginFormResponse.pathRedirect != null && !loginFormResponse.pathRedirect.isEmpty()) {
-            return HttpGetProxy.get(URL_ROOT, loginFormResponse.pathRedirect, loginFormResponse);
+            return newHttpGetProxy().get(URL_ROOT, loginFormResponse.pathRedirect, loginFormResponse);
         }
         return null;
     }
 
-    public static ResponseHttp navigateToRanking(ResponseHttp loginFormResponse) {
-        return HttpGetProxy.get(URL_ROOT, "/bloc_home/redirect/classement", loginFormResponse);
+    public ResponseHttp navigateToRanking(ResponseHttp loginFormResponse) {
+        return newHttpGetProxy().get(URL_ROOT, "/bloc_home/redirect/classement", loginFormResponse);
     }
 
-    public static RankingListResponse getRankingList(ResponseHttp loginFormResponse) {
-        ResponseHttp respRoot = HttpGetProxy.get(URL_ROOT, "/bloc_home/redirect/classement", loginFormResponse);
+    public RankingListResponse getRankingList(ResponseHttp loginFormResponse) {
+        ResponseHttp respRoot = newHttpGetProxy().get(URL_ROOT, "/bloc_home/redirect/classement", loginFormResponse);
         System.out.println("==============> connection Return:\r\n" + respRoot.body);
 
         return RankingParser.parseRankingList(respRoot.body, new FFTRankingListRequest());
     }
 
-    public static RankingMatchResponse getRankingMatch(ResponseHttp loginFormResponse, String id) {
-        ResponseHttp respRoot = HttpGetProxy.get(URL_ROOT, "/page_classement_ajax?id_bilan=" + id, loginFormResponse);
+    public RankingMatchResponse getRankingMatch(ResponseHttp loginFormResponse, String id) {
+        ResponseHttp respRoot = newHttpGetProxy().get(URL_ROOT, "/page_classement_ajax?id_bilan=" + id, loginFormResponse);
         if (!StringUtil.isBlank(respRoot.body)) {
             respRoot.body = format(respRoot.body);
             System.out.println("==============> getRankingMatch formated ranking.body:" + respRoot.body);
@@ -82,14 +95,14 @@ public class FFTService {
         return RankingParser.parseRankingMatch(respRoot.body, new FFTRankingMatchRequest());
     }
 
-    private static String format(String str) {
+    private String format(String str) {
         String ret = decode(str);
         ret = ret.replaceAll("\\\\n", "");
         ret = ret.replaceAll("\\\\/", "/");
         return ret;
     }
 
-    private static String decode(final String in) {
+    private String decode(final String in) {
         String working = in;
         int index;
         index = working.indexOf("\\u");
@@ -108,4 +121,49 @@ public class FFTService {
         return working;
     }
 
+    private HttpGetProxy newHttpGetProxy() {
+        HttpGetProxy instance = HttpGetProxy.newInstance();
+        setProxy(instance);
+        return instance;
+    }
+
+    private HttpPostProxy newHttpPostProxy() {
+        HttpPostProxy instance = HttpPostProxy.newInstance();
+        setProxy(instance);
+        instance.setSite(LOGON_SITE)
+                .setPort(LOGON_PORT)
+                .setMethod(LOGON_METHOD);
+        return instance;
+    }
+
+    private void setProxy(IProxy instance) {
+        instance.setProxyHost(proxyHost)
+                .setProxyPort(proxyPort)
+                .setProxyUser(proxyUser)
+                .setProxyPw(proxyPw);
+    }
+
+    @Override
+    public IProxy setProxyHost(String proxyHost) {
+        this.proxyHost = proxyHost;
+        return this;
+    }
+
+    @Override
+    public IProxy setProxyPort(int proxyPort) {
+        this.proxyPort = proxyPort;
+        return this;
+    }
+
+    @Override
+    public IProxy setProxyUser(String proxyUser) {
+        this.proxyUser = proxyUser;
+        return this;
+    }
+
+    @Override
+    public IProxy setProxyPw(String proxyPw) {
+        this.proxyPw = proxyPw;
+        return this;
+    }
 }
