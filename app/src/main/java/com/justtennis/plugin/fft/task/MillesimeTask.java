@@ -6,8 +6,8 @@ import android.util.Log;
 
 import com.justtennis.plugin.fft.exception.NotConnectedException;
 import com.justtennis.plugin.fft.model.LoginFormResponse;
-import com.justtennis.plugin.fft.model.RankingListResponse;
-import com.justtennis.plugin.fft.model.RankingMatchResponse;
+import com.justtennis.plugin.fft.model.PalmaresMillesimeResponse;
+import com.justtennis.plugin.fft.model.PalmaresResponse;
 import com.justtennis.plugin.fft.network.model.ResponseElement;
 import com.justtennis.plugin.fft.network.model.ResponseHttp;
 import com.justtennis.plugin.fft.service.FFTService;
@@ -18,22 +18,22 @@ import java.util.List;
  * Represents an asynchronous login/registration task used to authenticate
  * the user.
  */
-public abstract class UserLoginTask extends AsyncTask<Void, Void, List<RankingMatchResponse.RankingItem>> {
+public abstract class MillesimeTask extends AsyncTask<Void, Void, List<PalmaresMillesimeResponse.Millesime>> {
 
-    private static final String TAG = UserLoginTask.class.getName();
+    private static final String TAG = MillesimeTask.class.getName();
 
     private Context context;
     private final String mEmail;
     private final String mPassword;
 
-    protected UserLoginTask(Context context, String email, String password) {
+    protected MillesimeTask(Context context, String email, String password) {
         this.context = context;
         mEmail = email;
         mPassword = password;
     }
 
     @Override
-    protected List<RankingMatchResponse.RankingItem> doInBackground(Void... params) {
+    protected List<PalmaresMillesimeResponse.Millesime> doInBackground(Void... params) {
         try {
             FFTService fftService = newFFTService();
             Log.d(TAG, "getLoginForm login:" + mEmail + " pwd:" + mPassword);
@@ -43,15 +43,25 @@ public abstract class UserLoginTask extends AsyncTask<Void, Void, List<RankingMa
                 ResponseHttp form = fftService.submitFormLogin(response);
                 if (isFormLoginConnected(form)) {
                     Log.d(TAG, "submitFormLogin OK");
-                    RankingListResponse rankingList = fftService.getRankingList(form);
-                    if (rankingList != null && !rankingList.rankingList.isEmpty()) {
-                        Log.d(TAG, "getRankingList OK");
-                        RankingListResponse.RankingItem rank = rankingList.rankingList.get(0);
 
-                        RankingMatchResponse ranking = fftService.getRankingMatch(form, rank.id);
-                        return ranking.rankingList;
+                    ResponseHttp home = fftService.navigateToFormRedirect(form);
+
+                    PalmaresResponse palmaresResponse = fftService.getPalmares(home);
+
+                    if (palmaresResponse != null && palmaresResponse.action != null) {
+                        ResponseHttp palmares = fftService.navigateToPalmares(form, palmaresResponse);
+                        if (palmares.body != null) {
+                            PalmaresMillesimeResponse palmaresMillesimeResponse = fftService.getPalmaresMillesime(palmares);
+                            if (palmaresMillesimeResponse != null && !palmaresMillesimeResponse.listMillesime.isEmpty()) {
+                                return palmaresMillesimeResponse.listMillesime;
+                            } else {
+                                Log.w(TAG, "getPalmaresMillesime is empty");
+                            }
+                        } else {
+                            Log.w(TAG, "navigateToPalmares  body is empty");
+                        }
                     } else {
-                        Log.w(TAG, "getRankingList return empty");
+                        Log.w(TAG, "getPalmares action is empty");
                     }
                 } else {
                     Log.w(TAG, "submitFormLogin return empty");

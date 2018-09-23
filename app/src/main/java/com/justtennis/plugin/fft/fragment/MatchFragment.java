@@ -9,14 +9,20 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
+import com.justtennis.plugin.fft.LoginActivity;
 import com.justtennis.plugin.fft.R;
 import com.justtennis.plugin.fft.adapter.MatchAdapter;
 import com.justtennis.plugin.fft.dto.MatchContent;
 import com.justtennis.plugin.fft.dto.MatchDto;
+import com.justtennis.plugin.fft.model.PalmaresMillesimeResponse;
 import com.justtennis.plugin.fft.model.RankingMatchResponse;
+import com.justtennis.plugin.fft.task.MillesimeTask;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,6 +39,10 @@ public class MatchFragment extends Fragment {
     private int mColumnCount = 1;
     private List<MatchDto> mList;
     private OnListFragmentInteractionListener mListener;
+    private Spinner spMillesime;
+    private List<String> list = new ArrayList<>();
+    private ArrayAdapter<String> adpMillesime;
+    private MillesimeTask mMillesimeTask;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -65,6 +75,8 @@ public class MatchFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_match_list, container, false);
+        spMillesime = view.findViewById(R.id.sp_millesime);
+        initializeMillesime();
 
         // Set the adapter
         if (view instanceof RecyclerView) {
@@ -79,7 +91,6 @@ public class MatchFragment extends Fragment {
         }
         return view;
     }
-
 
     @Override
     public void onAttach(Context context) {
@@ -111,5 +122,41 @@ public class MatchFragment extends Fragment {
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
         void onListFragmentInteraction(MatchDto item);
+    }
+
+    private void initializeMillesime() {
+        adpMillesime = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, list);
+        spMillesime.setAdapter(adpMillesime);
+
+        mMillesimeTask = new MillesimeTask(email, password);
+        mMillesimeTask.execute((Void) null);
+    }
+
+    private class MyMillesimeTask  extends MillesimeTask {
+        protected MyMillesimeTask(String email, String password) {
+            super(email, password);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            list.clear();
+        }
+
+        @Override
+        protected void onPostExecute(List<PalmaresMillesimeResponse.Millesime> millesimes) {
+            super.onPostExecute(millesimes);
+            mMillesimeTask = null;
+            for(PalmaresMillesimeResponse.Millesime millesime : millesimes) {
+                list.add(millesime.value);
+            }
+            adpMillesime.notifyDataSetChanged();
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+            mMillesimeTask = null;
+        }
     }
 }

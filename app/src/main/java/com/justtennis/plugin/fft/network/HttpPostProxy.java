@@ -18,7 +18,6 @@ import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.commons.httpclient.methods.PostMethod;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 // https://gerardnico.com/lang/java/httpclient
@@ -42,11 +41,15 @@ public class HttpPostProxy implements IProxy {
         return new HttpPostProxy();
     }
 
-    public ResponseHttp post(String root, String path, Map<String, String> data) throws URIException {
-        return post(root, path, data, null);
+    public ResponseHttp post(String root, String path, Map<String, String> data) {
+        return post(root, path, data, (String)null);
     }
 
-    public ResponseHttp post(String root, String path, Map<String, String> data, ResponseHttp http) throws URIException {
+    public ResponseHttp post(String root, String path, Map<String, String> data, ResponseHttp http) {
+        return post(root, path, data, NetworkTool.buildCookie(http));
+    }
+
+    public ResponseHttp post(String root, String path, Map<String, String> data, String cookie) {
         ResponseHttp ret = new ResponseHttp();
         HttpClient client = new HttpClient();
         if (site != null && port > 0 && method != null) {
@@ -58,9 +61,7 @@ public class HttpPostProxy implements IProxy {
 
         HttpMethod method = new PostMethod(root + path);
 
-        if (http != null) {
-            NetworkTool.initCookies(method, http);
-        }
+        NetworkTool.initCookies(method, cookie);
 
         if (site != null && port > 0) {
             NetworkTool.showCookies(client, site, port);

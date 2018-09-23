@@ -30,17 +30,22 @@ public class HttpGetProxy implements IProxy {
     }
 
     public ResponseHttp get(String root, String path) {
-        return get(root, path, null);
+        return get(root, path, (String)null);
     }
 
     public ResponseHttp get(String root, String path, ResponseHttp http) {
+        String cookie = NetworkTool.buildCookie(http);
+        return get(root, path, cookie);
+    }
+
+    public ResponseHttp get(String root, String path, String cookie) {
         ResponseHttp ret = new ResponseHttp();
         HttpClient client = new HttpClient();
         HttpMethod method = new GetMethod(root + path);
 
         System.out.println("HttpGetProxy - url: " + root + path);
 
-        NetworkTool.initCookies(method, http);
+        NetworkTool.initCookies(method, cookie);
 
         if (proxyHost != null && proxyPort > 0) {
             HostConfiguration config = client.getHostConfiguration();

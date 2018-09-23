@@ -1,5 +1,8 @@
 package com.justtennis.plugin.fft.service;
 
+import android.content.Context;
+
+import com.justtennis.plugin.fft.exception.NotConnectedException;
 import com.justtennis.plugin.fft.model.LoginFormResponse;
 import com.justtennis.plugin.fft.model.PalmaresMillesimeResponse;
 import com.justtennis.plugin.fft.model.PalmaresResponse;
@@ -23,8 +26,9 @@ public class FFTServiceTest extends TestCase {
 
     private static final boolean useProxy = true;
 
-    public static void testGetLoginForm(String login, String password) {
-        FFTService fftService = newFFTService();
+    public static void testGetLoginForm(Context context) {
+
+        FFTService fftService = newFFTService(context);
         LoginFormResponse response = fftService.getLoginForm(LOGIN, PASWD);
 
         assertNotNull(response.action);
@@ -36,8 +40,8 @@ public class FFTServiceTest extends TestCase {
         assertEquals(response.input.size(), 16);
     }
 
-    public static void testSubmitFormLogin() throws IOException {
-        FFTService fftService = newFFTService();
+    public static void testSubmitFormLogin(Context context) {
+        FFTService fftService = newFFTService(context);
         LoginFormResponse response = fftService.getLoginForm(LOGIN, PASWD);
 
         ResponseHttp form = fftService.submitFormLogin(response);
@@ -47,8 +51,8 @@ public class FFTServiceTest extends TestCase {
         assertEquals(form.header.size(), 16);
     }
 
-    public static void testNavigateToFormRedirect() throws IOException {
-        FFTService fftService = newFFTService();
+    public static void testNavigateToFormRedirect(Context context) throws NotConnectedException {
+        FFTService fftService = newFFTService(context);
         LoginFormResponse response = fftService.getLoginForm(LOGIN, PASWD);
 
         ResponseHttp form = fftService.submitFormLogin(response);
@@ -61,8 +65,8 @@ public class FFTServiceTest extends TestCase {
         assertEquals(formRedirect.header.size(), 0);
     }
 
-    public static void testNavigateToRanking() throws IOException {
-        FFTService fftService = newFFTService();
+    public static void testNavigateToRanking(Context context) throws NotConnectedException {
+        FFTService fftService = newFFTService(context);
         LoginFormResponse response = fftService.getLoginForm(LOGIN, PASWD);
 
         ResponseHttp form = fftService.submitFormLogin(response);
@@ -75,8 +79,8 @@ public class FFTServiceTest extends TestCase {
         assertEquals(ranking.header.size(), 0);
     }
 
-    public static void testGetRankingList() throws IOException {
-        FFTService fftService = newFFTService();
+    public static void testGetRankingList(Context context) throws NotConnectedException {
+        FFTService fftService = newFFTService(context);
         LoginFormResponse response = fftService.getLoginForm(LOGIN, PASWD);
 
         ResponseHttp form = fftService.submitFormLogin(response);
@@ -94,8 +98,8 @@ public class FFTServiceTest extends TestCase {
         }
     }
 
-    public static void testGetRankingMatch() throws IOException {
-        FFTService fftService = newFFTService();
+    public static void testGetRankingMatch(Context context) throws NotConnectedException {
+        FFTService fftService = newFFTService(context);
         LoginFormResponse response = fftService.getLoginForm(LOGIN, PASWD);
 
         ResponseHttp form = fftService.submitFormLogin(response);
@@ -123,8 +127,8 @@ public class FFTServiceTest extends TestCase {
         }
     }
 
-    public static void testGetParmares() throws IOException {
-        FFTService fftService = newFFTService();
+    public static void testGetParmares(Context context) throws NotConnectedException {
+        FFTService fftService = newFFTService(context);
         LoginFormResponse response = fftService.getLoginForm(LOGIN, PASWD);
 
         ResponseHttp form = fftService.submitFormLogin(response);
@@ -140,8 +144,8 @@ public class FFTServiceTest extends TestCase {
         assertNotNull(palmares.body);
     }
 
-    public static void testGetParmaresMillesime() throws IOException {
-        FFTService fftService = newFFTService();
+    public static void testGetParmaresMillesime(Context context) throws NotConnectedException {
+        FFTService fftService = newFFTService(context);
         LoginFormResponse response = fftService.getLoginForm(LOGIN, PASWD);
 
         ResponseHttp form = fftService.submitFormLogin(response);
@@ -166,8 +170,8 @@ public class FFTServiceTest extends TestCase {
         assertTrue(palmaresMillesimeResponse.listMillesime.contains(palmaresMillesimeResponse.millesimeSelected));
     }
 
-    public static void testSubmitFormPalmaresMillesime() throws IOException {
-        FFTService fftService = newFFTService();
+    public static void testSubmitFormPalmaresMillesime(Context context) throws NotConnectedException, IOException {
+        FFTService fftService = newFFTService(context);
         LoginFormResponse response = fftService.getLoginForm(LOGIN, PASWD);
 
         ResponseHttp form = fftService.submitFormLogin(response);
@@ -198,8 +202,8 @@ public class FFTServiceTest extends TestCase {
         assertEquals(submitForm.header.size(), 13);
     }
 
-    private static FFTService newFFTService() {
-        FFTService instance = FFTService.newInstance();
+    private static FFTService newFFTService(Context context) {
+        FFTService instance = FFTService.newInstance(context);
         if (useProxy) {
             instance.setProxyHost(PROXY_HOST)
                     .setProxyPort(PROXY_PORT)

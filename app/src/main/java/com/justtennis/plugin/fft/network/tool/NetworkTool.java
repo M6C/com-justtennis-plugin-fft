@@ -1,5 +1,7 @@
 package com.justtennis.plugin.fft.network.tool;
 
+import android.support.annotation.NonNull;
+
 import com.justtennis.plugin.fft.network.model.ResponseElement;
 import com.justtennis.plugin.fft.network.model.ResponseHttp;
 
@@ -21,6 +23,21 @@ public class NetworkTool {
             return;
         }
 
+        initCookies(method, buildCookie(response));
+    }
+
+    public static void initCookies(HttpMethod method, String cookie) {
+        if (cookie == null || cookie.isEmpty()) {
+            return;
+        }
+
+        System.out.println("HttpGetProxy - initCookies - Cookie = " + cookie);
+        method.getParams().setCookiePolicy(CookiePolicy.IGNORE_COOKIES);
+        method.setRequestHeader("Cookie", cookie);
+    }
+
+    @NonNull
+    public static String buildCookie(ResponseHttp response) {
         StringBuilder strCookie = new StringBuilder("");
         for(ResponseElement head : response.header) {
             if ("Set-Cookie".equals(head.name)) {
@@ -32,10 +49,7 @@ public class NetworkTool {
                 strCookie.append(value);
             }
         }
-
-        System.out.println("HttpGetProxy - initCookies - Cookie = " + strCookie);
-        method.getParams().setCookiePolicy(CookiePolicy.IGNORE_COOKIES);
-        method.setRequestHeader("Cookie", strCookie.toString());
+        return strCookie.toString();
     }
 
     public static void showCookies(HttpClient client, String logonSite, int logonPort) {

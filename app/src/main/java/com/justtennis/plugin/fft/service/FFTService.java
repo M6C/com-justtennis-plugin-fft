@@ -1,7 +1,10 @@
 package com.justtennis.plugin.fft.service;
 
+import android.content.Context;
+
 import com.justtennis.plugin.converter.LoginFormResponseConverter;
 import com.justtennis.plugin.converter.PalmaresMillesimeFormResponseConverter;
+import com.justtennis.plugin.fft.exception.NotConnectedException;
 import com.justtennis.plugin.fft.model.FFTLoginFormRequest;
 import com.justtennis.plugin.fft.model.FFTRankingListRequest;
 import com.justtennis.plugin.fft.model.FFTRankingMatchRequest;
@@ -15,10 +18,12 @@ import com.justtennis.plugin.fft.model.RankingMatchResponse;
 import com.justtennis.plugin.fft.network.HttpGetProxy;
 import com.justtennis.plugin.fft.network.HttpPostProxy;
 import com.justtennis.plugin.fft.network.model.ResponseHttp;
+import com.justtennis.plugin.fft.network.tool.NetworkTool;
 import com.justtennis.plugin.fft.parser.FormParser;
 import com.justtennis.plugin.fft.parser.PalmaresParser;
 import com.justtennis.plugin.fft.parser.RankingParser;
 import com.justtennis.plugin.fft.skeleton.IProxy;
+import com.justtennis.plugin.fft.tool.FFTSharedPrefUtils;
 
 import org.jsoup.helper.StringUtil;
 
@@ -32,16 +37,18 @@ public class FFTService implements IProxy {
     private static final int    LOGON_PORT = 80;
     private static final String LOGON_METHOD = "https";
 
+    private Context context;
     private String proxyHost;
     private int    proxyPort;
     private String proxyUser;
     private String proxyPw;
 
-    private FFTService() {
+    private FFTService(Context context) {
+        this.context = context;
     }
 
-    public static FFTService newInstance() {
-        return new FFTService();
+    public static FFTService newInstance(Context context) {
+        return new FFTService(context);
     }
 
     public LoginFormResponse getLoginForm(String login, String password) {
@@ -49,7 +56,7 @@ public class FFTService implements IProxy {
         LoginFormResponse ret = null;
         System.out.println("\r\n" + URL_ROOT);
 
-        ResponseHttp respRoot = newHttpGetProxy().get(URL_ROOT, "");
+        ResponseHttp respRoot = doGet(URL_ROOT, "");
         System.out.println("==============> connection Return:\r\n" + respRoot.body);
 
         if (!StringUtil.isBlank(respRoot.body)) {
@@ -61,7 +68,7 @@ public class FFTService implements IProxy {
         return ret;
     }
 
-    public ResponseHttp submitFormLogin(LoginFormResponse form) throws IOException {
+    public ResponseHttp submitFormLogin(LoginFormResponse form) {
         logMethod("submitFormLogin");
         ResponseHttp ret = null;
 
@@ -70,36 +77,41 @@ public class FFTService implements IProxy {
 
         Map<String, String> data = LoginFormResponseConverter.toDataMap(form);
         if (!StringUtil.isBlank(form.action)) {
-            ret = newHttpPostProxy().post(URL_ROOT, form.action, data);
+            ret = doPost(URL_ROOT, form.action, data);
+
+            String cookie = NetworkTool.buildCookie(ret);
+            if (!cookie.isEmpty()) {
+                FFTSharedPrefUtils.setCookie(context, cookie);
+            }
         }
 
         return ret;
     }
 
-    public ResponseHttp navigateToFormRedirect(ResponseHttp loginFormResponse) {
+    public ResponseHttp navigateToFormRedirect(ResponseHttp loginFormResponse) throws NotConnectedException {
         logMethod("navigateToFormRedirect");
         if (loginFormResponse.pathRedirect != null && !loginFormResponse.pathRedirect.isEmpty()) {
-            return newHttpGetProxy().get(URL_ROOT, loginFormResponse.pathRedirect, loginFormResponse);
+            return doGetConnected(URL_ROOT, loginFormResponse.pathRedirect, loginFormResponse);
         }
         return null;
     }
 
-    public ResponseHttp navigateToRanking(ResponseHttp loginFormResponse) {
+    public ResponseHttp navigateToRanking(ResponseHttp loginFormResponse) throws NotConnectedException {
         logMethod("navigateToRanking");
-        return newHttpGetProxy().get(URL_ROOT, "/bloc_home/redirect/classement", loginFormResponse);
+        return doGetConnected(URL_ROOT, "/bloc_home/redirect/classement", loginFormResponse);
     }
 
-    public RankingListResponse getRankingList(ResponseHttp loginFormResponse) {
+    public RankingListResponse getRankingList(ResponseHttp loginFormResponse) throws NotConnectedException {
         logMethod("getRankingList");
-        ResponseHttp respRoot = newHttpGetProxy().get(URL_ROOT, "/bloc_home/redirect/classement", loginFormResponse);
+        ResponseHttp respRoot = doGetConnected(URL_ROOT, "/bloc_home/redirect/classement", loginFormResponse);
         System.out.println("==============> connection Return:\r\n" + respRoot.body);
 
         return RankingParser.parseRankingList(respRoot.body, new FFTRankingListRequest());
     }
 
-    public RankingMatchResponse getRankingMatch(ResponseHttp loginFormResponse, String id) {
+    public RankingMatchResponse getRankingMatch(ResponseHttp loginFormResponse, String id) throws NotConnectedException {
         logMethod("getRankingMatch");
-        ResponseHttp respRoot = newHttpGetProxy().get(URL_ROOT, "/page_classement_ajax?id_bilan=" + id, loginFormResponse);
+        ResponseHttp respRoot = doGetConnected(URL_ROOT, "/page_classement_ajax?id_bilan=" + id, loginFormResponse);
         if (!StringUtil.isBlank(respRoot.body)) {
             respRoot.body = format(respRoot.body);
             System.out.println("==============> getRankingMatch formated ranking.body:" + respRoot.body);
@@ -113,9 +125,9 @@ public class FFTService implements IProxy {
         return PalmaresParser.parsePalmares(loginFormResponse.body, new PalmaresRequest());
     }
 
-    public ResponseHttp navigateToPalmares(ResponseHttp loginFormResponse, PalmaresResponse palmaresResponse) {
+    public ResponseHttp navigateToPalmares(ResponseHttp loginFormResponse, PalmaresResponse palmaresResponse) throws NotConnectedException {
         logMethod("navigateToPalmares");
-        return newHttpGetProxy().get(URL_ROOT, palmaresResponse.action, loginFormResponse);
+        return doGetConnected(URL_ROOT, palmaresResponse.action, loginFormResponse);
     }
 
     public PalmaresMillesimeResponse getPalmaresMillesime(ResponseHttp palamresResponseHttp) {
@@ -124,7 +136,7 @@ public class FFTService implements IProxy {
         return PalmaresParser.parsePalmaresMillesime(palamresResponseHttp.body, new PalmaresMillesimeRequest());
     }
 
-    public ResponseHttp submitFormPalmaresMillesime(ResponseHttp loginFormResponse, PalmaresMillesimeResponse form) throws IOException {
+    public ResponseHttp submitFormPalmaresMillesime(ResponseHttp loginFormResponse, PalmaresMillesimeResponse form) throws IOException, NotConnectedException {
         logMethod("submitFormLogin");
         ResponseHttp ret = null;
 
@@ -135,7 +147,7 @@ public class FFTService implements IProxy {
 
         Map<String, String> data = PalmaresMillesimeFormResponseConverter.toDataMap(form);
         if (!StringUtil.isBlank(form.action)) {
-            ret = newHttpPostProxy().post(URL_ROOT, form.action, data, loginFormResponse);
+            ret = doPostConnected(URL_ROOT, form.action, data, loginFormResponse);
         }
 
         return ret;
@@ -171,6 +183,36 @@ public class FFTService implements IProxy {
         HttpGetProxy instance = HttpGetProxy.newInstance();
         setProxy(instance);
         return instance;
+    }
+
+    private ResponseHttp doGet(String root, String path) {
+        return newHttpGetProxy().get(root, path);
+    }
+
+    private ResponseHttp doPost(String root, String path, Map<String, String> data) {
+        return newHttpPostProxy().post(root, path, data);
+    }
+
+    private ResponseHttp doGetConnected(String root, String path, ResponseHttp http) throws NotConnectedException {
+        String cookie = FFTSharedPrefUtils.getCookie(context);
+        if (cookie == null && http == null) {
+            throw new NotConnectedException();
+        } else if (cookie != null) {
+            return newHttpGetProxy().get(root, path, cookie);
+        } else {
+            return newHttpGetProxy().get(root, path, http);
+        }
+    }
+
+    private ResponseHttp doPostConnected(String root, String path, Map<String, String> data, ResponseHttp http) throws NotConnectedException {
+        String cookie = FFTSharedPrefUtils.getCookie(context);
+        if (cookie == null && http == null) {
+            throw new NotConnectedException();
+        } else if (cookie != null) {
+            return newHttpPostProxy().post(root, path, data, cookie);
+        } else {
+            return newHttpPostProxy().post(root, path, data, http);
+        }
     }
 
     private HttpPostProxy newHttpPostProxy() {
