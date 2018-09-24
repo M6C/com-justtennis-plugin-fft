@@ -67,6 +67,10 @@ public class NetworkTool {
         System.out.println("");
     }
 
+    public static boolean isOk(int statusCode) {
+        return statusCode == HttpStatus.SC_OK;
+    }
+
     public static boolean isRedirect(int statusCode) {
         return statusCode == HttpStatus.SC_MOVED_TEMPORARILY ||
                 statusCode== HttpStatus.SC_MOVED_PERMANENTLY ||

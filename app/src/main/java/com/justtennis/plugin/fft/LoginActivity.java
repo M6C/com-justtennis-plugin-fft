@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.LoaderManager.LoaderCallbacks;
+import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
@@ -33,6 +34,7 @@ import com.justtennis.plugin.fft.model.RankingMatchResponse;
 import com.justtennis.plugin.fft.resolver.InviteResolver;
 import com.justtennis.plugin.fft.service.FFTService;
 import com.justtennis.plugin.fft.task.UserLoginTask;
+import com.justtennis.plugin.fft.tool.ProxySharedPrefUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -56,6 +58,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private static final int REQUEST_READ_CONTACTS = 0;
     private static final String TAG = LoginActivity.class.getName();
 
+    private Context context;
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
@@ -75,6 +78,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        context = getApplicationContext();
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
@@ -309,7 +313,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private class LoginTask  extends UserLoginTask {
 
         LoginTask(String email, String password) {
-            super(email, password);
+            super(context, email, password);
         }
 
         @Override
@@ -357,15 +361,16 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
         }
 
+        @Override
         protected FFTService newFFTService() {
-            FFTService instance = super.newFFTService();
-            if (mUseProxy.isChecked()) {
-                instance.setProxyHost(PROXY_HOST)
-                        .setProxyPort(PROXY_PORT)
-                        .setProxyUser(PROXY_USER)
-                        .setProxyPw(PROXY_PW);
+            ProxySharedPrefUtils.setUseProxy(context, mUseProxy.isChecked());
+            if (ProxySharedPrefUtils.getSite(context) == null) {
+                ProxySharedPrefUtils.setSite(context, PROXY_HOST);
+                ProxySharedPrefUtils.setPort(context, PROXY_PORT);
+                ProxySharedPrefUtils.setUser(context, PROXY_USER);
+                ProxySharedPrefUtils.setPwd(context, PROXY_PW);
             }
-            return instance;
+            return super.newFFTService();
         }
     }
 }

@@ -57,6 +57,11 @@ public class NetworkToolTest extends TestCase {
         assertFalse(NetworkTool.isRedirect(HttpStatus.SC_OK));
     }
 
+    public static void testIsOk() {
+        assertTrue(NetworkTool.isOk(HttpStatus.SC_OK));
+        assertFalse(NetworkTool.isOk(HttpStatus.SC_MOVED_PERMANENTLY));
+    }
+
     private static FFTService newFFTService(Context context) {
         FFTService instance = FFTService.newInstance(context);
         if (useProxy) {

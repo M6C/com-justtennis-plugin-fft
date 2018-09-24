@@ -24,6 +24,7 @@ import com.justtennis.plugin.fft.parser.PalmaresParser;
 import com.justtennis.plugin.fft.parser.RankingParser;
 import com.justtennis.plugin.fft.skeleton.IProxy;
 import com.justtennis.plugin.fft.tool.FFTSharedPrefUtils;
+import com.justtennis.plugin.fft.tool.ProxySharedPrefUtils;
 
 import org.jsoup.helper.StringUtil;
 
@@ -48,7 +49,14 @@ public class FFTService implements IProxy {
     }
 
     public static FFTService newInstance(Context context) {
-        return new FFTService(context);
+        FFTService service = new FFTService(context);
+        if (ProxySharedPrefUtils.getUseProxy(context)) {
+            service.setProxyHost(ProxySharedPrefUtils.getSite(context))
+                    .setProxyPort(ProxySharedPrefUtils.getPort(context))
+                    .setProxyUser(ProxySharedPrefUtils.getUser(context))
+                    .setProxyPw(ProxySharedPrefUtils.getPwd(context));
+        }
+        return service;
     }
 
     public LoginFormResponse getLoginForm(String login, String password) {
@@ -82,7 +90,12 @@ public class FFTService implements IProxy {
             String cookie = NetworkTool.buildCookie(ret);
             if (!cookie.isEmpty()) {
                 FFTSharedPrefUtils.setCookie(context, cookie);
+                FFTSharedPrefUtils.setHomePage(context, form.action);
+            } else {
+                FFTSharedPrefUtils.clean(context);
             }
+        } else {
+            FFTSharedPrefUtils.clean(context);
         }
 
         return ret;
@@ -91,9 +104,25 @@ public class FFTService implements IProxy {
     public ResponseHttp navigateToFormRedirect(ResponseHttp loginFormResponse) throws NotConnectedException {
         logMethod("navigateToFormRedirect");
         if (loginFormResponse.pathRedirect != null && !loginFormResponse.pathRedirect.isEmpty()) {
-            return doGetConnected(URL_ROOT, loginFormResponse.pathRedirect, loginFormResponse);
+            ResponseHttp responseHttp = doGetConnected(URL_ROOT, loginFormResponse.pathRedirect, loginFormResponse);
+            if (NetworkTool.isOk(responseHttp.statusCode)) {
+                FFTSharedPrefUtils.setHomePage(context, responseHttp.pathRedirect);
+            } else {
+                FFTSharedPrefUtils.clean(context);
+            }
+            return responseHttp;
         }
         return null;
+    }
+
+    public ResponseHttp navigateToHomePage(ResponseHttp loginFormResponse) throws NotConnectedException {
+        logMethod("navigateToHomePage");
+        String homePage = FFTSharedPrefUtils.getHomePage(context);
+        if (homePage != null && !homePage.isEmpty()) {
+            return doGetConnected(URL_ROOT, homePage, loginFormResponse);
+        } else {
+            throw new NotConnectedException("navigateToHomePage - No Home Page found");
+        }
     }
 
     public ResponseHttp navigateToRanking(ResponseHttp loginFormResponse) throws NotConnectedException {

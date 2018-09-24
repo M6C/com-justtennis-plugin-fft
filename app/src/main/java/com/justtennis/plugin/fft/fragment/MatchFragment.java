@@ -1,5 +1,6 @@
 package com.justtennis.plugin.fft.fragment;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
-import com.justtennis.plugin.fft.LoginActivity;
 import com.justtennis.plugin.fft.R;
 import com.justtennis.plugin.fft.adapter.MatchAdapter;
 import com.justtennis.plugin.fft.dto.MatchContent;
@@ -51,8 +51,6 @@ public class MatchFragment extends Fragment {
     public MatchFragment() {
     }
 
-    // TODO: Customize parameter initialization
-    @SuppressWarnings("unused")
     public static MatchFragment newInstance(List<RankingMatchResponse.RankingItem> list) {
         MatchFragment fragment = new MatchFragment();
         Bundle args = new Bundle();
@@ -120,21 +118,23 @@ public class MatchFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onListFragmentInteraction(MatchDto item);
     }
 
     private void initializeMillesime() {
-        adpMillesime = new ArrayAdapter<String>(getContext(), android.R.layout.simple_list_item_1, list);
+        Context context = getContext();
+        assert context != null;
+        adpMillesime = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, list);
         spMillesime.setAdapter(adpMillesime);
 
-        mMillesimeTask = new MillesimeTask(email, password);
+        mMillesimeTask = new MyMillesimeTask(context);
         mMillesimeTask.execute((Void) null);
     }
 
+    @SuppressLint("StaticFieldLeak")
     private class MyMillesimeTask  extends MillesimeTask {
-        protected MyMillesimeTask(String email, String password) {
-            super(email, password);
+        protected MyMillesimeTask(Context context) {
+            super(context);
         }
 
         @Override
