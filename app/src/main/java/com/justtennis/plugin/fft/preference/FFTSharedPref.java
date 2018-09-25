@@ -44,10 +44,8 @@ public class FFTSharedPref {
         CommonSharedPref.setString(context, homePage, "setHomePage", SHARED_PREF_FFT_HOME_PAGE);
     }
 
-    public static void clean(Context context) {
+    public static void cleanSecurity(Context context) {
         setCookie(context, "");
-        setLogin(context, "");
-        setPwd(context, "");
         setHomePage(context, "");
     }
 }

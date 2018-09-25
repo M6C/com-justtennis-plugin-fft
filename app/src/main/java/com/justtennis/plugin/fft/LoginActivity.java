@@ -106,6 +106,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mUseProxy = findViewById(R.id.chk_use_proxy);
 
         initializeForm();
+
+        FFTSharedPref.cleanSecurity(context);
     }
 
     @Override

@@ -92,10 +92,10 @@ public class FFTService implements IProxy {
                 FFTSharedPref.setCookie(context, cookie);
                 FFTSharedPref.setHomePage(context, form.action);
             } else {
-                FFTSharedPref.clean(context);
+                FFTSharedPref.cleanSecurity(context);
             }
         } else {
-            FFTSharedPref.clean(context);
+            FFTSharedPref.cleanSecurity(context);
         }
 
         return ret;
@@ -108,7 +108,7 @@ public class FFTService implements IProxy {
             if (NetworkTool.isOk(responseHttp.statusCode)) {
                 FFTSharedPref.setHomePage(context, responseHttp.pathRedirect);
             } else {
-                FFTSharedPref.clean(context);
+                FFTSharedPref.cleanSecurity(context);
             }
             return responseHttp;
         }
