@@ -6,6 +6,7 @@ import com.justtennis.plugin.fft.network.model.ResponseElement;
 import com.justtennis.plugin.fft.network.model.ResponseHttp;
 
 import org.apache.commons.httpclient.Cookie;
+import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
@@ -31,7 +32,7 @@ public class NetworkTool {
             return;
         }
 
-        System.out.println("HttpGetProxy - initCookies - Cookie = " + cookie);
+        System.out.println("NetworkTool - initCookies - Cookie = " + cookie);
         method.getParams().setCookiePolicy(CookiePolicy.IGNORE_COOKIES);
         method.setRequestHeader("Cookie", cookie);
     }
@@ -42,7 +43,7 @@ public class NetworkTool {
         for(ResponseElement head : response.header) {
             if ("Set-Cookie".equals(head.name)) {
                 String value = head.value.split(";", 2)[0];
-                System.out.println(("HttpGetProxy - initCookies head:" + head + " value:" + value).trim());
+                System.out.println(("NetworkTool - initCookies head:" + head + " value:" + value).trim());
                 if (strCookie.length()>0) {
                     strCookie.append("; ");
                 }
@@ -56,15 +57,36 @@ public class NetworkTool {
         System.out.println("");
         // See if we got any cookies
         Cookie[] initcookies = cookiespec.match(logonSite, logonPort, "/", true, client.getState().getCookies());
-        System.out.println("HttpPostProxy - showCookies - Initial set of cookies:");
+        System.out.println("NetworkTool - showCookies - Initial set of cookies:");
         if (initcookies.length == 0) {
-            System.out.println("HttpPostProxy - showCookes - None");
+            System.out.println("NetworkTool - showCookes - None");
         } else {
             for (int i = 0; i < initcookies.length; i++) {
-                System.out.println("HttpPostProxy - showCookies - " + initcookies[i].toString());
+                System.out.println("NetworkTool - showCookies - " + initcookies[i].toString());
             }
         }
         System.out.println("");
+    }
+
+    public static void showheaders(HttpMethod method) {
+        showRequestHeaders(method);
+        showResponseHeaders(method);
+    }
+
+    public static void showRequestHeaders(HttpMethod method) {
+        System.out.println("\r\nNetworkTool - showRequestHeaders-----------------------------");
+        for (Header head : method.getRequestHeaders()) {
+            System.out.println("NetworkTool - " + head.getName() + ":" + head.getValue());
+        }
+        System.out.println("-------------------------------------------------------------\r\n");
+    }
+
+    public static void showResponseHeaders(HttpMethod method) {
+        System.out.println("\r\nNetworkTool - showResponseHeaders ---------------------------");
+        for (Header head : method.getResponseHeaders()) {
+            System.out.println("NetworkTool - " + head.getName() + ":" + head.getValue());
+        }
+        System.out.println("-------------------------------------------------------------\r\n");
     }
 
     public static boolean isOk(int statusCode) {

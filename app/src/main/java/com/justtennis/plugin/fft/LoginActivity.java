@@ -1,6 +1,6 @@
 package com.justtennis.plugin.fft;
 
-import android.annotation.TargetApi;
+import android.annotation.SuppressLint;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Context;
 import android.content.CursorLoader;
@@ -16,10 +16,9 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -69,36 +68,26 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private TextView mResponse;
     private CheckBox mUseProxy;
 
-    private boolean userProxy;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         context = getApplicationContext();
         // Set up the login form.
-        mLoginView = (AutoCompleteTextView) findViewById(R.id.login);
+        mLoginView = findViewById(R.id.login);
         populateAutoComplete();
 
-        mPasswordView = (EditText) findViewById(R.id.password);
-        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) {
-                    attemptLogin();
-                    return true;
-                }
-                return false;
+        mPasswordView = findViewById(R.id.password);
+        mPasswordView.setOnEditorActionListener((textView, id, keyEvent) -> {
+            if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) {
+                attemptLogin();
+                return true;
             }
+            return false;
         });
 
-        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
-        mEmailSignInButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                attemptLogin();
-            }
-        });
+        Button mEmailSignInButton = findViewById(R.id.email_sign_in_button);
+        mEmailSignInButton.setOnClickListener(view -> attemptLogin());
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
@@ -133,13 +122,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
         if (shouldShowRequestPermissionRationale(READ_CONTACTS)) {
             Snackbar.make(mLoginView, R.string.permission_rationale, Snackbar.LENGTH_INDEFINITE)
-                    .setAction(android.R.string.ok, new View.OnClickListener() {
-                        @Override
-                        @TargetApi(Build.VERSION_CODES.M)
-                        public void onClick(View v) {
-                            requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
-                        }
-                    });
+                    .setAction(android.R.string.ok, v -> requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS));
         } else {
             requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
         }
@@ -158,7 +141,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         }
     }
-
 
     /**
      * Attempts to sign in or register the account specified by the login form.
@@ -204,6 +186,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // form field with an error.
             focusView.requestFocus();
         } else {
+            closeKeyboard();
+
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
@@ -212,13 +196,16 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
     }
 
+    private void closeKeyboard() {
+        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(mLoginView.getWindowToken(), 0);
+    }
+
     private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
-        return email.length() > 4;//.contains("@");
+        return email.length() > 4;
     }
 
     private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
         return password.length() > 4;
     }
 
@@ -260,7 +247,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
-
+        // Nothing to do
     }
 
     private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
@@ -273,6 +260,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     private void initializeForm() {
+        mUseProxy.setChecked(ProxySharedPref.getUseProxy(context));
+
         String login = FFTSharedPref.getLogin(context);
         if (login == null || login.isEmpty()) {
             mLoginView.setText("");
@@ -298,6 +287,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         int IS_PRIMARY = 1;
     }
 
+    @SuppressLint("StaticFieldLeak")
     private class MyUserLoginTask extends UserLoginTask {
 
         MyUserLoginTask(String email, String password) {

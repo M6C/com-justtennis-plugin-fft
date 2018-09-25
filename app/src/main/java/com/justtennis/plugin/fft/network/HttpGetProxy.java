@@ -15,6 +15,9 @@ import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.GetMethod;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.Map;
 
 public class HttpGetProxy implements IProxy {
 
@@ -39,11 +42,42 @@ public class HttpGetProxy implements IProxy {
     }
 
     public ResponseHttp get(String root, String path, String cookie) {
+        return get(root, path, null, cookie);
+    }
+
+    public ResponseHttp get(String root, String path, Map<String, String> data) {
+        return get(root, path, data, (String)null);
+    }
+
+    public ResponseHttp get(String root, String path, Map<String, String> data, ResponseHttp http) {
+        String cookie = NetworkTool.buildCookie(http);
+        return get(root, path, data, cookie);
+    }
+
+    public ResponseHttp get(String root, String path, Map<String, String> data, String cookie) {
         ResponseHttp ret = new ResponseHttp();
         HttpClient client = new HttpClient();
-        HttpMethod method = new GetMethod(root + path);
 
-        System.out.println("HttpGetProxy - url: " + root + path);
+        StringBuilder url = new StringBuilder(root).append(path);
+        if (data != null && data.size() > 0) {
+            try {
+                boolean first = true;
+                for(String key : data.keySet()) {
+                    if (first) {
+                        first = false;
+                        url.append("?");
+                    } else {
+                        url.append("&");
+                    }
+                    url.append(key).append("=").append(URLEncoder.encode(data.get(key), "UTF-8"));
+                }
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        }
+        HttpMethod method = new GetMethod(url.toString());
+
+        System.out.println("HttpGetProxy - url: " + url.toString());
 
         NetworkTool.initCookies(method, cookie);
 
@@ -61,12 +95,16 @@ public class HttpGetProxy implements IProxy {
         try {
             client.executeMethod(method);
 
+            NetworkTool.showheaders(method);
+
             ret.statusCode = method.getStatusCode();
             ret.pathRedirect = method.getPath();
 
+            System.out.println("HttpGetProxy - StatusCode:" + ret.statusCode);
+
             if (ret.statusCode == HttpStatus.SC_OK) {
                 ret.body = StreamTool.readStream(method.getResponseBodyAsStream());
-                System.out.println("Response = " + ret.body);
+                System.out.println("HttpGetProxy - Response: " + ret.body);
             } else {
                 while (NetworkTool.isRedirect(ret.statusCode)) {
                     method.releaseConnection();

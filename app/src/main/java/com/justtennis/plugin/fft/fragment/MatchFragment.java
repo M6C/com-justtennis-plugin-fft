@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
@@ -19,8 +20,10 @@ import com.justtennis.plugin.fft.R;
 import com.justtennis.plugin.fft.adapter.MatchAdapter;
 import com.justtennis.plugin.fft.dto.MatchContent;
 import com.justtennis.plugin.fft.dto.MatchDto;
+import com.justtennis.plugin.fft.model.MillesimeMatchResponse;
 import com.justtennis.plugin.fft.model.PalmaresMillesimeResponse;
 import com.justtennis.plugin.fft.model.RankingMatchResponse;
+import com.justtennis.plugin.fft.task.MillesimeMatchTask;
 import com.justtennis.plugin.fft.task.MillesimeTask;
 import com.justtennis.plugin.fft.task.RankingMatchTask;
 import com.justtennis.plugin.fft.tool.ProgressTool;
@@ -29,7 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A fragment representing a list of Items.
+ * A fragment representing a listMillesime of Items.
  * <p/>
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
@@ -39,15 +42,16 @@ public class MatchFragment extends Fragment {
     private static final String ARG_COLUMN_COUNT = "column-count";
 
     private int mColumnCount = 1;
-    private List<MatchDto> mList = new ArrayList<>();
+    private List<MatchDto> listMatch = new ArrayList<>();
+    private List<String> listMillesime = new ArrayList<>();
     private OnListFragmentInteractionListener mListener;
     private View llMatch;
     private Spinner spMillesime;
-    private List<String> list = new ArrayList<>();
     private ArrayAdapter<String> adpMillesime;
     private MatchAdapter adpMatch;
     private MillesimeTask mMillesimeTask;
-    private RankingMatchTask mRankingMatchTask;
+    private MillesimeMatchTask mMillesimeMatchTask;
+    private MyRankingMatchTask mRankingMatchTask;
     private ProgressBar pgMatch;
     private ProgressBar pgMillesime;
 
@@ -132,22 +136,22 @@ public class MatchFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            adpMatch = new MatchAdapter(mList, mListener);
+            adpMatch = new MatchAdapter(listMatch, mListener);
             recyclerView.setAdapter(adpMatch);
         }
 
-        if (mRankingMatchTask != null) {
+        if (mMillesimeMatchTask!= null) {
+            mMillesimeMatchTask.cancel(true);
+        }
+        if (mRankingMatchTask!= null) {
             mRankingMatchTask.cancel(true);
         }
-        showProgressMatch(true);
-        mRankingMatchTask = new MyRankingMatchTask(context);
-        mRankingMatchTask.execute((Void)null);
     }
 
     private void initializeMillesime() {
         Context context = getContext();
         assert context != null;
-        adpMillesime = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, list);
+        adpMillesime = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, listMillesime);
         spMillesime.setAdapter(adpMillesime);
 
         if (mMillesimeTask != null) {
@@ -156,6 +160,26 @@ public class MatchFragment extends Fragment {
         showProgressMillesime(true);
         mMillesimeTask = new MyMillesimeTask(context);
         mMillesimeTask.execute((Void) null);
+
+        spMillesime.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                showProgressMatch(true);
+                if (id == 0) {
+                    mRankingMatchTask = new MyRankingMatchTask(context);
+                    mRankingMatchTask.execute((Void)null);
+                } else {
+                    String millesime = listMillesime.get(position);
+                    mMillesimeMatchTask = new MyMillesimeMatchTask(context, millesime);
+                    mMillesimeMatchTask.execute((Void) null);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                showProgressMatch(true);
+            }
+        });
     }
 
     private void showProgressMillesime(final boolean show) {
@@ -175,7 +199,8 @@ public class MatchFragment extends Fragment {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            list.clear();
+            listMillesime.clear();
+            listMillesime.add("");
         }
 
         @Override
@@ -184,7 +209,7 @@ public class MatchFragment extends Fragment {
             showProgressMillesime(false);
             mMillesimeTask = null;
             for(PalmaresMillesimeResponse.Millesime millesime : millesimes) {
-                list.add(millesime.value);
+                listMillesime.add(millesime.value);
             }
             adpMillesime.notifyDataSetChanged();
         }
@@ -198,6 +223,36 @@ public class MatchFragment extends Fragment {
     }
 
     @SuppressLint("StaticFieldLeak")
+    private class MyMillesimeMatchTask extends MillesimeMatchTask {
+
+        MyMillesimeMatchTask(Context context, String millesime) {
+            super(context, millesime);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            listMatch.clear();
+            adpMatch.notifyDataSetChanged();
+        }
+
+        @Override
+        protected void onPostExecute(List<MillesimeMatchResponse.MatchItem> matchs) {
+            super.onPostExecute(matchs);
+            showProgressMatch(false);
+            listMatch.addAll(MatchContent.toDto2(matchs));
+            adpMatch.notifyDataSetChanged();
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+            showProgressMatch(false);
+            mRankingMatchTask = null;
+        }
+    }
+
+    @SuppressLint("StaticFieldLeak")
     private class MyRankingMatchTask extends RankingMatchTask {
         MyRankingMatchTask(Context context) {
             super(context);
@@ -206,14 +261,14 @@ public class MatchFragment extends Fragment {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            mList.clear();
+            listMatch.clear();
         }
 
         @Override
         protected void onPostExecute(List<RankingMatchResponse.RankingItem> matchs) {
             super.onPostExecute(matchs);
             showProgressMatch(false);
-            mList.addAll(MatchContent.toDto(matchs));
+            listMatch.addAll(MatchContent.toDto(matchs));
             adpMatch.notifyDataSetChanged();
         }
 

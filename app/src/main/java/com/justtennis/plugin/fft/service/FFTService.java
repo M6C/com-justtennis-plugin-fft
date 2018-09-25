@@ -6,9 +6,11 @@ import com.justtennis.plugin.converter.LoginFormResponseConverter;
 import com.justtennis.plugin.converter.PalmaresMillesimeFormResponseConverter;
 import com.justtennis.plugin.fft.exception.NotConnectedException;
 import com.justtennis.plugin.fft.model.FFTLoginFormRequest;
+import com.justtennis.plugin.fft.model.FFTMillessimeMatchRequest;
 import com.justtennis.plugin.fft.model.FFTRankingListRequest;
 import com.justtennis.plugin.fft.model.FFTRankingMatchRequest;
 import com.justtennis.plugin.fft.model.LoginFormResponse;
+import com.justtennis.plugin.fft.model.MillesimeMatchResponse;
 import com.justtennis.plugin.fft.model.PalmaresMillesimeRequest;
 import com.justtennis.plugin.fft.model.PalmaresMillesimeResponse;
 import com.justtennis.plugin.fft.model.PalmaresRequest;
@@ -20,6 +22,7 @@ import com.justtennis.plugin.fft.network.HttpPostProxy;
 import com.justtennis.plugin.fft.network.model.ResponseHttp;
 import com.justtennis.plugin.fft.network.tool.NetworkTool;
 import com.justtennis.plugin.fft.parser.FormParser;
+import com.justtennis.plugin.fft.parser.MillesimeMatchParser;
 import com.justtennis.plugin.fft.parser.PalmaresParser;
 import com.justtennis.plugin.fft.parser.RankingParser;
 import com.justtennis.plugin.fft.preference.FFTSharedPref;
@@ -28,7 +31,6 @@ import com.justtennis.plugin.fft.skeleton.IProxy;
 
 import org.jsoup.helper.StringUtil;
 
-import java.io.IOException;
 import java.util.Map;
 
 public class FFTService implements IProxy {
@@ -165,21 +167,33 @@ public class FFTService implements IProxy {
         return PalmaresParser.parsePalmaresMillesime(palamresResponseHttp.body, new PalmaresMillesimeRequest());
     }
 
-    public ResponseHttp submitFormPalmaresMillesime(ResponseHttp loginFormResponse, PalmaresMillesimeResponse form) throws IOException, NotConnectedException {
-        logMethod("submitFormLogin");
+    public ResponseHttp submitFormPalmaresMillesime(ResponseHttp loginFormResponse, PalmaresMillesimeResponse form) throws NotConnectedException {
+        logMethod("submitFormPalmaresMillesime");
         ResponseHttp ret = null;
 
         System.out.println("");
         System.out.println("==============> Form Action:" + form.action);
+        System.out.println("==============> Form Method:" + form.method);
 
         form.select.value = form.millesimeSelected.value;
 
         Map<String, String> data = PalmaresMillesimeFormResponseConverter.toDataMap(form);
+        data.put("mobile_sort", "nomAdversaire");
         if (!StringUtil.isBlank(form.action)) {
-            ret = doPostConnected(URL_ROOT, form.action, data, loginFormResponse);
+            if ("get".equalsIgnoreCase(form.method)) {
+                ret = doGetConnected(URL_ROOT, form.action, data, loginFormResponse);
+            } else {
+                ret = doPostConnected(URL_ROOT, form.action, data, loginFormResponse);
+            }
         }
 
         return ret;
+    }
+
+    public MillesimeMatchResponse getPalmaresMillesimeMatch(ResponseHttp palamresMillesimeResponseHttp) {
+        logMethod("getPalmaresMillesimeMatch");
+        System.out.println("==============> body:" + palamresMillesimeResponseHttp.body);
+        return MillesimeMatchParser.parseMillesimeMatch(palamresMillesimeResponseHttp.body, new FFTMillessimeMatchRequest());
     }
 
     private String format(String str) {
@@ -223,13 +237,17 @@ public class FFTService implements IProxy {
     }
 
     private ResponseHttp doGetConnected(String root, String path, ResponseHttp http) throws NotConnectedException {
+        return doGetConnected(root, path, null, http);
+    }
+
+    private ResponseHttp doGetConnected(String root, String path, Map<String, String> data, ResponseHttp http) throws NotConnectedException {
         String cookie = FFTSharedPref.getCookie(context);
         if (cookie == null && http == null) {
             throw new NotConnectedException();
         } else if (cookie != null) {
-            return newHttpGetProxy().get(root, path, cookie);
+            return newHttpGetProxy().get(root, path, data, cookie);
         } else {
-            return newHttpGetProxy().get(root, path, http);
+            return newHttpGetProxy().get(root, path, data, http);
         }
     }
 
@@ -285,7 +303,7 @@ public class FFTService implements IProxy {
     }
 
     private void logMethod(String method) {
-        System.out.println("\n==========================================================================");
+        System.out.println("\r\n==========================================================================");
         System.out.println("==============> Method:" + method);
         System.out.println("==========================================================================\r\n");
 

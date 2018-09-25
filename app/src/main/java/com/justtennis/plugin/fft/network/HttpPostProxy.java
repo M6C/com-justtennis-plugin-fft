@@ -11,7 +11,6 @@ import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
@@ -87,6 +86,8 @@ public class HttpPostProxy implements IProxy {
         try {
             client.executeMethod(method);
 
+            NetworkTool.showheaders(method);
+
             if (site != null && port > 0) {
                 NetworkTool.showCookies(client, site, port);
             }
@@ -95,6 +96,8 @@ public class HttpPostProxy implements IProxy {
             ret.statusCode = method.getStatusCode();
             ret.pathRedirect = method.getPath();
             ret.body = StreamTool.readStream(method.getResponseBodyAsStream());
+
+            System.out.println("HttpPostProxy - StatusCode: " + ret.statusCode);
 
             logResponse(ret);
         } catch (IOException e) {

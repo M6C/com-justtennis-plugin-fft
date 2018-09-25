@@ -48,6 +48,7 @@ public class PalmaresParser {
                 Element form = forms.first();
 
                 ret.action = form.attr("action");
+                ret.method = form.attr("method");
                 System.out.println("==============> Form Millesime action:" + ret.action);
 
                 Elements selects = doc.select(request.selectMillesime);
