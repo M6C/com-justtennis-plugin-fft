@@ -3,7 +3,7 @@ package com.justtennis.plugin.fft.model;
 public class FFTMillessimeMatchRequest {
 
     private static final String QUERY_DIV_MAIN = "div.content_tabs > div.table-wrapper";
-    private static final String QUERY_TABLE_BODY_CONTENT = "table:eq(1) > tbody > tr";
+    private static final String QUERY_TABLE_BODY_CONTENT = "table > tbody > tr";
     private static final String QUERY_TD_NAME = "td:eq(0)";
     private static final String QUERY_TD_YEAR = "td:eq(1)";
     private static final String QUERY_TD_RANKING = "td:eq(2)";

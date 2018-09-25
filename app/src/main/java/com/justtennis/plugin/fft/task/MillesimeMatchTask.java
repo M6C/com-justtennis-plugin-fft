@@ -8,8 +8,6 @@ import com.justtennis.plugin.fft.exception.NotConnectedException;
 import com.justtennis.plugin.fft.model.MillesimeMatchResponse;
 import com.justtennis.plugin.fft.model.PalmaresMillesimeResponse;
 import com.justtennis.plugin.fft.model.PalmaresResponse;
-import com.justtennis.plugin.fft.model.RankingListResponse;
-import com.justtennis.plugin.fft.model.RankingMatchResponse;
 import com.justtennis.plugin.fft.network.model.ResponseHttp;
 import com.justtennis.plugin.fft.service.FFTService;
 
@@ -37,21 +35,20 @@ public abstract class MillesimeMatchTask extends AsyncTask<Void, String, List<Mi
         List<MillesimeMatchResponse.MatchItem> ret = new ArrayList<>();
         try {
             ResponseHttp home = fftService.navigateToHomePage(null);
-
             PalmaresResponse palmaresResponse = fftService.getPalmares(home);
 
             if (palmaresResponse != null && palmaresResponse.action != null) {
                 ResponseHttp palmares = fftService.navigateToPalmares(null, palmaresResponse);
                 if (palmares.body != null) {
                     PalmaresMillesimeResponse palmaresMillesimeResponse = fftService.getPalmaresMillesime(palmares);
-                    if (palmaresMillesimeResponse.listMillesime.size() > 0) {
+                    if (!palmaresMillesimeResponse.listMillesime.isEmpty()) {
 
                         findMillesime(palmaresMillesimeResponse);
 
                         if (palmaresMillesimeResponse.millesimeSelected != null) {
                             ResponseHttp submitForm = fftService.submitFormPalmaresMillesime(null, palmaresMillesimeResponse);
                             if (submitForm.body != null && !submitForm.body.isEmpty()) {
-                                MillesimeMatchResponse palmaresMillesimeMatch = fftService.getPalmaresMillesimeMatch(palmares);
+                                MillesimeMatchResponse palmaresMillesimeMatch = fftService.getPalmaresMillesimeMatch(submitForm);
                                 if (palmaresMillesimeResponse != null && !palmaresMillesimeResponse.listMillesime.isEmpty()) {
                                     ret = palmaresMillesimeMatch.matchList;
                                 } else {
