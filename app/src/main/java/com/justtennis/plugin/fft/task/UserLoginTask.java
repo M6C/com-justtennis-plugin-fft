@@ -4,65 +4,45 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.justtennis.plugin.fft.exception.NotConnectedException;
 import com.justtennis.plugin.fft.model.LoginFormResponse;
-import com.justtennis.plugin.fft.model.RankingListResponse;
-import com.justtennis.plugin.fft.model.RankingMatchResponse;
 import com.justtennis.plugin.fft.network.model.ResponseElement;
 import com.justtennis.plugin.fft.network.model.ResponseHttp;
+import com.justtennis.plugin.fft.preference.FFTSharedPref;
 import com.justtennis.plugin.fft.service.FFTService;
-
-import java.util.List;
 
 /**
  * Represents an asynchronous login/registration task used to authenticate
  * the user.
  */
-public abstract class UserLoginTask extends AsyncTask<Void, Void, List<RankingMatchResponse.RankingItem>> {
+public abstract class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
     private static final String TAG = UserLoginTask.class.getName();
 
-    private Context context;
     private final String mEmail;
     private final String mPassword;
+    private FFTService fftService;
 
     protected UserLoginTask(Context context, String email, String password) {
-        this.context = context;
         mEmail = email;
         mPassword = password;
+        fftService = newFFTService(context);
+        FFTSharedPref.setLogin(context, mEmail);
+        FFTSharedPref.setPwd(context, mPassword);
     }
 
     @Override
-    protected List<RankingMatchResponse.RankingItem> doInBackground(Void... params) {
-        try {
-            FFTService fftService = newFFTService();
-            Log.d(TAG, "getLoginForm login:" + mEmail + " pwd:" + mPassword);
-            LoginFormResponse response = fftService.getLoginForm(mEmail, mPassword);
-            if (response != null && response.action != null && !response.action.isEmpty()) {
-                Log.d(TAG, "getLoginForm OK");
-                ResponseHttp form = fftService.submitFormLogin(response);
-                if (isFormLoginConnected(form)) {
-                    Log.d(TAG, "submitFormLogin OK");
-                    RankingListResponse rankingList = fftService.getRankingList(form);
-                    if (rankingList != null && !rankingList.rankingList.isEmpty()) {
-                        Log.d(TAG, "getRankingList OK");
-                        RankingListResponse.RankingItem rank = rankingList.rankingList.get(0);
-
-                        RankingMatchResponse ranking = fftService.getRankingMatch(form, rank.id);
-                        return ranking.rankingList;
-                    } else {
-                        Log.w(TAG, "getRankingList return empty");
-                    }
-                } else {
-                    Log.w(TAG, "submitFormLogin return empty");
-                }
-            } else {
-                Log.w(TAG, "getLoginForm return empty");
-            }
-        } catch (NotConnectedException e) {
-            Log.e(TAG, "doInBackground", e);
+    protected Boolean doInBackground(Void... params) {
+        Boolean ret = Boolean.FALSE;
+        Log.d(TAG, "getLoginForm login:" + mEmail + " pwd:" + mPassword);
+        LoginFormResponse response = fftService.getLoginForm(mEmail, mPassword);
+        if (response != null && response.action != null && !response.action.isEmpty()) {
+            Log.d(TAG, "getLoginForm OK");
+            ResponseHttp form = fftService.submitFormLogin(response);
+            ret = isFormLoginConnected(form);
+        } else {
+            Log.w(TAG, "getLoginForm return empty");
         }
-        return null;
+        return ret;
     }
 
     private boolean isFormLoginConnected(ResponseHttp form) {
@@ -79,7 +59,7 @@ public abstract class UserLoginTask extends AsyncTask<Void, Void, List<RankingMa
         return ret;
     }
 
-    protected FFTService newFFTService() {
+    protected FFTService newFFTService(Context context) {
         return FFTService.newInstance(context);
     }
 }

@@ -22,9 +22,9 @@ import com.justtennis.plugin.fft.network.tool.NetworkTool;
 import com.justtennis.plugin.fft.parser.FormParser;
 import com.justtennis.plugin.fft.parser.PalmaresParser;
 import com.justtennis.plugin.fft.parser.RankingParser;
+import com.justtennis.plugin.fft.preference.FFTSharedPref;
+import com.justtennis.plugin.fft.preference.ProxySharedPref;
 import com.justtennis.plugin.fft.skeleton.IProxy;
-import com.justtennis.plugin.fft.tool.FFTSharedPrefUtils;
-import com.justtennis.plugin.fft.tool.ProxySharedPrefUtils;
 
 import org.jsoup.helper.StringUtil;
 
@@ -50,11 +50,11 @@ public class FFTService implements IProxy {
 
     public static FFTService newInstance(Context context) {
         FFTService service = new FFTService(context);
-        if (ProxySharedPrefUtils.getUseProxy(context)) {
-            service.setProxyHost(ProxySharedPrefUtils.getSite(context))
-                    .setProxyPort(ProxySharedPrefUtils.getPort(context))
-                    .setProxyUser(ProxySharedPrefUtils.getUser(context))
-                    .setProxyPw(ProxySharedPrefUtils.getPwd(context));
+        if (ProxySharedPref.getUseProxy(context)) {
+            service.setProxyHost(ProxySharedPref.getSite(context))
+                    .setProxyPort(ProxySharedPref.getPort(context))
+                    .setProxyUser(ProxySharedPref.getUser(context))
+                    .setProxyPw(ProxySharedPref.getPwd(context));
         }
         return service;
     }
@@ -89,13 +89,13 @@ public class FFTService implements IProxy {
 
             String cookie = NetworkTool.buildCookie(ret);
             if (!cookie.isEmpty()) {
-                FFTSharedPrefUtils.setCookie(context, cookie);
-                FFTSharedPrefUtils.setHomePage(context, form.action);
+                FFTSharedPref.setCookie(context, cookie);
+                FFTSharedPref.setHomePage(context, form.action);
             } else {
-                FFTSharedPrefUtils.clean(context);
+                FFTSharedPref.clean(context);
             }
         } else {
-            FFTSharedPrefUtils.clean(context);
+            FFTSharedPref.clean(context);
         }
 
         return ret;
@@ -106,9 +106,9 @@ public class FFTService implements IProxy {
         if (loginFormResponse.pathRedirect != null && !loginFormResponse.pathRedirect.isEmpty()) {
             ResponseHttp responseHttp = doGetConnected(URL_ROOT, loginFormResponse.pathRedirect, loginFormResponse);
             if (NetworkTool.isOk(responseHttp.statusCode)) {
-                FFTSharedPrefUtils.setHomePage(context, responseHttp.pathRedirect);
+                FFTSharedPref.setHomePage(context, responseHttp.pathRedirect);
             } else {
-                FFTSharedPrefUtils.clean(context);
+                FFTSharedPref.clean(context);
             }
             return responseHttp;
         }
@@ -117,7 +117,7 @@ public class FFTService implements IProxy {
 
     public ResponseHttp navigateToHomePage(ResponseHttp loginFormResponse) throws NotConnectedException {
         logMethod("navigateToHomePage");
-        String homePage = FFTSharedPrefUtils.getHomePage(context);
+        String homePage = FFTSharedPref.getHomePage(context);
         if (homePage != null && !homePage.isEmpty()) {
             return doGetConnected(URL_ROOT, homePage, loginFormResponse);
         } else {
@@ -223,7 +223,7 @@ public class FFTService implements IProxy {
     }
 
     private ResponseHttp doGetConnected(String root, String path, ResponseHttp http) throws NotConnectedException {
-        String cookie = FFTSharedPrefUtils.getCookie(context);
+        String cookie = FFTSharedPref.getCookie(context);
         if (cookie == null && http == null) {
             throw new NotConnectedException();
         } else if (cookie != null) {
@@ -234,7 +234,7 @@ public class FFTService implements IProxy {
     }
 
     private ResponseHttp doPostConnected(String root, String path, Map<String, String> data, ResponseHttp http) throws NotConnectedException {
-        String cookie = FFTSharedPrefUtils.getCookie(context);
+        String cookie = FFTSharedPref.getCookie(context);
         if (cookie == null && http == null) {
             throw new NotConnectedException();
         } else if (cookie != null) {

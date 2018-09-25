@@ -14,20 +14,15 @@ import android.view.MenuItem;
 
 import com.justtennis.plugin.fft.dto.MatchDto;
 import com.justtennis.plugin.fft.fragment.MatchFragment;
-import com.justtennis.plugin.fft.model.RankingMatchResponse;
 import com.justtennis.plugin.fft.tool.FragmentTool;
 
-import java.util.List;
-
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, MatchFragment.OnListFragmentInteractionListener {
-
-    public static final String EXTRA_LIST_RANKING = "EXTRA_LIST_RANKING";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = findViewById(R.id.fab);
@@ -44,10 +39,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
 
         Bundle bundle = (savedInstanceState != null) ? savedInstanceState : getIntent().getExtras();
-        if (bundle.containsKey(EXTRA_LIST_RANKING)) {
-            List<RankingMatchResponse.RankingItem> list = (List<RankingMatchResponse.RankingItem>) bundle.getSerializable(EXTRA_LIST_RANKING);
-            FragmentTool.replaceFragment(this, MatchFragment.newInstance(list));
+        if (bundle != null) {
+            // Something to do
         }
+        FragmentTool.replaceFragment(this, MatchFragment.newInstance());
     }
 
     @Override

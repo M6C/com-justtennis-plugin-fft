@@ -1,7 +1,5 @@
 package com.justtennis.plugin.fft;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.Context;
@@ -18,7 +16,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -30,13 +27,13 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.justtennis.plugin.fft.model.RankingMatchResponse;
+import com.justtennis.plugin.fft.preference.FFTSharedPref;
+import com.justtennis.plugin.fft.preference.ProxySharedPref;
 import com.justtennis.plugin.fft.resolver.InviteResolver;
 import com.justtennis.plugin.fft.service.FFTService;
 import com.justtennis.plugin.fft.task.UserLoginTask;
-import com.justtennis.plugin.fft.tool.ProxySharedPrefUtils;
+import com.justtennis.plugin.fft.tool.ProgressTool;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,7 +62,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private UserLoginTask mAuthTask = null;
 
     // UI references.
-    private AutoCompleteTextView mEmailView;
+    private AutoCompleteTextView mLoginView;
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
@@ -80,7 +77,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         setContentView(R.layout.activity_login);
         context = getApplicationContext();
         // Set up the login form.
-        mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
+        mLoginView = (AutoCompleteTextView) findViewById(R.id.login);
         populateAutoComplete();
 
         mPasswordView = (EditText) findViewById(R.id.password);
@@ -107,6 +104,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mProgressView = findViewById(R.id.login_progress);
         mResponse = findViewById(R.id.tv_response);
         mUseProxy = findViewById(R.id.chk_use_proxy);
+
+        initializeForm();
     }
 
     @Override
@@ -131,7 +130,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             return true;
         }
         if (shouldShowRequestPermissionRationale(READ_CONTACTS)) {
-            Snackbar.make(mEmailView, R.string.permission_rationale, Snackbar.LENGTH_INDEFINITE)
+            Snackbar.make(mLoginView, R.string.permission_rationale, Snackbar.LENGTH_INDEFINITE)
                     .setAction(android.R.string.ok, new View.OnClickListener() {
                         @Override
                         @TargetApi(Build.VERSION_CODES.M)
@@ -170,11 +169,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
 
         // Reset errors.
-        mEmailView.setError(null);
+        mLoginView.setError(null);
         mPasswordView.setError(null);
 
         // Store values at the time of the login attempt.
-        String email = mEmailView.getText().toString();
+        String email = mLoginView.getText().toString();
         String password = mPasswordView.getText().toString();
 
         boolean cancel = false;
@@ -189,12 +188,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         // Check for a valid email address.
         if (TextUtils.isEmpty(email)) {
-            mEmailView.setError(getString(R.string.error_field_required));
-            focusView = mEmailView;
+            mLoginView.setError(getString(R.string.error_field_required));
+            focusView = mLoginView;
             cancel = true;
         } else if (!isEmailValid(email)) {
-            mEmailView.setError(getString(R.string.error_invalid_email));
-            focusView = mEmailView;
+            mLoginView.setError(getString(R.string.error_invalid_email));
+            focusView = mLoginView;
             cancel = true;
         }
 
@@ -206,7 +205,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new LoginTask(email, password);
+            mAuthTask = new MyUserLoginTask(email, password);
             mAuthTask.execute((Void) null);
         }
     }
@@ -224,37 +223,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     /**
      * Shows the progress UI and hides the login form.
      */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private void showProgress(final boolean show) {
-        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
-        // for very easy animations. If available, use these APIs to fade-in
-        // the progress spinner.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
-
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-            mLoginFormView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-                }
-            });
-
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mProgressView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-                }
-            });
-        } else {
-            // The ViewPropertyAnimator APIs are not available, so simply show
-            // and hide the relevant UI components.
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-        }
+        ProgressTool.showProgress(this, mLoginFormView, mProgressView, show);
     }
 
     @Override
@@ -297,7 +267,23 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 new ArrayAdapter<>(LoginActivity.this,
                         android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
 
-        mEmailView.setAdapter(adapter);
+        mLoginView.setAdapter(adapter);
+    }
+
+    private void initializeForm() {
+        String login = FFTSharedPref.getLogin(context);
+        if (login == null || login.isEmpty()) {
+            mLoginView.setText("");
+        } else {
+            mLoginView.setText(login);
+        }
+
+        String paswd = FFTSharedPref.getPwd(context);
+        if (paswd == null || paswd.isEmpty()) {
+            mPasswordView.setText("");
+        } else {
+            mPasswordView.setText(paswd);
+        }
     }
 
     private interface ProfileQuery {
@@ -310,9 +296,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         int IS_PRIMARY = 1;
     }
 
-    private class LoginTask  extends UserLoginTask {
+    private class MyUserLoginTask extends UserLoginTask {
 
-        LoginTask(String email, String password) {
+        MyUserLoginTask(String email, String password) {
             super(context, email, password);
         }
 
@@ -323,33 +309,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
 
         @Override
-        protected void onPostExecute(final List<RankingMatchResponse.RankingItem> list) {
+        protected void onPostExecute(final Boolean connected) {
             mAuthTask = null;
             showProgress(false);
 
-            if (list == null) {
+            if (!connected) {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();
             } else {
-                StringBuilder stb = new StringBuilder("Ranking Match:");
-                for (RankingMatchResponse.RankingItem item : list) {
-                    stb.append("\r\n")
-                            .append(" NAME:").append(item.name)
-                            .append(" YEAR:").append(item.year)
-                            .append(" RANKING:").append(item.ranking)
-                            .append(" VIC_DEF:").append(item.vicDef)
-                            .append(" WO:").append(item.wo)
-                            .append(" COEF:").append(item.coef)
-                            .append(" POINTS:").append(item.points)
-                            .append(" TOURNAMENT:").append(item.tournament)
-                            .append(" TYPE:").append(item.type)
-                            .append(" DATE:").append(item.date);
-                }
-                Log.d(TAG, stb.toString());
-                mResponse.setText(stb.toString());
-
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                intent.putExtra(MainActivity.EXTRA_LIST_RANKING, (Serializable)list);
                 startActivity(intent);
                 finish();
             }
@@ -362,15 +330,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
 
         @Override
-        protected FFTService newFFTService() {
-            ProxySharedPrefUtils.setUseProxy(context, mUseProxy.isChecked());
-            if (ProxySharedPrefUtils.getSite(context) == null) {
-                ProxySharedPrefUtils.setSite(context, PROXY_HOST);
-                ProxySharedPrefUtils.setPort(context, PROXY_PORT);
-                ProxySharedPrefUtils.setUser(context, PROXY_USER);
-                ProxySharedPrefUtils.setPwd(context, PROXY_PW);
+        protected FFTService newFFTService(Context context) {
+            ProxySharedPref.setUseProxy(context, mUseProxy.isChecked());
+            if (ProxySharedPref.getSite(context) == null) {
+                ProxySharedPref.setSite(context, PROXY_HOST);
+                ProxySharedPref.setPort(context, PROXY_PORT);
+                ProxySharedPref.setUser(context, PROXY_USER);
+                ProxySharedPref.setPwd(context, PROXY_PW);
             }
-            return super.newFFTService();
+            return super.newFFTService(context);
         }
     }
 }
