@@ -4,21 +4,22 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RankingMatchResponse {
+public class MillesimeMatchResponse {
 
-    public List<RankingItem> rankingList = new ArrayList<>();
+    public List<MatchItem> matchList = new ArrayList<>();
 
-    public static class RankingItem implements Serializable {
+    public static class MatchItem implements Serializable {
         public String name;
         public String year;
         public String ranking;
         public String vicDef;
+        public String score;
         public String wo;
-        public String coef;
-        public String points;
         public String tournament;
         public String type;
         public String date;
+        public String linkPalmares;
+        public String linkTournoi;
 
         @Override
         public String toString() {
@@ -27,12 +28,13 @@ public class RankingMatchResponse {
                     ", year='" + year + '\'' +
                     ", ranking='" + ranking + '\'' +
                     ", vicDef='" + vicDef + '\'' +
+                    ", score='" + score + '\'' +
                     ", wo='" + wo + '\'' +
-                    ", coef='" + coef + '\'' +
-                    ", points='" + points + '\'' +
                     ", tournament='" + tournament + '\'' +
                     ", type='" + type + '\'' +
                     ", date='" + date + '\'' +
+                    ", linkPalmares='" + linkPalmares + '\'' +
+                    ", linkTournoi='" + linkTournoi + '\'' +
                     '}';
         }
     }

@@ -16,7 +16,7 @@ public class RankingListResponse {
 
         @Override
         public String toString() {
-            return "RankingItem{" +
+            return "MatchItem{" +
                     "id=" + id +
                     ", year='" + year + '\'' +
                     ", ranking='" + ranking + '\'' +

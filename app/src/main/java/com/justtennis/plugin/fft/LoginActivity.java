@@ -1,9 +1,8 @@
 package com.justtennis.plugin.fft;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
+import android.annotation.SuppressLint;
 import android.app.LoaderManager.LoaderCallbacks;
+import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
@@ -17,11 +16,9 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -29,12 +26,13 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.justtennis.plugin.fft.model.RankingMatchResponse;
+import com.justtennis.plugin.fft.preference.FFTSharedPref;
+import com.justtennis.plugin.fft.preference.ProxySharedPref;
 import com.justtennis.plugin.fft.resolver.InviteResolver;
 import com.justtennis.plugin.fft.service.FFTService;
 import com.justtennis.plugin.fft.task.UserLoginTask;
+import com.justtennis.plugin.fft.tool.ProgressTool;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,53 +54,49 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private static final int REQUEST_READ_CONTACTS = 0;
     private static final String TAG = LoginActivity.class.getName();
 
+    private Context context;
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
     private UserLoginTask mAuthTask = null;
 
     // UI references.
-    private AutoCompleteTextView mEmailView;
+    private AutoCompleteTextView mLoginView;
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
     private TextView mResponse;
     private CheckBox mUseProxy;
 
-    private boolean userProxy;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        context = getApplicationContext();
         // Set up the login form.
-        mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
+        mLoginView = findViewById(R.id.login);
         populateAutoComplete();
 
-        mPasswordView = (EditText) findViewById(R.id.password);
-        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) {
-                    attemptLogin();
-                    return true;
-                }
-                return false;
+        mPasswordView = findViewById(R.id.password);
+        mPasswordView.setOnEditorActionListener((textView, id, keyEvent) -> {
+            if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) {
+                attemptLogin();
+                return true;
             }
+            return false;
         });
 
-        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
-        mEmailSignInButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                attemptLogin();
-            }
-        });
+        Button mEmailSignInButton = findViewById(R.id.email_sign_in_button);
+        mEmailSignInButton.setOnClickListener(view -> attemptLogin());
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
         mResponse = findViewById(R.id.tv_response);
         mUseProxy = findViewById(R.id.chk_use_proxy);
+
+        initializeForm();
+
+        FFTSharedPref.cleanSecurity(context);
     }
 
     @Override
@@ -127,14 +121,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             return true;
         }
         if (shouldShowRequestPermissionRationale(READ_CONTACTS)) {
-            Snackbar.make(mEmailView, R.string.permission_rationale, Snackbar.LENGTH_INDEFINITE)
-                    .setAction(android.R.string.ok, new View.OnClickListener() {
-                        @Override
-                        @TargetApi(Build.VERSION_CODES.M)
-                        public void onClick(View v) {
-                            requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
-                        }
-                    });
+            Snackbar.make(mLoginView, R.string.permission_rationale, Snackbar.LENGTH_INDEFINITE)
+                    .setAction(android.R.string.ok, v -> requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS));
         } else {
             requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
         }
@@ -154,7 +142,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
     }
 
-
     /**
      * Attempts to sign in or register the account specified by the login form.
      * If there are form errors (invalid email, missing fields, etc.), the
@@ -166,11 +153,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
 
         // Reset errors.
-        mEmailView.setError(null);
+        mLoginView.setError(null);
         mPasswordView.setError(null);
 
         // Store values at the time of the login attempt.
-        String email = mEmailView.getText().toString();
+        String email = mLoginView.getText().toString();
         String password = mPasswordView.getText().toString();
 
         boolean cancel = false;
@@ -185,12 +172,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         // Check for a valid email address.
         if (TextUtils.isEmpty(email)) {
-            mEmailView.setError(getString(R.string.error_field_required));
-            focusView = mEmailView;
+            mLoginView.setError(getString(R.string.error_field_required));
+            focusView = mLoginView;
             cancel = true;
         } else if (!isEmailValid(email)) {
-            mEmailView.setError(getString(R.string.error_invalid_email));
-            focusView = mEmailView;
+            mLoginView.setError(getString(R.string.error_invalid_email));
+            focusView = mLoginView;
             cancel = true;
         }
 
@@ -199,58 +186,34 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // form field with an error.
             focusView.requestFocus();
         } else {
+            closeKeyboard();
+
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new LoginTask(email, password);
+            mAuthTask = new MyUserLoginTask(email, password);
             mAuthTask.execute((Void) null);
         }
     }
 
+    private void closeKeyboard() {
+        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(mLoginView.getWindowToken(), 0);
+    }
+
     private boolean isEmailValid(String email) {
-        //TODO: Replace this with your own logic
-        return email.length() > 4;//.contains("@");
+        return email.length() > 4;
     }
 
     private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
         return password.length() > 4;
     }
 
     /**
      * Shows the progress UI and hides the login form.
      */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private void showProgress(final boolean show) {
-        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
-        // for very easy animations. If available, use these APIs to fade-in
-        // the progress spinner.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
-
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-            mLoginFormView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-                }
-            });
-
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mProgressView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-                }
-            });
-        } else {
-            // The ViewPropertyAnimator APIs are not available, so simply show
-            // and hide the relevant UI components.
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-        }
+        ProgressTool.showProgress(this, mLoginFormView, mProgressView, show);
     }
 
     @Override
@@ -284,7 +247,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
-
+        // Nothing to do
     }
 
     private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
@@ -293,7 +256,25 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 new ArrayAdapter<>(LoginActivity.this,
                         android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
 
-        mEmailView.setAdapter(adapter);
+        mLoginView.setAdapter(adapter);
+    }
+
+    private void initializeForm() {
+        mUseProxy.setChecked(ProxySharedPref.getUseProxy(context));
+
+        String login = FFTSharedPref.getLogin(context);
+        if (login == null || login.isEmpty()) {
+            mLoginView.setText("");
+        } else {
+            mLoginView.setText(login);
+        }
+
+        String paswd = FFTSharedPref.getPwd(context);
+        if (paswd == null || paswd.isEmpty()) {
+            mPasswordView.setText("");
+        } else {
+            mPasswordView.setText(paswd);
+        }
     }
 
     private interface ProfileQuery {
@@ -306,10 +287,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         int IS_PRIMARY = 1;
     }
 
-    private class LoginTask  extends UserLoginTask {
+    @SuppressLint("StaticFieldLeak")
+    private class MyUserLoginTask extends UserLoginTask {
 
-        LoginTask(String email, String password) {
-            super(email, password);
+        MyUserLoginTask(String email, String password) {
+            super(context, email, password);
         }
 
         @Override
@@ -319,33 +301,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
 
         @Override
-        protected void onPostExecute(final List<RankingMatchResponse.RankingItem> list) {
+        protected void onPostExecute(final Boolean connected) {
             mAuthTask = null;
             showProgress(false);
 
-            if (list == null) {
+            if (!connected) {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();
             } else {
-                StringBuilder stb = new StringBuilder("Ranking Match:");
-                for (RankingMatchResponse.RankingItem item : list) {
-                    stb.append("\r\n")
-                            .append(" NAME:").append(item.name)
-                            .append(" YEAR:").append(item.year)
-                            .append(" RANKING:").append(item.ranking)
-                            .append(" VIC_DEF:").append(item.vicDef)
-                            .append(" WO:").append(item.wo)
-                            .append(" COEF:").append(item.coef)
-                            .append(" POINTS:").append(item.points)
-                            .append(" TOURNAMENT:").append(item.tournament)
-                            .append(" TYPE:").append(item.type)
-                            .append(" DATE:").append(item.date);
-                }
-                Log.d(TAG, stb.toString());
-                mResponse.setText(stb.toString());
-
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                intent.putExtra(MainActivity.EXTRA_LIST_RANKING, (Serializable)list);
                 startActivity(intent);
                 finish();
             }
@@ -357,15 +321,16 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             showProgress(false);
         }
 
-        protected FFTService newFFTService() {
-            FFTService instance = super.newFFTService();
-            if (mUseProxy.isChecked()) {
-                instance.setProxyHost(PROXY_HOST)
-                        .setProxyPort(PROXY_PORT)
-                        .setProxyUser(PROXY_USER)
-                        .setProxyPw(PROXY_PW);
+        @Override
+        protected FFTService newFFTService(Context context) {
+            ProxySharedPref.setUseProxy(context, mUseProxy.isChecked());
+            if (ProxySharedPref.getSite(context) == null) {
+                ProxySharedPref.setSite(context, PROXY_HOST);
+                ProxySharedPref.setPort(context, PROXY_PORT);
+                ProxySharedPref.setUser(context, PROXY_USER);
+                ProxySharedPref.setPwd(context, PROXY_PW);
             }
-            return instance;
+            return super.newFFTService(context);
         }
     }
 }

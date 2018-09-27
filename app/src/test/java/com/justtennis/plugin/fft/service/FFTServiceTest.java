@@ -1,6 +1,8 @@
 package com.justtennis.plugin.fft.service;
 
+import com.justtennis.plugin.fft.exception.NotConnectedException;
 import com.justtennis.plugin.fft.model.LoginFormResponse;
+import com.justtennis.plugin.fft.model.MillesimeMatchResponse;
 import com.justtennis.plugin.fft.model.PalmaresMillesimeResponse;
 import com.justtennis.plugin.fft.model.PalmaresResponse;
 import com.justtennis.plugin.fft.model.RankingListResponse;
@@ -18,12 +20,14 @@ public class FFTServiceTest extends TestCase {
     private static final String PROXY_HOST = "proxy-internet.net-courrier.extra.laposte.fr";
     private static final int PROXY_PORT = 8080;
 
+    // ROCAdavid75 / JEkonCAEN26 - leonie.roca / ymNgfBeJ36 - delphin.roca / 123456789
     private static final String LOGIN = "leandre.roca2006";
     private static final String PASWD = "lR123456789";
 
     private static final boolean useProxy = true;
 
-    public static void testGetLoginForm(String login, String password) {
+    public static void testGetLoginForm() {
+
         FFTService fftService = newFFTService();
         LoginFormResponse response = fftService.getLoginForm(LOGIN, PASWD);
 
@@ -31,12 +35,12 @@ public class FFTServiceTest extends TestCase {
         assertNotNull(response.button.name);
         assertNotNull(response.login.name);
         assertNotNull(response.password.name);
-        assertEquals(response.login.value, LOGIN);
-        assertEquals(response.password.value, PASWD);
-        assertEquals(response.input.size(), 16);
+        assertEquals(LOGIN, response.login.value);
+        assertEquals(PASWD, response.password.value);
+        assertEquals(2, response.input.size());
     }
 
-    public static void testSubmitFormLogin() throws IOException {
+    public static void testSubmitFormLogin() {
         FFTService fftService = newFFTService();
         LoginFormResponse response = fftService.getLoginForm(LOGIN, PASWD);
 
@@ -47,7 +51,7 @@ public class FFTServiceTest extends TestCase {
         assertEquals(form.header.size(), 16);
     }
 
-    public static void testNavigateToFormRedirect() throws IOException {
+    public static void testNavigateToFormRedirect() throws NotConnectedException {
         FFTService fftService = newFFTService();
         LoginFormResponse response = fftService.getLoginForm(LOGIN, PASWD);
 
@@ -61,7 +65,7 @@ public class FFTServiceTest extends TestCase {
         assertEquals(formRedirect.header.size(), 0);
     }
 
-    public static void testNavigateToRanking() throws IOException {
+    public static void testNavigateToRanking() throws NotConnectedException {
         FFTService fftService = newFFTService();
         LoginFormResponse response = fftService.getLoginForm(LOGIN, PASWD);
 
@@ -75,7 +79,7 @@ public class FFTServiceTest extends TestCase {
         assertEquals(ranking.header.size(), 0);
     }
 
-    public static void testGetRankingList() throws IOException {
+    public static void testGetRankingList() throws NotConnectedException {
         FFTService fftService = newFFTService();
         LoginFormResponse response = fftService.getLoginForm(LOGIN, PASWD);
 
@@ -94,17 +98,17 @@ public class FFTServiceTest extends TestCase {
         }
     }
 
-    public static void testGetRankingMatch() throws IOException {
+    public static void testGetRankingMatch() throws NotConnectedException {
         FFTService fftService = newFFTService();
         LoginFormResponse response = fftService.getLoginForm(LOGIN, PASWD);
 
         ResponseHttp form = fftService.submitFormLogin(response);
 
-        RankingListResponse rankingList = fftService.getRankingList(form);
+        RankingListResponse matchList = fftService.getRankingList(form);
 
-        assertNotNull(rankingList);
-        assertTrue("Ranking List must not be empty", rankingList.rankingList.size() > 0);
-        RankingListResponse.RankingItem rank = rankingList.rankingList.get(0);
+        assertNotNull(matchList);
+        assertTrue("Ranking List must not be empty", matchList.rankingList.size() > 0);
+        RankingListResponse.RankingItem rank = matchList.rankingList.get(0);
 
         RankingMatchResponse ranking = fftService.getRankingMatch(form, rank.id);
         assertNotNull(ranking);
@@ -123,7 +127,7 @@ public class FFTServiceTest extends TestCase {
         }
     }
 
-    public static void testGetParmares() throws IOException {
+    public static void testGetParmares() throws NotConnectedException {
         FFTService fftService = newFFTService();
         LoginFormResponse response = fftService.getLoginForm(LOGIN, PASWD);
 
@@ -140,7 +144,7 @@ public class FFTServiceTest extends TestCase {
         assertNotNull(palmares.body);
     }
 
-    public static void testGetParmaresMillesime() throws IOException {
+    public static void testGetParmaresMillesime() throws NotConnectedException {
         FFTService fftService = newFFTService();
         LoginFormResponse response = fftService.getLoginForm(LOGIN, PASWD);
 
@@ -166,7 +170,7 @@ public class FFTServiceTest extends TestCase {
         assertTrue(palmaresMillesimeResponse.listMillesime.contains(palmaresMillesimeResponse.millesimeSelected));
     }
 
-    public static void testSubmitFormPalmaresMillesime() throws IOException {
+    public static void testSubmitFormPalmaresMillesime() throws NotConnectedException, IOException {
         FFTService fftService = newFFTService();
         LoginFormResponse response = fftService.getLoginForm(LOGIN, PASWD);
 
@@ -185,21 +189,67 @@ public class FFTServiceTest extends TestCase {
         PalmaresMillesimeResponse palmaresMillesimeResponse = fftService.getPalmaresMillesime(palmares);
         assertTrue(palmaresMillesimeResponse.listMillesime.size() > 0);
 
+        changeMillesimeSelected(palmaresMillesimeResponse);
+
+        ResponseHttp submitForm = fftService.submitFormPalmaresMillesime(form, palmaresMillesimeResponse);
+        assertNotNull(submitForm.body);
+        assertNotNull(submitForm.pathRedirect);
+//        assertEquals(13, submitForm.header.size());
+    }
+
+    public static void testGetPalmaresMillesimeMatch() throws NotConnectedException {
+        FFTService fftService = newFFTService();
+        LoginFormResponse response = fftService.getLoginForm(LOGIN, PASWD);
+
+        ResponseHttp form = fftService.submitFormLogin(response);
+
+        ResponseHttp home = fftService.navigateToFormRedirect(form);
+
+        PalmaresResponse palmaresResponse = fftService.getPalmares(home);
+
+        assertNotNull(palmaresResponse);
+        assertNotNull(palmaresResponse.action);
+
+        ResponseHttp palmares = fftService.navigateToPalmares(form, palmaresResponse);
+        assertNotNull(palmares.body);
+
+        PalmaresMillesimeResponse palmaresMillesimeResponse = fftService.getPalmaresMillesime(palmares);
+        assertTrue(palmaresMillesimeResponse.listMillesime.size() > 0);
+
+        changeMillesimeSelected(palmaresMillesimeResponse);
+
+        ResponseHttp submitForm = fftService.submitFormPalmaresMillesime(form, palmaresMillesimeResponse);
+        assertNotNull(submitForm.body);
+
+        MillesimeMatchResponse palmaresMillesimeMatch = fftService.getPalmaresMillesimeMatch(submitForm);
+        assertNotNull(palmaresMillesimeMatch);
+        assertTrue("Palmares Millesime List must not be empty", palmaresMillesimeMatch.matchList.size() > 0);
+       for (MillesimeMatchResponse.MatchItem item : palmaresMillesimeMatch.matchList) {
+            assertNotNull(item.name);
+            assertNotNull(item.year);
+            assertNotNull(item.ranking);
+            assertNotNull(item.vicDef);
+            assertNotNull(item.score);
+            assertNotNull(item.wo);
+            assertNotNull(item.tournament);
+            assertNotNull(item.type);
+            assertNotNull(item.date);
+            assertNotNull(item.linkPalmares);
+            assertNotNull(item.linkTournoi);
+        }
+    }
+
+    private static void changeMillesimeSelected(PalmaresMillesimeResponse palmaresMillesimeResponse) {
         for(PalmaresMillesimeResponse.Millesime millesime : palmaresMillesimeResponse.listMillesime) {
             if (!millesime.equals(palmaresMillesimeResponse.millesimeSelected)) {
                 palmaresMillesimeResponse.millesimeSelected = millesime;
                 break;
             }
         }
-
-        ResponseHttp submitForm = fftService.submitFormPalmaresMillesime(form, palmaresMillesimeResponse);
-        assertNotNull(submitForm.body);
-        assertNotNull(submitForm.pathRedirect);
-        assertEquals(submitForm.header.size(), 13);
     }
 
     private static FFTService newFFTService() {
-        FFTService instance = FFTService.newInstance();
+        FFTService instance = FFTService.newInstance(null);
         if (useProxy) {
             instance.setProxyHost(PROXY_HOST)
                     .setProxyPort(PROXY_PORT)

@@ -1,5 +1,7 @@
 package com.justtennis.plugin.fft.network.tool;
 
+import android.content.Context;
+
 import com.justtennis.plugin.fft.model.LoginFormResponse;
 import com.justtennis.plugin.fft.network.model.ResponseHttp;
 import com.justtennis.plugin.fft.service.FFTService;
@@ -11,8 +13,6 @@ import org.apache.commons.httpclient.HttpMethod;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.commons.httpclient.methods.GetMethod;
-
-import java.io.IOException;
 
 public class NetworkToolTest extends TestCase {
 
@@ -29,10 +29,10 @@ public class NetworkToolTest extends TestCase {
 
     private static final boolean useProxy = true;
 
-    public static void testInitCookies() throws IOException {
+    public static void testInitCookies(Context context) {
         HttpMethod method = new GetMethod(URL_ROOT + "/bloc_home/redirect/classement");
 
-        FFTService fftService = newFFTService();
+        FFTService fftService = newFFTService(context);
         LoginFormResponse response = fftService.getLoginForm(LOGIN, PASWD);
 
         ResponseHttp form = fftService.submitFormLogin(response);
@@ -57,8 +57,13 @@ public class NetworkToolTest extends TestCase {
         assertFalse(NetworkTool.isRedirect(HttpStatus.SC_OK));
     }
 
-    private static FFTService newFFTService() {
-        FFTService instance = FFTService.newInstance();
+    public static void testIsOk() {
+        assertTrue(NetworkTool.isOk(HttpStatus.SC_OK));
+        assertFalse(NetworkTool.isOk(HttpStatus.SC_MOVED_PERMANENTLY));
+    }
+
+    private static FFTService newFFTService(Context context) {
+        FFTService instance = FFTService.newInstance(context);
         if (useProxy) {
             instance.setProxyHost(PROXY_HOST)
                     .setProxyPort(PROXY_PORT)

@@ -9,6 +9,7 @@ import java.util.Objects;
 public class PalmaresMillesimeResponse {
 
     public String action;
+    public String method;
     public List<Millesime> listMillesime = new ArrayList<>();
     public Millesime millesimeSelected;
     public Map<String, String> input = new HashMap<>();
