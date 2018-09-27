@@ -14,6 +14,9 @@ public class FFTMillessimeMatchRequest {
     private static final String QUERY_TD_TYPE = "td:eq(6)";
     private static final String QUERY_TD_DATE = "td:eq(7)";
 
+    private static final String QUERY_LINK_PALMARES = "td:eq(0) > a";
+    private static final String QUERY_LINK_TOURNOI = "td:eq(5) > a";
+
     public String divMain;
     public String tableBodyContent;
     public String name;
@@ -25,6 +28,8 @@ public class FFTMillessimeMatchRequest {
     public String tournament;
     public String type;
     public String date;
+    public String linkPalmares;
+    public String linkTournoi;
 
     public FFTMillessimeMatchRequest() {
         this.divMain = QUERY_DIV_MAIN;
@@ -38,5 +43,7 @@ public class FFTMillessimeMatchRequest {
         this.tournament = QUERY_TD_TOURNAMENT;
         this.type = QUERY_TD_TYPE;
         this.date = QUERY_TD_DATE;
+        this.linkPalmares = QUERY_LINK_PALMARES;
+        this.linkTournoi = QUERY_LINK_TOURNOI;
     }
 }

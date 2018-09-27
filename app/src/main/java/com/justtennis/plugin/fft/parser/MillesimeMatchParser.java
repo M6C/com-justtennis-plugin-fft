@@ -33,6 +33,16 @@ public class MillesimeMatchParser {
                         item.type = e.select(request.type).text();
                         item.date = e.select(request.date).text();
 
+                        Elements linkPalmares = e.select(request.linkPalmares);
+                        if (linkPalmares != null && !linkPalmares.isEmpty()) {
+                            item.linkPalmares = linkPalmares.attr("href");
+                        }
+
+                        Elements linkTournoi = e.select(request.linkTournoi);
+                        if (linkTournoi != null && !linkTournoi.isEmpty()) {
+                            item.linkTournoi = linkTournoi.attr("href");
+                        }
+
                         ret.matchList.add(item);
                         System.err.println("\r\n==============> ranking " + item);
                     }

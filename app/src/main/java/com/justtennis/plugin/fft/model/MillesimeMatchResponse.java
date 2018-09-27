@@ -18,6 +18,8 @@ public class MillesimeMatchResponse {
         public String tournament;
         public String type;
         public String date;
+        public String linkPalmares;
+        public String linkTournoi;
 
         @Override
         public String toString() {
@@ -31,6 +33,8 @@ public class MillesimeMatchResponse {
                     ", tournament='" + tournament + '\'' +
                     ", type='" + type + '\'' +
                     ", date='" + date + '\'' +
+                    ", linkPalmares='" + linkPalmares + '\'' +
+                    ", linkTournoi='" + linkTournoi + '\'' +
                     '}';
         }
     }

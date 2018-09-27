@@ -4,17 +4,22 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.justtennis.plugin.fft.R;
 import com.justtennis.plugin.fft.adapter.MatchAdapter;
@@ -54,6 +59,10 @@ public class MatchFragment extends Fragment {
     private MyRankingMatchTask mRankingMatchTask;
     private ProgressBar pgMatch;
     private ProgressBar pgMillesime;
+    private TextView tvMessage;
+    private LinearLayout llMessage;
+    private LinearLayout llContent;
+    private Button btnMessage;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -87,9 +96,15 @@ public class MatchFragment extends Fragment {
         spMillesime = view.findViewById(R.id.sp_millesime);
         pgMatch = view.findViewById(R.id.progress_match);
         pgMillesime = view.findViewById(R.id.progress_millesime);
+        tvMessage = view.findViewById(R.id.tv_message);
+        llMessage = view.findViewById(R.id.llMessage);
+        llContent = view.findViewById(R.id.llContent);
+        btnMessage = view.findViewById(R.id.btnMessage);
 
         initializeMatch();
         initializeMillesime();
+
+        btnMessage.setOnClickListener(v -> hideMessage());
 
         return view;
     }
@@ -190,6 +205,18 @@ public class MatchFragment extends Fragment {
         ProgressTool.showProgress(getContext(), llMatch, pgMatch, show);
     }
 
+    private void showMessage(@StringRes int id) {
+        llContent.setVisibility(View.GONE);
+        llMessage.setVisibility(View.VISIBLE);
+        tvMessage.setText(Html.fromHtml(getString(id)));
+    }
+
+    private void hideMessage() {
+        llMessage.setVisibility(View.GONE);
+        llContent.setVisibility(View.VISIBLE);
+        tvMessage.setText("");
+    }
+
     @SuppressLint("StaticFieldLeak")
     private class MyMillesimeTask  extends MillesimeTask {
         MyMillesimeTask(Context context) {
@@ -200,18 +227,26 @@ public class MatchFragment extends Fragment {
         protected void onPreExecute() {
             super.onPreExecute();
             listMillesime.clear();
-            listMillesime.add("");
         }
 
         @Override
         protected void onPostExecute(List<PalmaresMillesimeResponse.Millesime> millesimes) {
             super.onPostExecute(millesimes);
-            showProgressMillesime(false);
-            mMillesimeTask = null;
-            for(PalmaresMillesimeResponse.Millesime millesime : millesimes) {
-                listMillesime.add(millesime.value);
+            try {
+                mMillesimeTask = null;
+                if (millesimes != null && !millesimes.isEmpty()) {
+                    hideMessage();
+                    listMillesime.add("");
+                    for (PalmaresMillesimeResponse.Millesime millesime : millesimes) {
+                        listMillesime.add(millesime.value);
+                    }
+                    adpMillesime.notifyDataSetChanged();
+                } else {
+                    showMessage(R.string.msg_fft_must_connect_to_site);
+                }
+            } finally {
+                showProgressMillesime(false);
             }
-            adpMillesime.notifyDataSetChanged();
         }
 
         @Override
