@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 
 import com.justtennis.plugin.fft.R;
 import com.justtennis.plugin.fft.dto.MatchDto;
@@ -40,6 +41,7 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchViewHolder> {
         holder.mItem = mValues.get(position);
         holder.mContentView.setText(holder.mItem.content);
         holder.mDetailView.setText(holder.mItem.details);
+        holder.mCheckView.setChecked(holder.mItem.selected);
 
         holder.mView.setOnClickListener(v -> {
             holder.mCheckView.setChecked(!holder.mCheckView.isChecked());
@@ -49,6 +51,8 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchViewHolder> {
                 mListener.onListFragmentInteraction(holder.mItem);
             }
         });
+
+        holder.mCheckView.setOnCheckedChangeListener((v, checked) -> holder.mItem.selected = checked);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.justtennis.plugin.fft.dto;
 
 public class MatchDto {
+    public boolean selected;
     public final String id;
     public final String content;
     public final String details;

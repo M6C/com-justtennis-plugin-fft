@@ -1,6 +1,7 @@
 package com.justtennis.plugin.fft.resolver;
 
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.net.Uri;
 
@@ -36,6 +37,15 @@ public class SaisonResolver extends AbstractResolver<Saison> {
 
         String[] columns = new String[]{COLUMN_ID, COLUMN_NAME, COLUMN_BEGIN, COLUMN_END, COLUMN_ACTIVE};
         return query(contentResolver, CONTENT_URI, columns, null, null);
+    }
+
+    public boolean createSaison(Context context, String millesime) {
+        boolean ret = false;
+        ContentResolver contentResolver = context.getContentResolver();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COLUMN_NAME, millesime);
+        contentResolver.insert(CONTENT_URI, contentValues);
+        return ret;
     }
 
     @Override

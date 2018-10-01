@@ -24,10 +24,12 @@ import com.justtennis.plugin.fft.R;
 import com.justtennis.plugin.fft.adapter.MatchAdapter;
 import com.justtennis.plugin.fft.dto.MatchContent;
 import com.justtennis.plugin.fft.dto.MatchDto;
+import com.justtennis.plugin.fft.model.Saison;
 import com.justtennis.plugin.fft.query.response.MillesimeMatchResponse;
 import com.justtennis.plugin.fft.query.response.PalmaresMillesimeResponse;
 import com.justtennis.plugin.fft.query.response.RankingMatchResponse;
 import com.justtennis.plugin.fft.resolver.InviteResolver;
+import com.justtennis.plugin.fft.resolver.SaisonResolver;
 import com.justtennis.plugin.fft.task.MillesimeMatchTask;
 import com.justtennis.plugin.fft.task.MillesimeTask;
 import com.justtennis.plugin.fft.task.RankingMatchTask;
@@ -230,7 +232,34 @@ public class MatchFragment extends Fragment {
 
     private void initializeFabValidate() {
         FragmentTool.initializeFabDrawable(getActivity(), FragmentTool.INIT_FAB_IMAGE.VALIDATE);
-        FragmentTool.onClickFab(getActivity(), view -> InviteResolver.getInstance().queryAllMatch(Objects.requireNonNull(getContext())));
+        FragmentTool.onClickFab(getActivity(), this::onClickFabCreate);
+    }
+
+    private void onClickFabCreate(View view) {
+        InviteResolver.getInstance().queryAllMatch(Objects.requireNonNull(getContext()));
+
+        boolean millesimePresent = false;
+        String millesime = listMillesime.get(mMillesimePosition);
+        List<Saison> listSaison = SaisonResolver.getInstance().queryAll(getContext());
+        for(Saison saison : listSaison) {
+            if (saison.getName().endsWith(millesime)) {
+                millesimePresent = true;
+                break;
+            }
+        }
+
+        if (!millesimePresent) {
+            millesimePresent = SaisonResolver.getInstance().createSaison(getContext(), millesime);
+        }
+
+
+        if (millesimePresent) {
+            for (MatchDto match : listMatch) {
+                if (match.selected) {
+
+                }
+            }
+        }
     }
 
     @SuppressLint("StaticFieldLeak")
