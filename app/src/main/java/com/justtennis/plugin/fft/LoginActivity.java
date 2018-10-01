@@ -28,7 +28,10 @@ import android.widget.TextView;
 
 import com.justtennis.plugin.fft.preference.FFTSharedPref;
 import com.justtennis.plugin.fft.preference.ProxySharedPref;
+import com.justtennis.plugin.fft.resolver.ClubResolver;
 import com.justtennis.plugin.fft.resolver.InviteResolver;
+import com.justtennis.plugin.fft.resolver.PlayerResolver;
+import com.justtennis.plugin.fft.resolver.SaisonResolver;
 import com.justtennis.plugin.fft.service.FFTService;
 import com.justtennis.plugin.fft.task.UserLoginTask;
 import com.justtennis.plugin.fft.tool.ProgressTool;
@@ -102,7 +105,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     @Override
     protected void onResume() {
         super.onResume();
-        InviteResolver.queryAll(getApplicationContext());
+        SaisonResolver.getInstance().queryAll(context);
+        ClubResolver.getInstance().queryAll(context);
+        PlayerResolver.getInstance().queryAll(context);
+        InviteResolver.getInstance().queryAllMatch(context);
     }
 
     private void populateAutoComplete() {

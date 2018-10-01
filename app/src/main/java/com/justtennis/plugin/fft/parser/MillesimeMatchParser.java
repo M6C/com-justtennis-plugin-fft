@@ -1,7 +1,7 @@
 package com.justtennis.plugin.fft.parser;
 
-import com.justtennis.plugin.fft.model.FFTMillessimeMatchRequest;
-import com.justtennis.plugin.fft.model.MillesimeMatchResponse;
+import com.justtennis.plugin.fft.query.request.FFTMillessimeMatchRequest;
+import com.justtennis.plugin.fft.query.response.MillesimeMatchResponse;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

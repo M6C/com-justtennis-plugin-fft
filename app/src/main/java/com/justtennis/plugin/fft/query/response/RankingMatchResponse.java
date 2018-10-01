@@ -1,4 +1,4 @@
-package com.justtennis.plugin.fft.model;
+package com.justtennis.plugin.fft.query.response;
 
 import java.io.Serializable;
 import java.util.ArrayList;

@@ -1,9 +1,9 @@
 package com.justtennis.plugin.fft.parser;
 
-import com.justtennis.plugin.fft.model.FFTRankingListRequest;
-import com.justtennis.plugin.fft.model.FFTRankingMatchRequest;
-import com.justtennis.plugin.fft.model.RankingListResponse;
-import com.justtennis.plugin.fft.model.RankingMatchResponse;
+import com.justtennis.plugin.fft.query.request.FFTRankingListRequest;
+import com.justtennis.plugin.fft.query.request.FFTRankingMatchRequest;
+import com.justtennis.plugin.fft.query.response.RankingListResponse;
+import com.justtennis.plugin.fft.query.response.RankingMatchResponse;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

@@ -4,10 +4,10 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.justtennis.plugin.fft.model.LoginFormResponse;
 import com.justtennis.plugin.fft.network.model.ResponseElement;
 import com.justtennis.plugin.fft.network.model.ResponseHttp;
 import com.justtennis.plugin.fft.preference.FFTSharedPref;
+import com.justtennis.plugin.fft.query.response.LoginFormResponse;
 import com.justtennis.plugin.fft.service.FFTService;
 
 /**

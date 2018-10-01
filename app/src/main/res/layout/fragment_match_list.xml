@@ -10,33 +10,24 @@
     <LinearLayout
         android:id="@+id/llMessage"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:layout_gravity="center"
         android:gravity="center"
         android:orientation="vertical"
         android:visibility="gone">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:layout_gravity="center"
-            android:gravity="center">
-            <TextView
-                android:id="@+id/tv_message"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="24sp"/>
-        </LinearLayout>
-        <Button
-            android:id="@+id/btnMessage"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/tv_message"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Ok"/>
+            android:textSize="24sp"
+            android:text="Empty list"/>
     </LinearLayout>
     <LinearLayout
         android:id="@+id/llContent"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:orientation="vertical">
         <LinearLayout
             android:layout_width="match_parent"
@@ -79,5 +70,4 @@
                 tools:listitem="@layout/fragment_match_item" />
         </LinearLayout>
     </LinearLayout>
-
 </LinearLayout>

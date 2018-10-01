@@ -1,10 +1,10 @@
 package com.justtennis.plugin.fft.parser;
 
-import com.justtennis.plugin.fft.model.FormElement;
-import com.justtennis.plugin.fft.model.PalmaresMillesimeRequest;
-import com.justtennis.plugin.fft.model.PalmaresMillesimeResponse;
-import com.justtennis.plugin.fft.model.PalmaresRequest;
-import com.justtennis.plugin.fft.model.PalmaresResponse;
+import com.justtennis.plugin.fft.query.request.PalmaresMillesimeRequest;
+import com.justtennis.plugin.fft.query.request.PalmaresRequest;
+import com.justtennis.plugin.fft.query.response.FormElement;
+import com.justtennis.plugin.fft.query.response.PalmaresMillesimeResponse;
+import com.justtennis.plugin.fft.query.response.PalmaresResponse;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

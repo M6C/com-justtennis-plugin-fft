@@ -1,4 +1,4 @@
-package com.justtennis.plugin.fft.model;
+package com.justtennis.plugin.fft.query.response;
 
 public class FormElement {
     public String name;

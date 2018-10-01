@@ -1,6 +1,6 @@
 package com.justtennis.plugin.converter;
 
-import com.justtennis.plugin.fft.model.LoginFormResponse;
+import com.justtennis.plugin.fft.query.response.LoginFormResponse;
 
 import java.util.HashMap;
 import java.util.Map;

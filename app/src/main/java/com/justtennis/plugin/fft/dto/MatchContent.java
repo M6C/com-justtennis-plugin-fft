@@ -1,10 +1,9 @@
 package com.justtennis.plugin.fft.dto;
 
-import com.justtennis.plugin.fft.model.MillesimeMatchResponse;
-import com.justtennis.plugin.fft.model.RankingMatchResponse;
+import com.justtennis.plugin.fft.query.response.MillesimeMatchResponse;
+import com.justtennis.plugin.fft.query.response.RankingMatchResponse;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class MatchContent {

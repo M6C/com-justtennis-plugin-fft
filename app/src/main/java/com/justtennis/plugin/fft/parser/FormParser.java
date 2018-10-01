@@ -1,8 +1,8 @@
 package com.justtennis.plugin.fft.parser;
 
-import com.justtennis.plugin.fft.model.FormElement;
-import com.justtennis.plugin.fft.model.LoginFormRequest;
-import com.justtennis.plugin.fft.model.LoginFormResponse;
+import com.justtennis.plugin.fft.query.request.LoginFormRequest;
+import com.justtennis.plugin.fft.query.response.FormElement;
+import com.justtennis.plugin.fft.query.response.LoginFormResponse;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

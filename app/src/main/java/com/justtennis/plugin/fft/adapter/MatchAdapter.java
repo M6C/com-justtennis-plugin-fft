@@ -42,6 +42,7 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchViewHolder> {
         holder.mDetailView.setText(holder.mItem.details);
 
         holder.mView.setOnClickListener(v -> {
+            holder.mCheckView.setChecked(!holder.mCheckView.isChecked());
             if (null != mListener) {
                 // Notify the active callbacks interface (the activity, if the
                 // fragment is attached to one) that an item has been selected.

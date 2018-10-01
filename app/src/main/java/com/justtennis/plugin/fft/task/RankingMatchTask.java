@@ -5,8 +5,8 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.justtennis.plugin.fft.exception.NotConnectedException;
-import com.justtennis.plugin.fft.model.RankingListResponse;
-import com.justtennis.plugin.fft.model.RankingMatchResponse;
+import com.justtennis.plugin.fft.query.response.RankingListResponse;
+import com.justtennis.plugin.fft.query.response.RankingMatchResponse;
 import com.justtennis.plugin.fft.service.FFTService;
 
 import java.util.ArrayList;
