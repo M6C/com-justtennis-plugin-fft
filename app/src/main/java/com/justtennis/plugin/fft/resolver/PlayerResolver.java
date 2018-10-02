@@ -59,16 +59,19 @@ public class PlayerResolver extends AbstractResolver<Player> {
         return query(contentResolver, selection, selectionArgs);
     }
 
-    public Long createPlayer(Context context, String firstname, String lastname, String birthday, Long idSaison) {
+    public Long createPlayer(Context context, String firstname, String lastname, String birthday, Long idSaison, Long idRanking) {
         ContentResolver contentResolver = context.getContentResolver();
         ContentValues contentValues = new ContentValues();
         contentValues.put(COLUMN_FIRSTNAME, firstname);
         contentValues.put(COLUMN_LASTNAME, lastname);
         contentValues.put(COLUMN_TYPE, TypeManager.TYPE.COMPETITION.toString());
+        contentValues.put(COLUMN_ID_SAISON, idSaison);
         if (birthday != null) {
             contentValues.put(COLUMN_BIRTHDAY, birthday);
         }
-        contentValues.put(COLUMN_ID_SAISON, idSaison);
+        if (idRanking != null) {
+            contentValues.put(COLUMN_ID_RANKING, idRanking);
+        }
         Uri uri = contentResolver.insert(CONTENT_URI, contentValues);
 
         return getIdFromUri(uri);
