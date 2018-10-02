@@ -4,14 +4,12 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,34 +24,19 @@ import com.justtennis.plugin.fft.R;
 import com.justtennis.plugin.fft.adapter.MatchAdapter;
 import com.justtennis.plugin.fft.dto.MatchContent;
 import com.justtennis.plugin.fft.dto.MatchDto;
-import com.justtennis.plugin.fft.manager.InviteManager.SCORE_RESULT;
-import com.justtennis.plugin.fft.model.Player;
-import com.justtennis.plugin.fft.model.Ranking;
-import com.justtennis.plugin.fft.model.Saison;
 import com.justtennis.plugin.fft.query.response.MillesimeMatchResponse;
 import com.justtennis.plugin.fft.query.response.PalmaresMillesimeResponse;
 import com.justtennis.plugin.fft.query.response.RankingMatchResponse;
-import com.justtennis.plugin.fft.resolver.InviteResolver;
-import com.justtennis.plugin.fft.resolver.PlayerResolver;
-import com.justtennis.plugin.fft.resolver.RankingResolver;
-import com.justtennis.plugin.fft.resolver.SaisonResolver;
-import com.justtennis.plugin.fft.resolver.ScoreSetResolver;
+import com.justtennis.plugin.fft.task.CreateInviteTask;
 import com.justtennis.plugin.fft.task.MillesimeMatchTask;
 import com.justtennis.plugin.fft.task.MillesimeTask;
 import com.justtennis.plugin.fft.task.RankingMatchTask;
 import com.justtennis.plugin.fft.tool.FragmentTool;
 import com.justtennis.plugin.fft.tool.ProgressTool;
 
-import java.text.DateFormat;
-import java.text.MessageFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Locale;
+import java.util.Objects;
 
 /**
  * A fragment representing a listMillesime of Items.
@@ -66,9 +49,6 @@ public class MatchFragment extends Fragment {
     private static final String TAG = MatchFragment.class.getName();
 
     private static final String ARG_COLUMN_COUNT = "column-count";
-
-    private static final long ID_UNKNOWN_PLAYER = -1l;
-    private static final long ID_NC_RANKING = -1l;
 
     private int mMillesimePosition = 0;
     private int mColumnCount = 1;
@@ -88,8 +68,6 @@ public class MatchFragment extends Fragment {
     private TextView tvMessage;
     private LinearLayout llMessage;
     private LinearLayout llContent;
-    private SimpleDateFormat sdfFFT;
-    private DateFormat sdfBirth;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -142,8 +120,8 @@ public class MatchFragment extends Fragment {
             throw new RuntimeException(context.toString()
                     + " must implement OnListFragmentInteractionListener");
         }
-        sdfFFT = new SimpleDateFormat("dd/MM/yyyy", Locale.FRANCE);
-        sdfBirth = new SimpleDateFormat(getString(R.string.msg_common_format_date), Locale.FRANCE);
+
+        FragmentTool.onClickFab(Objects.requireNonNull(getActivity()), null);
     }
 
     @Override
@@ -262,146 +240,8 @@ public class MatchFragment extends Fragment {
 
     private void onClickFabCreate(View view) {
         String millesime = listMillesime.get(mMillesimePosition);
-        Long idSaison = createOrGetSaison(millesime);
-
-        if (idSaison != null) {
-            for (int i=0; i<listMatch.size(); i++) {
-                MillesimeMatchResponse.MatchItem match = listMatch.get(i);
-                MatchDto dto = listMatchDto.get(i);
-                if (dto.selected) {
-                    createInvite(match, idSaison);
-                }
-            }
-        }
-    }
-
-    private void createInvite(MillesimeMatchResponse.MatchItem match, Long idSaison) {
-        Long idPlayer = createOrGetPlayer(match, idSaison);
-        Long idRanking = getRanking(match);
-        Date date = new Date();
-        try {
-            date = sdfFFT.parse(match.date);
-        } catch (ParseException e) {
-            Log.e(TAG, MessageFormat.format("Formatting match.date:{0}", match.date), e);
-        }
-        String scoreResult = match.vicDef.startsWith("D") ? SCORE_RESULT.DEFEAT.toString() :  SCORE_RESULT.VICTORY.toString();
-        Long idClub = null;
-
-        Context context = getContext();
-        InviteResolver inviteResolver = InviteResolver.getInstance();
-        Long idInvite = inviteResolver.createInvite(context, idSaison, idPlayer, idRanking, date, scoreResult, idClub);
-
-        createScoreSet(match, idInvite);
-    }
-
-    @Nullable
-    private Long createOrGetPlayer(MillesimeMatchResponse.MatchItem match, Long idSaison) {
-        Long ret = null;
-        String playerName = match.name;
-        if (playerName != null) {
-            String firstname = playerName;
-            String lastname = "";
-            int iSep = playerName.indexOf(' ');
-            if (iSep > 0) {
-                firstname = playerName.substring(0, iSep);
-                lastname = playerName.substring(iSep+1);
-            }
-
-            String birthday = getBirthday(match);
-
-            Context context = getContext();
-            PlayerResolver playerResolver = PlayerResolver.getInstance();
-            List<Player> listPlayer = playerResolver.queryByName(context, firstname, lastname);
-            if (listPlayer == null || listPlayer.isEmpty()) {
-                Long idRanking = getRanking(match);
-                ret = playerResolver.createPlayer(context, firstname, lastname, birthday, idSaison, idRanking);
-            } else {
-                ret = listPlayer.get(0).getId();
-            }
-
-            if (ret == null) {
-                // Set ret to UNKNOW
-                ret = ID_UNKNOWN_PLAYER;
-            }
-        }
-        return ret;
-    }
-
-    @Nullable
-    private String getBirthday(MillesimeMatchResponse.MatchItem match) {
-        String ret = null;
-        if (match.year != null && match.year.length() == 4) {
-            try {
-                Calendar calendar = GregorianCalendar.getInstance();
-                calendar.set(Calendar.YEAR, Integer.parseInt(match.year));
-                calendar.set(Calendar.MONTH, 1);
-                calendar.set(Calendar.DAY_OF_MONTH, 1);
-                calendar.set(Calendar.HOUR, 1);
-                calendar.set(Calendar.MINUTE, 0);
-                calendar.set(Calendar.SECOND, 0);
-                calendar.set(Calendar.MILLISECOND, 0);
-                ret = sdfBirth.format(calendar.getTime());
-            } catch (RuntimeException e) {
-                Log.e(TAG, MessageFormat.format("Birthday formatting match.year:{0}", match.year), e);
-            }
-        }
-        return ret;
-    }
-
-    private long getRanking(MillesimeMatchResponse.MatchItem match) {
-        long ret = ID_NC_RANKING;
-        if (match.ranking != null && !match.ranking.isEmpty()) {
-            RankingResolver rankingResolver = RankingResolver.getInstance();
-            List<Ranking> listRanking = rankingResolver.queryByRanking(getContext(), match.ranking);
-            if (listRanking != null && !listRanking.isEmpty()) {
-                ret = listRanking.get(0).getId();
-            }
-        }
-        if (ret == ID_NC_RANKING) {
-            Log.w(TAG, MessageFormat.format("Ranking not found match.ranking:{0}", match.ranking));
-        }
-        return ret;
-    }
-
-    private void createScoreSet(MillesimeMatchResponse.MatchItem match, Long idInvite) {
-        try {
-            if (match.score != null && !match.score.isEmpty()) {
-                Log.w(TAG, MessageFormat.format("ScoreSet creation for idInvite:{0} match.score:{1}", idInvite, match.score));
-                ScoreSetResolver rankingResolver = ScoreSetResolver.getInstance();
-
-                String[] listSet = match.score.split(" ");
-                if (listSet.length > 0) {
-                    int order = 0;
-                    for (String set : listSet) {
-                        String[] score = set.split("/");
-                        if (score.length == 2) {
-                            rankingResolver.createScoreSet(getContext(), idInvite, order++, Integer.parseInt(score[0]), Integer.parseInt(score[1]));
-                        }
-                    }
-                }
-
-            }
-        } catch (RuntimeException e) {
-            Log.e(TAG, "ScoreSet creation", e);
-        }
-    }
-
-    private Long createOrGetSaison(String millesime) {
-        Long idSaison = null;
-        Context context = getContext();
-        SaisonResolver saisonResolver = SaisonResolver.getInstance();
-        List<Saison> listSaison = saisonResolver.queryAll(context);
-        for(Saison s : listSaison) {
-            if (s.getName().endsWith(millesime)) {
-                idSaison = s.getId();
-                break;
-            }
-        }
-
-        if (idSaison == null) {
-            idSaison = saisonResolver.createSaison(context, millesime);
-        }
-        return idSaison;
+        MyCreateInviteTask myCreateInviteTask = new MyCreateInviteTask(getContext(), listMatch, listMatchDto, millesime);
+        myCreateInviteTask.execute((Void) null);
     }
 
     @SuppressLint("StaticFieldLeak")
@@ -508,6 +348,31 @@ public class MatchFragment extends Fragment {
             super.onCancelled();
             showProgressMatch(false);
             mRankingMatchTask = null;
+        }
+    }
+
+    private class MyCreateInviteTask extends CreateInviteTask {
+
+        protected MyCreateInviteTask(Context context, List<MillesimeMatchResponse.MatchItem> listMatch, List<MatchDto> listMatchDto, String millesime) {
+            super(context, listMatch, listMatchDto, millesime);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            FragmentTool.onClickFab(getActivity(), null);
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+            initializeFabValidate();
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+            initializeFabValidate();
         }
     }
 }
