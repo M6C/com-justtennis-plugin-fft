@@ -10,6 +10,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,11 +25,14 @@ import com.justtennis.plugin.fft.R;
 import com.justtennis.plugin.fft.adapter.MatchAdapter;
 import com.justtennis.plugin.fft.dto.MatchContent;
 import com.justtennis.plugin.fft.dto.MatchDto;
+import com.justtennis.plugin.fft.manager.InviteManager.SCORE_RESULT;
+import com.justtennis.plugin.fft.model.Player;
 import com.justtennis.plugin.fft.model.Saison;
 import com.justtennis.plugin.fft.query.response.MillesimeMatchResponse;
 import com.justtennis.plugin.fft.query.response.PalmaresMillesimeResponse;
 import com.justtennis.plugin.fft.query.response.RankingMatchResponse;
 import com.justtennis.plugin.fft.resolver.InviteResolver;
+import com.justtennis.plugin.fft.resolver.PlayerResolver;
 import com.justtennis.plugin.fft.resolver.SaisonResolver;
 import com.justtennis.plugin.fft.task.MillesimeMatchTask;
 import com.justtennis.plugin.fft.task.MillesimeTask;
@@ -36,8 +40,16 @@ import com.justtennis.plugin.fft.task.RankingMatchTask;
 import com.justtennis.plugin.fft.tool.FragmentTool;
 import com.justtennis.plugin.fft.tool.ProgressTool;
 
+import java.text.DateFormat;
+import java.text.MessageFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 /**
@@ -48,11 +60,17 @@ import java.util.Objects;
  */
 public class MatchFragment extends Fragment {
 
+    private static final String TAG = MatchFragment.class.getName();
+
     private static final String ARG_COLUMN_COUNT = "column-count";
+
+    private static final long ID_UNKNOWN_PLAYER = -1l;
+    private static final long ID_NC_RANKING = -1l;
 
     private int mMillesimePosition = 0;
     private int mColumnCount = 1;
-    private List<MatchDto> listMatch = new ArrayList<>();
+    private List<MillesimeMatchResponse.MatchItem> listMatch = new ArrayList<>();
+    private List<MatchDto> listMatchDto = new ArrayList<>();
     private List<String> listMillesime = new ArrayList<>();
     private OnListFragmentInteractionListener mListener;
     private View llMatch;
@@ -67,6 +85,8 @@ public class MatchFragment extends Fragment {
     private TextView tvMessage;
     private LinearLayout llMessage;
     private LinearLayout llContent;
+    private SimpleDateFormat sdfFFT;
+    private DateFormat sdfBirth;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -119,6 +139,8 @@ public class MatchFragment extends Fragment {
             throw new RuntimeException(context.toString()
                     + " must implement OnListFragmentInteractionListener");
         }
+        sdfFFT = new SimpleDateFormat("dd/MM/yyyy", Locale.FRANCE);
+        sdfBirth = new SimpleDateFormat(getString(R.string.msg_common_format_date), Locale.FRANCE);
     }
 
     @Override
@@ -152,7 +174,7 @@ public class MatchFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            adpMatch = new MatchAdapter(listMatch, mListener);
+            adpMatch = new MatchAdapter(listMatchDto, mListener);
             recyclerView.setAdapter(adpMatch);
         }
 
@@ -232,31 +254,88 @@ public class MatchFragment extends Fragment {
 
     private void initializeFabValidate() {
         FragmentTool.initializeFabDrawable(getActivity(), FragmentTool.INIT_FAB_IMAGE.VALIDATE);
-        FragmentTool.onClickFab(getActivity(), this::onClickFabCreate);
+        FragmentTool.onClickFab(getActivity(), listMatch.isEmpty() ? null : this::onClickFabCreate);
     }
 
     private void onClickFabCreate(View view) {
-        InviteResolver.getInstance().queryAllMatch(Objects.requireNonNull(getContext()));
+        android.content.Context context = getContext();
+        InviteResolver.getInstance().queryAllMatch(Objects.requireNonNull(context));
 
-        boolean millesimePresent = false;
+        Long idSaison = null;
         String millesime = listMillesime.get(mMillesimePosition);
-        List<Saison> listSaison = SaisonResolver.getInstance().queryAll(getContext());
-        for(Saison saison : listSaison) {
-            if (saison.getName().endsWith(millesime)) {
-                millesimePresent = true;
+        SaisonResolver saisonResolver = SaisonResolver.getInstance();
+        List<Saison> listSaison = saisonResolver.queryAll(context);
+        for(Saison s : listSaison) {
+            if (s.getName().endsWith(millesime)) {
+                idSaison = s.getId();
                 break;
             }
         }
 
-        if (!millesimePresent) {
-            millesimePresent = SaisonResolver.getInstance().createSaison(getContext(), millesime);
+        if (idSaison == null) {
+            idSaison = saisonResolver.createSaison(context, millesime);
         }
 
 
-        if (millesimePresent) {
-            for (MatchDto match : listMatch) {
-                if (match.selected) {
+        if (idSaison != null) {
+            PlayerResolver playerResolver = PlayerResolver.getInstance();
+            for (int i=0; i<listMatch.size(); i++) {
+                MillesimeMatchResponse.MatchItem match = listMatch.get(i);
+                MatchDto dto = listMatchDto.get(i);
+                if (dto.selected) {
+                    Long idPlayer = null;
+                    String playerName = match.name;
+                    if (playerName != null) {
+                        String firstname = playerName;
+                        String lastname = "";
+                        int iSep = playerName.indexOf(' ');
+                        if (iSep > 0) {
+                            firstname = playerName.substring(0, iSep);
+                            lastname = playerName.substring(iSep+1);
+                        }
 
+                        String birthday = null;
+                        if (match.year != null && match.year.length() == 4) {
+                            try {
+                                Calendar calendar = GregorianCalendar.getInstance();
+                                calendar.set(Calendar.YEAR, Integer.parseInt(match.year));
+                                calendar.set(Calendar.MONTH, 1);
+                                calendar.set(Calendar.DAY_OF_MONTH, 1);
+                                calendar.set(Calendar.HOUR, 1);
+                                calendar.set(Calendar.MINUTE, 0);
+                                calendar.set(Calendar.SECOND, 0);
+                                calendar.set(Calendar.MILLISECOND, 0);
+                                birthday = sdfBirth.format(calendar.getTime());
+                            } catch (RuntimeException e) {
+                                Log.e(TAG, MessageFormat.format("Birthday formatting match.year:{0}", match.year), e);
+                            }
+                        }
+
+                        List<Player> listPlayer = playerResolver.queryByName(context, firstname, lastname);
+                        if (listPlayer == null || listPlayer.isEmpty()) {
+                            idPlayer = playerResolver.createPlayer(context, firstname, lastname, birthday, idSaison);
+                        } else {
+                            idPlayer = listPlayer.get(0).getId();
+                        }
+
+                        if (idPlayer == null) {
+                            // Set idPlayer to UNKNOW
+                            idPlayer = ID_UNKNOWN_PLAYER;
+                        }
+
+                        Long idRanking = ID_NC_RANKING;
+                        Date date = new Date();
+                        try {
+                            date = sdfFFT.parse(match.date);
+                        } catch (ParseException e) {
+                            Log.e(TAG, MessageFormat.format("Formatting match.date:{0}", match.date), e);
+                        }
+                        String scoreResult = match.vicDef.startsWith("D") ? SCORE_RESULT.DEFEAT.toString() :  SCORE_RESULT.VICTORY.toString();
+                        Long idClub = null;
+
+                        InviteResolver inviteResolver = InviteResolver.getInstance();
+                        inviteResolver.createInvite(context, idSaison, idPlayer, idRanking, date, scoreResult, idClub);
+                    }
                 }
             }
         }
@@ -288,7 +367,6 @@ public class MatchFragment extends Fragment {
                 }
             } finally {
                 if (!listMillesime.isEmpty()) {
-                    initializeFabValidate();
                     hideMessage();
                 } else {
                     initializeFabRefresh();
@@ -317,6 +395,7 @@ public class MatchFragment extends Fragment {
         protected void onPreExecute() {
             super.onPreExecute();
             listMatch.clear();
+            listMatchDto.clear();
             adpMatch.notifyDataSetChanged();
         }
 
@@ -324,8 +403,10 @@ public class MatchFragment extends Fragment {
         protected void onPostExecute(List<MillesimeMatchResponse.MatchItem> matchs) {
             super.onPostExecute(matchs);
             showProgressMatch(false);
-            listMatch.addAll(MatchContent.toDto2(matchs));
+            listMatch.addAll(matchs);
+            listMatchDto.addAll(MatchContent.toDto2(matchs));
             adpMatch.notifyDataSetChanged();
+            initializeFabValidate();
         }
 
         @Override
@@ -338,6 +419,7 @@ public class MatchFragment extends Fragment {
 
     @SuppressLint("StaticFieldLeak")
     private class MyRankingMatchTask extends RankingMatchTask {
+
         MyRankingMatchTask(Context context) {
             super(context);
         }
@@ -346,14 +428,16 @@ public class MatchFragment extends Fragment {
         protected void onPreExecute() {
             super.onPreExecute();
             listMatch.clear();
+            listMatchDto.clear();
         }
 
         @Override
         protected void onPostExecute(List<RankingMatchResponse.RankingItem> matchs) {
             super.onPostExecute(matchs);
             showProgressMatch(false);
-            listMatch.addAll(MatchContent.toDto(matchs));
+            listMatchDto.addAll(MatchContent.toDto(matchs));
             adpMatch.notifyDataSetChanged();
+            initializeFabValidate();
         }
 
         @Override

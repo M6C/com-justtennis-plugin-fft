@@ -23,4 +23,6 @@
     <string name="use_proxy">Use Proxy</string>
 
     <string name="msg_fft_must_connect_to_site">You must connect to <a href="https://mon-espace-tennis.fft.fr">fft site</a>.</string>
+
+    <string name="msg_common_format_date">EEEEE d MMMMM yyyy</string>
 </resources>

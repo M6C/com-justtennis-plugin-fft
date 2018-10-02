@@ -17,11 +17,12 @@ public class SaisonResolver extends AbstractResolver<Saison> {
     private static final String CONTENT_AUTHORITY = "justtennis.com.justtennis.provider.saison";
     private static final Uri CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
-    private static final String COLUMN_ID = "_id";
     private static final String COLUMN_NAME = "NAME";
     private static final String COLUMN_BEGIN = "BEGIN";
     private static final String COLUMN_END = "END";
     private static final String COLUMN_ACTIVE = "ACTIVE";
+
+    private static final String[] COLUMNS = new String[]{COLUMN_ID, COLUMN_NAME, COLUMN_BEGIN, COLUMN_END, COLUMN_ACTIVE};
 
     private static SaisonResolver instance;
 
@@ -35,17 +36,16 @@ public class SaisonResolver extends AbstractResolver<Saison> {
     public List<Saison> queryAll(Context context) {
         ContentResolver contentResolver = context.getContentResolver();
 
-        String[] columns = new String[]{COLUMN_ID, COLUMN_NAME, COLUMN_BEGIN, COLUMN_END, COLUMN_ACTIVE};
-        return query(contentResolver, CONTENT_URI, columns, null, null);
+        return query(contentResolver, null, null);
     }
 
-    public boolean createSaison(Context context, String millesime) {
-        boolean ret = false;
+    public Long createSaison(Context context, String millesime) {
         ContentResolver contentResolver = context.getContentResolver();
         ContentValues contentValues = new ContentValues();
         contentValues.put(COLUMN_NAME, millesime);
-        contentResolver.insert(CONTENT_URI, contentValues);
-        return ret;
+        Uri uri = contentResolver.insert(CONTENT_URI, contentValues);
+
+        return getIdFromUri(uri);
     }
 
     @Override
@@ -66,5 +66,15 @@ public class SaisonResolver extends AbstractResolver<Saison> {
         } else if (COLUMN_ACTIVE.equalsIgnoreCase(column)) {
             model.setActive(data == null ? false : Boolean.valueOf(data));
         }
+    }
+
+    @Override
+    protected Uri getUri() {
+        return CONTENT_URI;
+    }
+
+    @Override
+    protected String[] getColumns() {
+        return COLUMNS;
     }
 }

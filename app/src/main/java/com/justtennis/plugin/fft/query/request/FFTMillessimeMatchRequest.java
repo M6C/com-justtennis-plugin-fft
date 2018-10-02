@@ -10,9 +10,9 @@ public class FFTMillessimeMatchRequest {
     private static final String QUERY_TD_VIC_DEF = "td:eq(3) > span";
     private static final String QUERY_TD_SCORE = "td:eq(4)";
     private static final String QUERY_TD_WO = "td:eq(5)";
-    private static final String QUERY_TD_TOURNAMENT = "td:eq(5)";
-    private static final String QUERY_TD_TYPE = "td:eq(6)";
-    private static final String QUERY_TD_DATE = "td:eq(7)";
+    private static final String QUERY_TD_TOURNAMENT = "td:eq(6)";
+    private static final String QUERY_TD_TYPE = "td:eq(7)";
+    private static final String QUERY_TD_DATE = "td:eq(8)";
 
     private static final String QUERY_LINK_PALMARES = "td:eq(0) > a";
     private static final String QUERY_LINK_TOURNOI = "td:eq(5) > a";

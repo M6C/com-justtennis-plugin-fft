@@ -1,6 +1,7 @@
 package com.justtennis.plugin.fft.resolver;
 
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.net.Uri;
 
@@ -16,7 +17,6 @@ public class PlayerResolver extends AbstractResolver<Player> {
     private static final String CONTENT_AUTHORITY = "justtennis.com.justtennis.provider.player";
     private static final Uri CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
-    private static final String COLUMN_ID = "_id";
     private static final String COLUMN_FIRSTNAME = "FIRSTNAME";
     private static final String COLUMN_LASTNAME = "LASTNAME";
     private static final String COLUMN_BIRTHDAY = "BIRTHDAY";
@@ -34,6 +34,8 @@ public class PlayerResolver extends AbstractResolver<Player> {
     private static final String COLUMN_ID_GOOGLE = "ID_GOOGLE";
     private static final String COLUMN_TYPE = "TYPE";
 
+    private static final String[] COLUMNS = new String[]{COLUMN_ID, COLUMN_FIRSTNAME, COLUMN_LASTNAME, COLUMN_BIRTHDAY, COLUMN_TYPE, COLUMN_ID_SAISON, COLUMN_ID_CLUB};
+
     private static PlayerResolver instance;
 
     public static PlayerResolver getInstance() {
@@ -45,10 +47,31 @@ public class PlayerResolver extends AbstractResolver<Player> {
 
     public List<Player> queryAll(Context context) {
         ContentResolver contentResolver = context.getContentResolver();
-        String[] columns = new String[]{COLUMN_ID, COLUMN_FIRSTNAME, COLUMN_LASTNAME, COLUMN_BIRTHDAY, COLUMN_TYPE, COLUMN_ID_SAISON, COLUMN_ID_CLUB};
         String selection = " " + COLUMN_TYPE + " = ? ";
         String[] selectionArgs = {TypeManager.TYPE.COMPETITION.toString()};
-        return query(contentResolver, CONTENT_URI, columns, selection, selectionArgs);
+        return query(contentResolver, selection, selectionArgs);
+    }
+
+    public List<Player> queryByName(Context context, String firstname, String lastname) {
+        ContentResolver contentResolver = context.getContentResolver();
+        String selection = " " + COLUMN_FIRSTNAME + " = ? AND " + COLUMN_LASTNAME + " = ?";
+        String[] selectionArgs = {firstname, lastname};
+        return query(contentResolver, selection, selectionArgs);
+    }
+
+    public Long createPlayer(Context context, String firstname, String lastname, String birthday, Long idSaison) {
+        ContentResolver contentResolver = context.getContentResolver();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COLUMN_FIRSTNAME, firstname);
+        contentValues.put(COLUMN_LASTNAME, lastname);
+        contentValues.put(COLUMN_TYPE, TypeManager.TYPE.COMPETITION.toString());
+        if (birthday != null) {
+            contentValues.put(COLUMN_BIRTHDAY, birthday);
+        }
+        contentValues.put(COLUMN_ID_SAISON, idSaison);
+        Uri uri = contentResolver.insert(CONTENT_URI, contentValues);
+
+        return getIdFromUri(uri);
     }
 
     @Override
@@ -73,5 +96,15 @@ public class PlayerResolver extends AbstractResolver<Player> {
         } else if (COLUMN_ID_CLUB.equalsIgnoreCase(column)) {
             model.setIdClub(data == null ? null : Long.parseLong(data));
         }
+    }
+
+    @Override
+    protected Uri getUri() {
+        return CONTENT_URI;
+    }
+
+    @Override
+    protected String[] getColumns() {
+        return COLUMNS;
     }
 }

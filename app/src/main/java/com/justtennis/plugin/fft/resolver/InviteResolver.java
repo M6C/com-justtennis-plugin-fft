@@ -1,6 +1,7 @@
 package com.justtennis.plugin.fft.resolver;
 
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.net.Uri;
 
@@ -20,7 +21,6 @@ public class InviteResolver extends AbstractResolver<Invite> {
     private static final String CONTENT_AUTHORITY = "justtennis.com.justtennis.provider.invite";
     private static final Uri CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
-    private static final String COLUMN_ID = "_id";
     private static final String COLUMN_ID_SAISON = "ID_SAISON";
     private static final String COLUMN_ID_PLAYER = "ID_PLAYER";
     private static final String COLUMN_TIME = "TIME";
@@ -36,6 +36,8 @@ public class InviteResolver extends AbstractResolver<Invite> {
     private static final String COLUMN_ID_TOURNAMENT = "ID_TOURNAMENT";
     private static final String COLUMN_BONUS_POINT = "BONUS_POINT";
 
+    private static final String[] COLUMNS = new String[]{COLUMN_ID, COLUMN_ID_SAISON, COLUMN_TYPE, COLUMN_ID_PLAYER, COLUMN_ID_RANKING, COLUMN_ID_CLUB, COLUMN_TIME, COLUMN_SCORE_RESULT};
+
     private static InviteResolver instance;
 
     public static InviteResolver getInstance() {
@@ -48,10 +50,26 @@ public class InviteResolver extends AbstractResolver<Invite> {
     public List<Invite> queryAllMatch(Context context) {
         ContentResolver contentResolver = context.getContentResolver();
 
-        String[] columns = new String[]{COLUMN_ID, COLUMN_ID_SAISON, COLUMN_TYPE, COLUMN_ID_PLAYER, COLUMN_ID_RANKING, COLUMN_ID_CLUB, COLUMN_TIME, COLUMN_SCORE_RESULT};
         String selection = " " + COLUMN_TYPE + " = ? ";
         String[] selectionArgs = {TypeManager.TYPE.COMPETITION.toString()};
-        return query(contentResolver, CONTENT_URI, columns, selection, selectionArgs);
+        return query(contentResolver, selection, selectionArgs);
+    }
+
+    public Long createInvite(Context context, Long idSaison, Long idPlayer, Long idRanking, Date date, String scoreResult, Long idClub) {
+        ContentResolver contentResolver = context.getContentResolver();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COLUMN_ID_SAISON, idSaison);
+        contentValues.put(COLUMN_TYPE, TypeManager.TYPE.COMPETITION.toString());
+        contentValues.put(COLUMN_ID_PLAYER, idPlayer);
+        contentValues.put(COLUMN_ID_RANKING, idRanking);
+        contentValues.put(COLUMN_TIME, date.getTime());
+        contentValues.put(COLUMN_SCORE_RESULT, scoreResult);
+        if (idClub != null) {
+            contentValues.put(COLUMN_ID_CLUB, idClub);
+        }
+        Uri uri = contentResolver.insert(CONTENT_URI, contentValues);
+
+        return getIdFromUri(uri);
     }
 
     @Override
@@ -78,5 +96,15 @@ public class InviteResolver extends AbstractResolver<Invite> {
         } else if (COLUMN_SCORE_RESULT.equalsIgnoreCase(column)) {
             model.setScoreResult(data == null ? null : Invite.SCORE_RESULT.valueOf(data));
         }
+    }
+
+    @Override
+    protected Uri getUri() {
+        return CONTENT_URI;
+    }
+
+    @Override
+    protected String[] getColumns() {
+        return COLUMNS;
     }
 }

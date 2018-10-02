@@ -15,9 +15,9 @@ public class ClubResolver extends AbstractResolver<Club> {
     private static final String CONTENT_AUTHORITY = "justtennis.com.justtennis.provider.club";
     private static final Uri CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
 
-    private static final String COLUMN_ID = "_id";
     private static final String COLUMN_NAME = "NAME";
     private static final String COLUMN_ID_ADDRESS = "ID_ADDRESS";
+    private static final String[] COLUMNS = new String[]{COLUMN_ID, COLUMN_ID_ADDRESS, COLUMN_NAME};
 
     private static ClubResolver instance;
 
@@ -31,8 +31,7 @@ public class ClubResolver extends AbstractResolver<Club> {
     public List<Club> queryAll(Context context) {
         ContentResolver contentResolver = context.getContentResolver();
 
-        String[] columns = new String[]{COLUMN_ID, COLUMN_ID_ADDRESS, COLUMN_NAME};
-        return query(contentResolver, CONTENT_URI, columns, null, null);
+        return query(contentResolver, null, null);
     }
 
     @Override
@@ -49,5 +48,15 @@ public class ClubResolver extends AbstractResolver<Club> {
         } else if (COLUMN_ID_ADDRESS.equalsIgnoreCase(column)) {
             model.setSubId(data == null ? null : Long.parseLong(data));
         }
+    }
+
+    @Override
+    protected Uri getUri() {
+        return CONTENT_URI;
+    }
+
+    @Override
+    protected String[] getColumns() {
+        return COLUMNS;
     }
 }
