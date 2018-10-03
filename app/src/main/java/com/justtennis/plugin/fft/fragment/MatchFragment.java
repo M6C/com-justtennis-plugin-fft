@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,9 +25,11 @@ import com.justtennis.plugin.fft.R;
 import com.justtennis.plugin.fft.adapter.MatchAdapter;
 import com.justtennis.plugin.fft.dto.MatchContent;
 import com.justtennis.plugin.fft.dto.MatchDto;
+import com.justtennis.plugin.fft.model.User;
 import com.justtennis.plugin.fft.query.response.MillesimeMatchResponse;
 import com.justtennis.plugin.fft.query.response.PalmaresMillesimeResponse;
 import com.justtennis.plugin.fft.query.response.RankingMatchResponse;
+import com.justtennis.plugin.fft.resolver.UserResolver;
 import com.justtennis.plugin.fft.task.CreateInviteTask;
 import com.justtennis.plugin.fft.task.MillesimeMatchTask;
 import com.justtennis.plugin.fft.task.MillesimeTask;
@@ -74,6 +77,7 @@ public class MatchFragment extends Fragment {
      * fragment (e.g. upon screen orientation changes).
      */
     public MatchFragment() {
+        // Nothing to do
     }
 
     public static MatchFragment newInstance() {
@@ -120,8 +124,7 @@ public class MatchFragment extends Fragment {
             throw new RuntimeException(context.toString()
                     + " must implement OnListFragmentInteractionListener");
         }
-
-        FragmentTool.onClickFab(Objects.requireNonNull(getActivity()), null);
+        hideFab();
     }
 
     @Override
@@ -228,20 +231,39 @@ public class MatchFragment extends Fragment {
         tvMessage.setText("");
     }
 
+    private void hideFab() {
+        FragmentTool.onClickFab(Objects.requireNonNull(getActivity()), null);
+    }
+
     private void initializeFabRefresh() {
-        FragmentTool.initializeFabDrawable(getActivity(), FragmentTool.INIT_FAB_IMAGE.REFRESH);
+        FragmentTool.initializeFabDrawable(Objects.requireNonNull(getActivity()), FragmentTool.INIT_FAB_IMAGE.REFRESH);
         FragmentTool.onClickFab(getActivity(), view -> loadMatch());
     }
 
     private void initializeFabValidate() {
-        FragmentTool.initializeFabDrawable(getActivity(), FragmentTool.INIT_FAB_IMAGE.VALIDATE);
+        FragmentTool.initializeFabDrawable(Objects.requireNonNull(getActivity()), FragmentTool.INIT_FAB_IMAGE.VALIDATE);
         FragmentTool.onClickFab(getActivity(), listMatch.isEmpty() ? null : this::onClickFabCreate);
     }
 
+    private void initializeFabHideMessage(FragmentActivity activity) {
+        FragmentTool.initializeFabDrawable(Objects.requireNonNull(getActivity()), FragmentTool.INIT_FAB_IMAGE.BACK);
+        FragmentTool.onClickFab(activity, v -> {
+            hideMessage();
+            initializeFabValidate();
+        });
+    }
+
     private void onClickFabCreate(View view) {
-        String millesime = listMillesime.get(mMillesimePosition);
-        MyCreateInviteTask myCreateInviteTask = new MyCreateInviteTask(getContext(), listMatch, listMatchDto, millesime);
-        myCreateInviteTask.execute((Void) null);
+        List<User> users = UserResolver.getInstance().queryAll(getContext());
+        if (!users.isEmpty()) {
+            String millesime = listMillesime.get(mMillesimePosition);
+            MyCreateInviteTask myCreateInviteTask = new MyCreateInviteTask(getContext(), listMatch, listMatchDto, millesime);
+            myCreateInviteTask.execute((Void) null);
+        } else {
+            FragmentActivity activity = Objects.requireNonNull(getActivity());
+            showMessage(R.string.msg_no_user_found_in_main_application);
+            initializeFabHideMessage(activity);
+        }
     }
 
     @SuppressLint("StaticFieldLeak")
@@ -351,16 +373,17 @@ public class MatchFragment extends Fragment {
         }
     }
 
+    @SuppressLint("StaticFieldLeak")
     private class MyCreateInviteTask extends CreateInviteTask {
 
-        protected MyCreateInviteTask(Context context, List<MillesimeMatchResponse.MatchItem> listMatch, List<MatchDto> listMatchDto, String millesime) {
+        MyCreateInviteTask(Context context, List<MillesimeMatchResponse.MatchItem> listMatch, List<MatchDto> listMatchDto, String millesime) {
             super(context, listMatch, listMatchDto, millesime);
         }
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            FragmentTool.onClickFab(getActivity(), null);
+            hideFab();
         }
 
         @Override

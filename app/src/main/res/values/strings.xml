@@ -25,4 +25,6 @@
     <string name="msg_fft_must_connect_to_site">You must connect to <a href="https://mon-espace-tennis.fft.fr">fft site</a>.</string>
 
     <string name="msg_common_format_date">EEEEE d MMMMM yyyy</string>
+
+    <string name="msg_no_user_found_in_main_application">No user found in Just Tennis Application.</string>
 </resources>
