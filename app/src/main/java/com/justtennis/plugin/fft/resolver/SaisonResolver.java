@@ -48,6 +48,11 @@ public class SaisonResolver extends AbstractResolver<Saison> {
         return getIdFromUri(uri);
     }
 
+    public boolean deleteSaison(Context context, Long idSaison) {
+        ContentResolver contentResolver = context.getContentResolver();
+        return contentResolver.delete(CONTENT_URI, "" + COLUMN_ID + " = ?", new String[]{idSaison.toString()}) > 0;
+    }
+
     @Override
     protected Saison createModel() {
         return new Saison();

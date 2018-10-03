@@ -366,6 +366,7 @@ public class MatchFragment extends Fragment {
         @Override
         protected void onPostExecute(Boolean aBoolean) {
             super.onPostExecute(aBoolean);
+            adpMatch.notifyDataSetChanged();
             initializeFabValidate();
         }
 

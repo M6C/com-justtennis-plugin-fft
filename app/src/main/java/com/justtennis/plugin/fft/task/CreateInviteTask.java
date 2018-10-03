@@ -11,12 +11,14 @@ import com.justtennis.plugin.fft.manager.InviteManager;
 import com.justtennis.plugin.fft.model.Player;
 import com.justtennis.plugin.fft.model.Ranking;
 import com.justtennis.plugin.fft.model.Saison;
+import com.justtennis.plugin.fft.model.User;
 import com.justtennis.plugin.fft.query.response.MillesimeMatchResponse;
 import com.justtennis.plugin.fft.resolver.InviteResolver;
 import com.justtennis.plugin.fft.resolver.PlayerResolver;
 import com.justtennis.plugin.fft.resolver.RankingResolver;
 import com.justtennis.plugin.fft.resolver.SaisonResolver;
 import com.justtennis.plugin.fft.resolver.ScoreSetResolver;
+import com.justtennis.plugin.fft.resolver.UserResolver;
 
 import java.text.DateFormat;
 import java.text.MessageFormat;
@@ -67,6 +69,7 @@ public abstract class CreateInviteTask extends AsyncTask<Void, Void, Boolean> {
                 MatchDto dto = listMatchDto.get(i);
                 if (dto.selected) {
                     createInvite(match, idSaison);
+                    dto.selected = false;
                 }
             }
         }
@@ -167,7 +170,7 @@ public abstract class CreateInviteTask extends AsyncTask<Void, Void, Boolean> {
 
                 String[] listSet = match.score.split(" ");
                 if (listSet.length > 0) {
-                    int order = 0;
+                    int order = 1;
                     for (String set : listSet) {
                         String[] score = set.split("/");
                         if (score.length == 2) {
@@ -195,7 +198,29 @@ public abstract class CreateInviteTask extends AsyncTask<Void, Void, Boolean> {
 
         if (idSaison == null) {
             idSaison = saisonResolver.createSaison(context, millesime);
+            Long idUser = createOrGetUser(idSaison);
+            if (idUser == null) {
+                // No user created or found so delete saison
+                saisonResolver.deleteSaison(context, idSaison);
+            }
         }
         return idSaison;
+    }
+
+    private Long createOrGetUser(Long idSaison) {
+        Long ret = null;
+        UserResolver userResolver = UserResolver.getInstance();
+        List<User> users = userResolver.queryBySaison(context, idSaison);
+        if (users == null || users.isEmpty()) {
+            users = userResolver.queryAll(context);
+            if (users != null && !users.isEmpty()) {
+                User user = users.get(users.size()-1);
+                // Create new user from last user
+                ret = userResolver.createUser(context, idSaison, user);
+            }
+        } else {
+            ret = users.get(users.size()-1).getId();
+        }
+        return ret;
     }
 }
