@@ -27,4 +27,7 @@
     <string name="msg_common_format_date">EEEEE d MMMMM yyyy</string>
 
     <string name="msg_no_user_found_in_main_application">No user found in Just Tennis Application.</string>
+
+    <string name="dialog_confirm_check_match_already_exist_title">Confirm import</string>
+    <string name="dialog_confirm_check_match_already_exist_message">This Match has been detected already exist. Confirm check ?</string>
 </resources>

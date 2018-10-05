@@ -158,7 +158,7 @@ public class MatchFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            adpMatch = new MatchAdapter(listMatchDto, mListener);
+            adpMatch = new MatchAdapter(context, listMatchDto, mListener);
             recyclerView.setAdapter(adpMatch);
         }
 
@@ -206,6 +206,7 @@ public class MatchFragment extends Fragment {
         } else {
             showProgressMatch(true);
             String millesime = listMillesime.get(mMillesimePosition);
+            adpMatch.setMillesime(millesime);
             mMillesimeMatchTask = new MyMillesimeMatchTask(context, millesime);
             mMillesimeMatchTask.execute((Void) null);
         }

@@ -72,6 +72,19 @@ public class InviteResolver extends AbstractResolver<Invite> {
         return getIdFromUri(uri);
     }
 
+    public List<Invite> queryInvite(Context context, Long idSaison, Long idPlayer, Date date, String scoreResult) {
+        ContentResolver contentResolver = context.getContentResolver();
+        String selection = " " +
+                COLUMN_TYPE + " = ? AND " +
+                COLUMN_ID_SAISON + " = ? AND " +
+                COLUMN_ID_PLAYER + " = ? AND " +
+                COLUMN_TIME + " = ? AND " +
+                COLUMN_SCORE_RESULT + " = ? ";
+        String[] selectionArgs = {TypeManager.TYPE.COMPETITION.toString(), idSaison.toString(),
+                idPlayer.toString(), ""+date.getTime(), scoreResult};
+        return query(contentResolver, selection, selectionArgs);
+    }
+
     @Override
     protected Invite createModel() {
         return new Invite();

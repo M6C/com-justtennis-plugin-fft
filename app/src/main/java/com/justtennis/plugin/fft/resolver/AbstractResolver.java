@@ -57,7 +57,7 @@ public abstract class AbstractResolver<M> {
             Log.i(TAG, out.toString());
         }
         else {
-            out.append("Invite Provider not found [").append(uri.toString()).append("]");
+            out.append("Provider not found [").append(uri.toString()).append("]");
             Log.w(TAG, out.toString());
         }
         return ret;

@@ -1,10 +1,12 @@
 package com.justtennis.plugin.fft.service;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.justtennis.plugin.converter.LoginFormResponseConverter;
 import com.justtennis.plugin.converter.PalmaresMillesimeFormResponseConverter;
 import com.justtennis.plugin.fft.exception.NotConnectedException;
+import com.justtennis.plugin.fft.manager.InviteManager;
 import com.justtennis.plugin.fft.network.HttpGetProxy;
 import com.justtennis.plugin.fft.network.HttpPostProxy;
 import com.justtennis.plugin.fft.network.model.ResponseHttp;
@@ -31,14 +33,23 @@ import com.justtennis.plugin.fft.skeleton.IProxy;
 
 import org.jsoup.helper.StringUtil;
 
+import java.text.MessageFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Map;
 
 public class FFTService implements IProxy {
+
+    private static final String TAG = FFTService.class.getName();
 
     private static final String URL_ROOT = "https://mon-espace-tennis.fft.fr";
     private static final String LOGON_SITE = "mon-espace-tennis.fft.fr";
     private static final int    LOGON_PORT = 80;
     private static final String LOGON_METHOD = "https";
+
+    private static SimpleDateFormat sdfFFT = new SimpleDateFormat("dd/MM/yyyy",Locale.FRANCE);
 
     private Context context;
     private String proxyHost;
@@ -300,6 +311,21 @@ public class FFTService implements IProxy {
     public IProxy setProxyPw(String proxyPw) {
         this.proxyPw = proxyPw;
         return this;
+    }
+
+
+    public static Date getDateFromFFT(String date) {
+        Date ret = new Date();
+        try {
+            ret = sdfFFT.parse(date);
+        } catch (ParseException e) {
+            Log.e(TAG, MessageFormat.format("Formatting match.ret:{0}", date), e);
+        }
+        return ret;
+    }
+
+    public static InviteManager.SCORE_RESULT getScoreResultFromFFT(String vicDef) {
+        return vicDef.startsWith("D") ? InviteManager.SCORE_RESULT.DEFEAT :  InviteManager.SCORE_RESULT.VICTORY;
     }
 
     private void logMethod(String method) {

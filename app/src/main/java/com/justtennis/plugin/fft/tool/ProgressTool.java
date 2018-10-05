@@ -12,7 +12,7 @@ public class ProgressTool {
     private ProgressTool() {}
 
     /**
-     * Shows the progress UI and hides the content view.
+     * Shows the progress UI and hides the date view.
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     public static void showProgress(Context context, View content, View progress, final boolean show) {

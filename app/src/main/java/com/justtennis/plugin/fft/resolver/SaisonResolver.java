@@ -39,6 +39,14 @@ public class SaisonResolver extends AbstractResolver<Saison> {
         return query(contentResolver, null, null);
     }
 
+    public List<Saison> queryNameEndWith(Context context, String millesime) {
+        ContentResolver contentResolver = context.getContentResolver();
+
+        String selection = " " + COLUMN_NAME + " like ?";
+        String[] selectionArgs = new String[] {"%"+millesime};
+        return query(contentResolver, selection, selectionArgs);
+    }
+
     public Long createSaison(Context context, String millesime) {
         ContentResolver contentResolver = context.getContentResolver();
         ContentValues contentValues = new ContentValues();

@@ -2,12 +2,13 @@ package com.justtennis.plugin.fft.task;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.justtennis.plugin.fft.R;
+import com.justtennis.plugin.fft.dto.MatchContent;
 import com.justtennis.plugin.fft.dto.MatchDto;
-import com.justtennis.plugin.fft.manager.InviteManager;
 import com.justtennis.plugin.fft.model.Player;
 import com.justtennis.plugin.fft.model.Ranking;
 import com.justtennis.plugin.fft.model.Saison;
@@ -19,10 +20,10 @@ import com.justtennis.plugin.fft.resolver.RankingResolver;
 import com.justtennis.plugin.fft.resolver.SaisonResolver;
 import com.justtennis.plugin.fft.resolver.ScoreSetResolver;
 import com.justtennis.plugin.fft.resolver.UserResolver;
+import com.justtennis.plugin.fft.service.FFTService;
 
 import java.text.DateFormat;
 import java.text.MessageFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -38,10 +39,9 @@ public abstract class CreateInviteTask extends AsyncTask<Void, Void, Boolean> {
 
     private static final String TAG = CreateInviteTask.class.getName();
 
-    private static final long ID_UNKNOWN_PLAYER = -1l;
-    private static final long ID_NC_RANKING = -1l;
+    private static final long ID_UNKNOWN_PLAYER = -1L;
+    private static final long ID_NC_RANKING = -1L;
 
-    private SimpleDateFormat sdfFFT;
     private DateFormat sdfBirth;
 
     private Context context;
@@ -54,7 +54,6 @@ public abstract class CreateInviteTask extends AsyncTask<Void, Void, Boolean> {
         this.listMatch = listMatch;
         this.listMatchDto = listMatchDto;
         this.millesime = millesime;
-        sdfFFT = new SimpleDateFormat("dd/MM/yyyy", Locale.FRANCE);
         sdfBirth = new SimpleDateFormat(context.getString(R.string.msg_common_format_date), Locale.FRANCE);
     }
 
@@ -79,13 +78,8 @@ public abstract class CreateInviteTask extends AsyncTask<Void, Void, Boolean> {
     private void createInvite(MillesimeMatchResponse.MatchItem match, Long idSaison) {
         Long idPlayer = createOrGetPlayer(match, idSaison);
         Long idRanking = getRanking(match);
-        Date date = new Date();
-        try {
-            date = sdfFFT.parse(match.date);
-        } catch (ParseException e) {
-            Log.e(TAG, MessageFormat.format("Formatting match.date:{0}", match.date), e);
-        }
-        String scoreResult = match.vicDef.startsWith("D") ? InviteManager.SCORE_RESULT.DEFEAT.toString() :  InviteManager.SCORE_RESULT.VICTORY.toString();
+        Date date = FFTService.getDateFromFFT(match.date);
+        String scoreResult = FFTService.getScoreResultFromFFT(match.vicDef).toString();
         Long idClub = null;
 
         InviteResolver inviteResolver = InviteResolver.getInstance();
@@ -94,19 +88,13 @@ public abstract class CreateInviteTask extends AsyncTask<Void, Void, Boolean> {
         createScoreSet(match, idInvite);
     }
 
-    @Nullable
+    @NonNull
     private Long createOrGetPlayer(MillesimeMatchResponse.MatchItem match, Long idSaison) {
         Long ret = null;
-        String playerName = match.name;
+        String[] playerName = MatchContent.getFirstLastName(match.name);
         if (playerName != null) {
-            String firstname = playerName;
-            String lastname = "";
-            int iSep = playerName.indexOf(' ');
-            if (iSep > 0) {
-                firstname = playerName.substring(0, iSep);
-                lastname = playerName.substring(iSep+1);
-            }
-
+            String firstname = playerName[0];
+            String lastname = playerName[1];
             String birthday = getBirthday(match);
 
             PlayerResolver playerResolver = PlayerResolver.getInstance();
@@ -117,11 +105,10 @@ public abstract class CreateInviteTask extends AsyncTask<Void, Void, Boolean> {
             } else {
                 ret = listPlayer.get(0).getId();
             }
-
-            if (ret == null) {
-                // Set ret to UNKNOW
-                ret = ID_UNKNOWN_PLAYER;
-            }
+        }
+        if (ret == null) {
+            // Set ret to UNKNOW
+            ret = ID_UNKNOWN_PLAYER;
         }
         return ret;
     }
@@ -188,12 +175,16 @@ public abstract class CreateInviteTask extends AsyncTask<Void, Void, Boolean> {
     private Long createOrGetSaison(String millesime) {
         Long idSaison = null;
         SaisonResolver saisonResolver = SaisonResolver.getInstance();
-        List<Saison> listSaison = saisonResolver.queryAll(context);
-        for(Saison s : listSaison) {
-            if (s.getName().endsWith(millesime)) {
-                idSaison = s.getId();
-                break;
-            }
+//        List<Saison> listSaison = saisonResolver.queryAll(context);
+//        for(Saison s : listSaison) {
+//            if (s.getName().endsWith(millesime)) {
+//                idSaison = s.getId();
+//                break;
+//            }
+//        }
+        List<Saison> listSaison = saisonResolver.queryNameEndWith(context, millesime);
+        if (listSaison != null && !listSaison.isEmpty()) {
+            idSaison = listSaison.get(0).getId();
         }
 
         if (idSaison == null) {

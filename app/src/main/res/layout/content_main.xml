@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- As the main content view, the view below consumes the entire
+<!-- As the main date view, the view below consumes the entire
      space available using match_parent in both dimensions. -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
