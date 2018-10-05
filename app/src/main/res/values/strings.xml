@@ -4,6 +4,10 @@
     <!-- Strings related to login -->
     <string name="prompt_email">Login</string>
     <string name="prompt_password">Password</string>
+    <string name="prompt_proxy_host">Proxy Host</string>
+    <string name="prompt_proxy_port">Port</string>
+    <string name="prompt_proxy_login">Proxy User</string>
+    <string name="prompt_proxy_password">Proxy Password</string>
     <string name="action_sign_in">Connection</string>
     <string name="action_sign_in_short">Connect</string>
     <string name="error_invalid_email">This login address is invalid</string>

@@ -45,11 +45,15 @@ class CommonSharedPref {
     }
 
     public static int getInteger(Context context, String method, String key) {
+        return getInteger(context, method, key, -1);
+    }
+
+    public static int getInteger(Context context, String method, String key, int defaultValue) {
         if (context == null) {
             logMe(method + " context is null");
             return -1;
         } else {
-            return SharedPrefUtils.getIntegerPreference(context, key, -1);
+            return SharedPrefUtils.getIntegerPreference(context, key, defaultValue);
         }
     }
 

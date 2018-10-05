@@ -9,6 +9,7 @@ public class ProxySharedPref {
     private static final String SHARED_PREF_PROXY_PORT = "SHARED_PREF_PROXY_PORT";
     private static final String SHARED_PREF_PROXY_USER = "SHARED_PREF_PROXY_USER";
     private static final String SHARED_PREF_PROXY_PASWD = "SHARED_PREF_PROXY_PASWD";
+    private static final int PROXY_PORT_DEFAULT = 8080;
 
     private ProxySharedPref() {
     }
@@ -30,7 +31,7 @@ public class ProxySharedPref {
     }
 
     public static int getPort(Context context) {
-        return CommonSharedPref.getInteger(context, "getPort", SHARED_PREF_PROXY_PORT);
+        return CommonSharedPref.getInteger(context, "getPort", SHARED_PREF_PROXY_PORT, PROXY_PORT_DEFAULT);
     }
 
     public static void setPort(Context context, int port) {
@@ -56,7 +57,7 @@ public class ProxySharedPref {
     public static void clean(Context context) {
         setUseProxy(context, false);
         setSite(context, "");
-        setPort(context, -1);
+        setPort(context, PROXY_PORT_DEFAULT);
         setUser(context, "");
         setPwd(context, "");
     }

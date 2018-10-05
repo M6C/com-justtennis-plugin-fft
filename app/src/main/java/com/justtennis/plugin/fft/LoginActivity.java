@@ -38,6 +38,7 @@ import com.justtennis.plugin.fft.tool.ProgressTool;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -45,11 +46,6 @@ import static android.Manifest.permission.READ_CONTACTS;
  * A login screen that offers login via email/password.
  */
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
-
-    private static final String PROXY_USER = "pckh146";
-    private static final String PROXY_PW = "k5F+n7S!";
-    private static final String PROXY_HOST = "proxy-internet.net-courrier.extra.laposte.fr";
-    private static final int PROXY_PORT = 8080;
 
     /**
      * Id to identity READ_CONTACTS permission request.
@@ -70,6 +66,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private View mLoginFormView;
     private TextView mResponse;
     private CheckBox mUseProxy;
+
+    private View mProxyForm;
+    private EditText mProxyHost;
+    private EditText mProxyPort;
+    private EditText mProxyLogin;
+    private EditText mProxyPassword;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +98,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mProgressView = findViewById(R.id.login_progress);
         mResponse = findViewById(R.id.tv_response);
         mUseProxy = findViewById(R.id.chk_use_proxy);
+
+        mProxyForm = findViewById(R.id.proxy_form);
+        mProxyHost = findViewById(R.id.proxy_host);
+        mProxyPort = findViewById(R.id.proxy_port);
+        mProxyLogin = findViewById(R.id.proxy_login);
+        mProxyPassword = findViewById(R.id.proxy_password);
+
 
         initializeForm();
 
@@ -185,6 +194,24 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mLoginView.setError(getString(R.string.error_invalid_email));
             focusView = mLoginView;
             cancel = true;
+        } else if (mUseProxy.isChecked()) {
+            if (mProxyHost.getText().length()==0) {
+                mProxyHost.setError(getString(R.string.error_field_required));
+                focusView = mProxyHost;
+                cancel = true;
+            } else if (mProxyPort.getText().length()==0) {
+                mProxyPort.setError(getString(R.string.error_field_required));
+                focusView = mProxyPort;
+                cancel = true;
+            } else if (mProxyLogin.getText().length()==0) {
+                mProxyLogin.setError(getString(R.string.error_field_required));
+                focusView = mProxyLogin;
+                cancel = true;
+            } else if (mProxyPassword.getText().length()==0) {
+                mProxyPassword.setError(getString(R.string.error_field_required));
+                focusView = mProxyPassword;
+                cancel = true;
+            }
         }
 
         if (cancel) {
@@ -266,7 +293,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     private void initializeForm() {
+        mUseProxy.setOnCheckedChangeListener((v, check) -> mProxyForm.setVisibility(check ? View.VISIBLE : View.GONE));
         mUseProxy.setChecked(ProxySharedPref.getUseProxy(context));
+        mProxyHost.setText(ProxySharedPref.getSite(context));
+        mProxyPort.setText(String.format(Locale.FRANCE, "%1$d",ProxySharedPref.getPort(context)));
+        mProxyLogin.setText(ProxySharedPref.getUser(context));
+        mProxyPassword.setText(ProxySharedPref.getPwd(context));
 
         String login = FFTSharedPref.getLogin(context);
         if (login == null || login.isEmpty()) {
@@ -330,11 +362,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         @Override
         protected FFTService newFFTService(Context context) {
             ProxySharedPref.setUseProxy(context, mUseProxy.isChecked());
-            if (ProxySharedPref.getSite(context) == null) {
-                ProxySharedPref.setSite(context, PROXY_HOST);
-                ProxySharedPref.setPort(context, PROXY_PORT);
-                ProxySharedPref.setUser(context, PROXY_USER);
-                ProxySharedPref.setPwd(context, PROXY_PW);
+            if (mUseProxy.isChecked()) {
+                ProxySharedPref.setSite(context, mProxyHost.getText().toString());
+                ProxySharedPref.setPort(context, Integer.parseInt(mProxyPort.getText().toString()));
+                ProxySharedPref.setUser(context, mProxyLogin.getText().toString());
+                ProxySharedPref.setPwd(context, mProxyPassword.getText().toString());
             }
             return super.newFFTService(context);
         }
