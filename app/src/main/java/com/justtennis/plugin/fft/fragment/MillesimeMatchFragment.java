@@ -133,7 +133,7 @@ public class MillesimeMatchFragment extends Fragment implements OnListFragmentIn
         adpMillesime = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, listMillesime);
         spMillesime.setAdapter(adpMillesime);
 
-        loadMillesime(context);
+        loadMillesime();
 
         spMillesime.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
@@ -145,16 +145,16 @@ public class MillesimeMatchFragment extends Fragment implements OnListFragmentIn
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                showProgressMatch(true);
+                // Nothing to do
             }
         });
     }
 
-    private void loadMillesime(Context context) {
+    private void loadMillesime() {
+        Context context = getContext();
         if (mMillesimeTask != null) {
             mMillesimeTask.cancel(true);
         }
-        showProgressMillesime(true);
         mMillesimeTask = new MyMillesimeTask(context);
         mMillesimeTask.execute((Void) null);
     }
@@ -162,13 +162,18 @@ public class MillesimeMatchFragment extends Fragment implements OnListFragmentIn
     private void loadMatch() {
         Context context = getContext();
         if (mMillesimePosition > 0) {
-            showProgressMatch(true);
             String millesime = listMillesime.get(mMillesimePosition);
             adpMatch.setMillesime(millesime);
             mMillesimeMatchTask = new MyMillesimeMatchTask(context, millesime);
             mMillesimeMatchTask.execute((Void) null);
+        }
+    }
+
+    private void refresh() {
+        if (mMillesimePosition > 0) {
+            loadMatch();
         } else {
-            loadMillesime(context);
+            loadMillesime();
         }
     }
 
@@ -198,7 +203,7 @@ public class MillesimeMatchFragment extends Fragment implements OnListFragmentIn
 
     private void initializeFabRefresh() {
         FragmentTool.initializeFabDrawable(Objects.requireNonNull(getActivity()), FragmentTool.INIT_FAB_IMAGE.REFRESH);
-        FragmentTool.onClickFab(getActivity(), view -> loadMatch());
+        FragmentTool.onClickFab(getActivity(), view -> refresh());
     }
 
     private void initializeFabValidate() {
@@ -240,7 +245,9 @@ public class MillesimeMatchFragment extends Fragment implements OnListFragmentIn
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            showProgressMillesime(true);
             listMillesime.clear();
+            adpMillesime.notifyDataSetChanged();
         }
 
         @Override
@@ -284,6 +291,7 @@ public class MillesimeMatchFragment extends Fragment implements OnListFragmentIn
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            showProgressMatch(true);
             listMatch.clear();
             listMatchDto.clear();
             adpMatch.notifyDataSetChanged();
