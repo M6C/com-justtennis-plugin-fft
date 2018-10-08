@@ -1,7 +1,6 @@
 package com.justtennis.plugin.fft.adapter;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,7 +12,7 @@ import com.cameleon.common.android.factory.FactoryDialog;
 import com.justtennis.plugin.fft.R;
 import com.justtennis.plugin.fft.dto.MatchContent;
 import com.justtennis.plugin.fft.dto.MatchDto;
-import com.justtennis.plugin.fft.fragment.MatchFragment.OnListFragmentInteractionListener;
+import com.justtennis.plugin.fft.interfaces.OnListFragmentInteractionListener;
 import com.justtennis.plugin.fft.model.Invite;
 import com.justtennis.plugin.fft.model.Player;
 import com.justtennis.plugin.fft.model.Saison;

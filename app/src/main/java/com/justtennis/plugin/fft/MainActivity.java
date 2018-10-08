@@ -1,5 +1,7 @@
 package com.justtennis.plugin.fft;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -12,11 +14,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.justtennis.plugin.fft.dto.MatchDto;
-import com.justtennis.plugin.fft.fragment.MatchFragment;
+import com.justtennis.plugin.fft.fragment.MillesimeMatchFragment;
+import com.justtennis.plugin.fft.fragment.RankingMatchFragment;
 import com.justtennis.plugin.fft.tool.FragmentTool;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, MatchFragment.OnListFragmentInteractionListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+
+    private NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,14 +39,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         Bundle bundle = (savedInstanceState != null) ? savedInstanceState : getIntent().getExtras();
         if (bundle != null) {
             // Something to do
         }
-        FragmentTool.replaceFragment(this, MatchFragment.newInstance());
+        navigationView.getMenu().getItem(0).setChecked(true);
+        FragmentTool.replaceFragment(this, MillesimeMatchFragment.newInstance());
     }
 
     @Override
@@ -82,27 +87,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        Menu menu = navigationView.getMenu();
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        if (id == R.id.nav_millesime_match && !menu.findItem(R.id.nav_millesime_match).isChecked()) {
+            FragmentTool.replaceFragment(this, MillesimeMatchFragment.newInstance());
+        } else if (id == R.id.nav_ranking_match && !menu.findItem(R.id.nav_ranking_match).isChecked()) {
+            FragmentTool.replaceFragment(this, RankingMatchFragment.newInstance());
+//        } else if (id == R.id.nav_slideshow) {
+//
+//        } else if (id == R.id.nav_manage) {
+//
+        } else if (id == R.id.nav_fft) {
+            String url = "https://mon-espace-tennis.fft.fr";
+            Intent i = new Intent(Intent.ACTION_VIEW);
+            i.setData(Uri.parse(url));
+            startActivity(i);
+//        } else if (id == R.id.nav_send) {
+//
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-
-    @Override
-    public void onListFragmentInteraction(MatchDto item) {
     }
 }

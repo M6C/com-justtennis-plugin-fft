@@ -25,15 +25,14 @@ import com.justtennis.plugin.fft.R;
 import com.justtennis.plugin.fft.adapter.MatchAdapter;
 import com.justtennis.plugin.fft.dto.MatchContent;
 import com.justtennis.plugin.fft.dto.MatchDto;
+import com.justtennis.plugin.fft.interfaces.OnListFragmentInteractionListener;
 import com.justtennis.plugin.fft.model.User;
 import com.justtennis.plugin.fft.query.response.MillesimeMatchResponse;
 import com.justtennis.plugin.fft.query.response.PalmaresMillesimeResponse;
-import com.justtennis.plugin.fft.query.response.RankingMatchResponse;
 import com.justtennis.plugin.fft.resolver.UserResolver;
 import com.justtennis.plugin.fft.task.CreateInviteTask;
 import com.justtennis.plugin.fft.task.MillesimeMatchTask;
 import com.justtennis.plugin.fft.task.MillesimeTask;
-import com.justtennis.plugin.fft.task.RankingMatchTask;
 import com.justtennis.plugin.fft.tool.FragmentTool;
 import com.justtennis.plugin.fft.tool.ProgressTool;
 
@@ -41,15 +40,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * A fragment representing a listMillesime of Items.
- * <p/>
- * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
- * interface.
- */
-public class MatchFragment extends Fragment {
+public class MillesimeMatchFragment extends Fragment implements OnListFragmentInteractionListener {
 
-    private static final String TAG = MatchFragment.class.getName();
+    private static final String TAG = MillesimeMatchFragment.class.getName();
 
     private static final String ARG_COLUMN_COUNT = "column-count";
 
@@ -58,14 +51,12 @@ public class MatchFragment extends Fragment {
     private List<MillesimeMatchResponse.MatchItem> listMatch = new ArrayList<>();
     private List<MatchDto> listMatchDto = new ArrayList<>();
     private List<String> listMillesime = new ArrayList<>();
-    private OnListFragmentInteractionListener mListener;
     private View llMatch;
     private Spinner spMillesime;
     private ArrayAdapter<String> adpMillesime;
     private MatchAdapter adpMatch;
     private MillesimeTask mMillesimeTask;
     private MillesimeMatchTask mMillesimeMatchTask;
-    private MyRankingMatchTask mRankingMatchTask;
     private ProgressBar pgMatch;
     private ProgressBar pgMillesime;
     private TextView tvMessage;
@@ -76,12 +67,12 @@ public class MatchFragment extends Fragment {
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public MatchFragment() {
+    public MillesimeMatchFragment() {
         // Nothing to do
     }
 
-    public static MatchFragment newInstance() {
-        MatchFragment fragment = new MatchFragment();
+    public static MillesimeMatchFragment newInstance() {
+        MillesimeMatchFragment fragment = new MillesimeMatchFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, 1);
         fragment.setArguments(args);
@@ -111,40 +102,9 @@ public class MatchFragment extends Fragment {
 
         initializeMatch();
         initializeMillesime();
+        hideFab();
 
         return view;
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnListFragmentInteractionListener) {
-            mListener = (OnListFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnListFragmentInteractionListener");
-        }
-        hideFab();
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnListFragmentInteractionListener {
-        void onListFragmentInteraction(MatchDto item);
     }
 
     private void initializeMatch() {
@@ -158,15 +118,12 @@ public class MatchFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            adpMatch = new MatchAdapter(context, listMatchDto, mListener);
+            adpMatch = new MatchAdapter(context, listMatchDto, this);
             recyclerView.setAdapter(adpMatch);
         }
 
         if (mMillesimeMatchTask!= null) {
             mMillesimeMatchTask.cancel(true);
-        }
-        if (mRankingMatchTask!= null) {
-            mRankingMatchTask.cancel(true);
         }
     }
 
@@ -176,12 +133,7 @@ public class MatchFragment extends Fragment {
         adpMillesime = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, listMillesime);
         spMillesime.setAdapter(adpMillesime);
 
-        if (mMillesimeTask != null) {
-            mMillesimeTask.cancel(true);
-        }
-        showProgressMillesime(true);
-        mMillesimeTask = new MyMillesimeTask(context);
-        mMillesimeTask.execute((Void) null);
+        loadMillesime(context);
 
         spMillesime.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
@@ -198,17 +150,25 @@ public class MatchFragment extends Fragment {
         });
     }
 
+    private void loadMillesime(Context context) {
+        if (mMillesimeTask != null) {
+            mMillesimeTask.cancel(true);
+        }
+        showProgressMillesime(true);
+        mMillesimeTask = new MyMillesimeTask(context);
+        mMillesimeTask.execute((Void) null);
+    }
+
     private void loadMatch() {
         Context context = getContext();
-        if (mMillesimePosition == 0) {
-//            mRankingMatchTask = new MyRankingMatchTask(context);
-//            mRankingMatchTask.execute((Void)null);
-        } else {
+        if (mMillesimePosition > 0) {
             showProgressMatch(true);
             String millesime = listMillesime.get(mMillesimePosition);
             adpMatch.setMillesime(millesime);
             mMillesimeMatchTask = new MyMillesimeMatchTask(context, millesime);
             mMillesimeMatchTask.execute((Void) null);
+        } else {
+            loadMillesime(context);
         }
     }
 
@@ -265,6 +225,10 @@ public class MatchFragment extends Fragment {
             showMessage(R.string.msg_no_user_found_in_main_application);
             initializeFabHideMessage(activity);
         }
+    }
+
+    @Override
+    public void onListFragmentInteraction(MatchDto item) {
     }
 
     @SuppressLint("StaticFieldLeak")
@@ -339,38 +303,7 @@ public class MatchFragment extends Fragment {
         protected void onCancelled() {
             super.onCancelled();
             showProgressMatch(false);
-            mRankingMatchTask = null;
-        }
-    }
-
-    @SuppressLint("StaticFieldLeak")
-    private class MyRankingMatchTask extends RankingMatchTask {
-
-        MyRankingMatchTask(Context context) {
-            super(context);
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            listMatch.clear();
-            listMatchDto.clear();
-        }
-
-        @Override
-        protected void onPostExecute(List<RankingMatchResponse.RankingItem> matchs) {
-            super.onPostExecute(matchs);
-            showProgressMatch(false);
-            listMatchDto.addAll(MatchContent.toDto(matchs));
-            adpMatch.notifyDataSetChanged();
-            initializeFabValidate();
-        }
-
-        @Override
-        protected void onCancelled() {
-            super.onCancelled();
-            showProgressMatch(false);
-            mRankingMatchTask = null;
+            mMillesimeMatchTask = null;
         }
     }
 
