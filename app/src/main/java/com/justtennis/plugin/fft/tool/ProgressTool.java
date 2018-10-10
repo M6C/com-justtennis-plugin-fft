@@ -16,6 +16,9 @@ public class ProgressTool {
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     public static void showProgress(Context context, View content, View progress, final boolean show) {
+        if (context == null) {
+            return;
+        }
         // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
         // for very easy animations. If available, use these APIs to fade-in
         // the progress spinner.
