@@ -1,5 +1,6 @@
 package com.justtennis.plugin.fft;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.view.MenuItem;
 
 import com.justtennis.plugin.fft.fragment.MillesimeMatchFragment;
 import com.justtennis.plugin.fft.fragment.RankingMatchFragment;
+import com.justtennis.plugin.fft.preference.FFTSharedPref;
 import com.justtennis.plugin.fft.tool.FragmentTool;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -102,8 +104,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             Intent i = new Intent(Intent.ACTION_VIEW);
             i.setData(Uri.parse(url));
             startActivity(i);
-//        } else if (id == R.id.nav_send) {
-//
+        } else if (id == R.id.nav_disconnect) {
+            Context context = getApplicationContext();
+            FFTSharedPref.cleanSecurity(context);
+            startActivity(new Intent(context, LoginActivity.class));
+            finish();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

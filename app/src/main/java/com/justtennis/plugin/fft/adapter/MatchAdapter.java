@@ -56,9 +56,16 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchViewHolder> {
 
         holder.mItem.selected = !checkMatchExist(holder.mItem);
 
-        holder.mContentView.setText(holder.mItem.date);
-        holder.mDetailView.setText(holder.mItem.details);
         holder.mCheckView.setChecked(holder.mItem.selected);
+        holder.mDateView.setText(holder.mItem.date);
+        holder.mVicDefView.setText(holder.mItem.vicDef);
+        holder.mNameView.setText(holder.mItem.name);
+        holder.mRankingView.setText(holder.mItem.ranking);
+        holder.mScoreView.setText("Oui".equalsIgnoreCase(holder.mItem.wo) ? "WO" : holder.mItem.score);
+        holder.mPointsView.setText(holder.mItem.points);
+
+        holder.mScoreView.setVisibility(holder.mItem.score != null && !holder.mItem.score.isEmpty() ? View.VISIBLE : View.GONE);
+        holder.mPointsView.setVisibility(holder.mItem.points != null && !holder.mItem.points.isEmpty() ? View.VISIBLE : View.GONE);
 
         holder.mView.setOnClickListener(v -> {
             holder.mCheckView.setChecked(!holder.mCheckView.isChecked());

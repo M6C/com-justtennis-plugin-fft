@@ -14,7 +14,6 @@ import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -49,8 +48,8 @@ public class RankingMatchFragment extends Fragment implements OnListFragmentInte
     private MyRankingMatchTask mRankingMatchTask;
     private ProgressBar pgMatch;
     private TextView tvMessage;
-    private LinearLayout llMessage;
-    private LinearLayout llContent;
+    private View llMessage;
+    private View llContent;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the

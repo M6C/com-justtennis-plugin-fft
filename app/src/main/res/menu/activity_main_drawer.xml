@@ -7,11 +7,11 @@
         <item
             android:id="@+id/nav_millesime_match"
             android:icon="@drawable/ic_menu_camera"
-            android:title="Millesime Match" />
+            android:title="@string/drawer_item_millesime_match" />
         <item
             android:id="@+id/nav_ranking_match"
             android:icon="@drawable/ic_menu_gallery"
-            android:title="Ranking Match" />
+            android:title="@string/drawer_item_ranking_match" />
         <!--<item-->
             <!--android:id="@+id/nav_slideshow"-->
             <!--android:icon="@drawable/ic_menu_slideshow"-->
@@ -22,17 +22,16 @@
             <!--android:title="Tools" />-->
     </group>
 
-    <item android:title="Communicate">
+    <item android:title="@string/drawer_title_communicate">
         <menu>
             <item
                 android:id="@+id/nav_fft"
                 android:icon="@drawable/ic_menu_share"
-                android:title="Mon Espace FFT" />
+                android:title="@string/drawer_item_mon_espace_fft" />
             <item
-                android:id="@+id/nav_send"
+                android:id="@+id/nav_disconnect"
                 android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
+                android:title="@string/drawer_item_disconnect" />
         </menu>
     </item>
-
 </menu>

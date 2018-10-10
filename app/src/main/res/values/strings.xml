@@ -34,4 +34,9 @@
 
     <string name="dialog_confirm_check_match_already_exist_title">Confirm import</string>
     <string name="dialog_confirm_check_match_already_exist_message">This Match has been detected already exist. Confirm check ?</string>
+    <string name="drawer_item_millesime_match">Millesime Match</string>
+    <string name="drawer_item_ranking_match">Ranking Match</string>
+    <string name="drawer_title_communicate">Communicate</string>
+    <string name="drawer_item_mon_espace_fft">Mon Espace FFT</string>
+    <string name="drawer_item_disconnect">Disconnect</string>
 </resources>
