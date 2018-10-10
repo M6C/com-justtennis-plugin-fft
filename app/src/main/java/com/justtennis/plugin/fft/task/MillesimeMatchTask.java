@@ -23,10 +23,12 @@ public abstract class MillesimeMatchTask extends AsyncTask<Void, String, List<Mi
     private static final String TAG = MillesimeMatchTask.class.getName();
 
     private FFTService fftService;
+    private String palmaresAction;
     private String millesime;
 
-    protected MillesimeMatchTask(Context context, String millesime) {
+    protected MillesimeMatchTask(Context context, String palmaresAction, String millesime) {
         fftService = newFFTService(context);
+        this.palmaresAction = palmaresAction;
         this.millesime = millesime;
     }
 
@@ -34,10 +36,17 @@ public abstract class MillesimeMatchTask extends AsyncTask<Void, String, List<Mi
     protected List<MillesimeMatchResponse.MatchItem> doInBackground(Void... params) {
         List<MillesimeMatchResponse.MatchItem> ret = new ArrayList<>();
         try {
-            ResponseHttp home = fftService.navigateToHomePage(null);
-            PalmaresResponse palmaresResponse = fftService.getPalmares(home);
+            PalmaresResponse palmaresResponse;
+            if (palmaresAction != null) {
+                palmaresResponse = new PalmaresResponse();
+                palmaresResponse.action = palmaresAction;
+            } else {
+                ResponseHttp home = fftService.navigateToHomePage(null);
+                palmaresResponse = fftService.getPalmares(home);
+            }
+            palmaresResponse.millesime = millesime;
 
-            if (palmaresResponse != null && palmaresResponse.action != null) {
+            if (palmaresResponse.action != null) {
                 ResponseHttp palmares = fftService.navigateToPalmares(null, palmaresResponse);
                 if (palmares.body != null) {
                     PalmaresMillesimeResponse palmaresMillesimeResponse = fftService.getPalmaresMillesime(palmares);

@@ -35,6 +35,7 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchViewHolder> {
     private final List<MatchDto> mValues;
     private final OnListFragmentInteractionListener mListener;
     private String millesime;
+    private boolean canValidate;
 
     public MatchAdapter(Context context, List<MatchDto> items, OnListFragmentInteractionListener listener) {
         this.context = context;
@@ -56,6 +57,7 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchViewHolder> {
 
         holder.mItem.selected = !checkMatchExist(holder.mItem);
 
+        holder.mCheckView.setVisibility(canValidate ? View.VISIBLE : View.GONE);
         holder.mCheckView.setChecked(holder.mItem.selected);
         holder.mDateView.setText(holder.mItem.date);
         holder.mVicDefView.setText(holder.mItem.vicDef);
@@ -125,5 +127,9 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchViewHolder> {
 
     public void setMillesime(String millesime) {
         this.millesime = millesime;
+    }
+
+    public void setCanValidate(boolean canValidate) {
+        this.canValidate = canValidate;
     }
 }

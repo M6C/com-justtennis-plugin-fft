@@ -24,7 +24,8 @@ public class FragmentTool {
         VALIDATE(R.drawable.ic_check_black_24dp),
         ADD(android.R.drawable.ic_input_add),
         BACK(R.drawable.ic_arrow_back_black_24dp),
-        REFRESH(R.drawable.ic_refresh_black_48dp);
+        REFRESH(R.drawable.ic_refresh_black_48dp),
+        INFORMATION(R.drawable.ic_refresh_black_48dp);
 
         @DrawableRes
         int res;
