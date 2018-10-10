@@ -1,6 +1,8 @@
 package com.justtennis.plugin.fft.dto;
 
-public class MatchDto {
+import java.io.Serializable;
+
+public class MatchDto implements Serializable {
     public boolean selected;
     public final String id;
     public final String date;
@@ -10,8 +12,9 @@ public class MatchDto {
     public final String score;
     public final String points;
     public final String wo;
+    public final String linkPalmares;
 
-    public MatchDto(String id, String date, String name, String vicDef, String ranking, String score, String points, String wo) {
+    public MatchDto(String id, String date, String name, String vicDef, String ranking, String score, String points, String wo, String linkPalmares) {
         this.id = id;
         this.date = date;
         this.name = name;
@@ -20,6 +23,7 @@ public class MatchDto {
         this.score = score;
         this.points = points;
         this.wo = wo;
+        this.linkPalmares = linkPalmares;
     }
 
     @Override
@@ -34,6 +38,7 @@ public class MatchDto {
                 ", score='" + score + '\'' +
                 ", points='" + points + '\'' +
                 ", wo='" + wo + '\'' +
+                ", linkPalmares='" + linkPalmares + '\'' +
                 '}';
     }
 }

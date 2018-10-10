@@ -44,11 +44,11 @@ public class MatchContent {
     }
 
     private static MatchDto createDao(int position, RankingMatchResponse.RankingItem item) {
-        return new MatchDto(String.valueOf(position), item.date, item.name, item.vicDef, item.ranking, null, item.points, item.wo);
+        return new MatchDto(String.valueOf(position), item.date, item.name, item.vicDef, item.ranking, null, item.points, item.wo, null);
     }
 
     private static MatchDto createDao(int position, MillesimeMatchResponse.MatchItem item) {
-        return new MatchDto(String.valueOf(position), item.date, item.name, item.vicDef, item.ranking, item.score, null, item.wo);
+        return new MatchDto(String.valueOf(position), item.date, item.name, item.vicDef, item.ranking, item.score, null, item.wo, item.linkPalmares);
     }
 
     private static String makeDetails(RankingMatchResponse.RankingItem item) {

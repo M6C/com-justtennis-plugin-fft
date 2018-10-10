@@ -20,6 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.justtennis.plugin.fft.R;
 import com.justtennis.plugin.fft.adapter.MatchAdapter;
@@ -36,6 +37,7 @@ import com.justtennis.plugin.fft.task.MillesimeTask;
 import com.justtennis.plugin.fft.tool.FragmentTool;
 import com.justtennis.plugin.fft.tool.ProgressTool;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -45,9 +47,14 @@ public class MillesimeMatchFragment extends Fragment implements OnListFragmentIn
     private static final String TAG = MillesimeMatchFragment.class.getName();
 
     private static final String ARG_COLUMN_COUNT = "column-count";
+    private static final String ARG_MATCH = "ARG_MATCH";
+    private static final String ARG_MILLESIME = "ARG_MILLESIME";
+    private static final String DAT_MILLESIME_POS = "DAT_MILLESIME_POS";
 
     private int mMillesimePosition = 0;
     private int mColumnCount = 1;
+    private MatchDto argMatch;
+    private String argMillesime;
     private List<MillesimeMatchResponse.MatchItem> listMatch = new ArrayList<>();
     private List<MatchDto> listMatchDto = new ArrayList<>();
     private List<String> listMillesime = new ArrayList<>();
@@ -62,6 +69,7 @@ public class MillesimeMatchFragment extends Fragment implements OnListFragmentIn
     private TextView tvMessage;
     private LinearLayout llMessage;
     private LinearLayout llContent;
+    private FragmentActivity activity;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -72,20 +80,27 @@ public class MillesimeMatchFragment extends Fragment implements OnListFragmentIn
     }
 
     public static MillesimeMatchFragment newInstance() {
+        return newInstance(null, null);
+    }
+
+    public static MillesimeMatchFragment newInstance(MatchDto match, String millesime) {
         MillesimeMatchFragment fragment = new MillesimeMatchFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, 1);
+        if (match != null) {
+            args.putSerializable(ARG_MATCH, match);
+        }
+        if (millesime != null && !millesime.isEmpty()) {
+            args.putString(ARG_MILLESIME, millesime);
+        }
         fragment.setArguments(args);
         return fragment;
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        if (getArguments() != null) {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-        }
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        activity = getActivity();
     }
 
     @Override
@@ -100,6 +115,14 @@ public class MillesimeMatchFragment extends Fragment implements OnListFragmentIn
         llMessage = view.findViewById(R.id.llMessage);
         llContent = view.findViewById(R.id.llContent);
 
+        Bundle arguments = (savedInstanceState != null) ? savedInstanceState : getArguments();
+        if (arguments != null) {
+            mColumnCount = arguments.getInt(ARG_COLUMN_COUNT, mColumnCount);
+            argMatch = arguments.containsKey(ARG_MATCH) ? (MatchDto) arguments.getSerializable(ARG_MATCH) : argMatch;
+            argMillesime = arguments.getString(ARG_MILLESIME, argMillesime);
+            mMillesimePosition = arguments.getInt(DAT_MILLESIME_POS, mMillesimePosition);
+        }
+
         initializeMatch();
         initializeMillesime();
         hideFab();
@@ -107,9 +130,30 @@ public class MillesimeMatchFragment extends Fragment implements OnListFragmentIn
         return view;
     }
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(ARG_COLUMN_COUNT, mColumnCount);
+        if (argMatch != null) {
+            outState.putSerializable(ARG_MATCH, argMatch);
+        }
+        if (argMillesime != null) {
+            outState.putString(ARG_MILLESIME, argMillesime);
+        }
+        outState.putInt(DAT_MILLESIME_POS, mMillesimePosition);
+    }
+
+    @Override
+    public void onListFragmentInteraction(MatchDto item) {
+        if (item.linkPalmares != null && !item.linkPalmares.isEmpty()) {
+            FragmentTool.replaceFragment(activity, MillesimeMatchFragment.newInstance(item, getMillesime()));
+        }
+    }
+
     private void initializeMatch() {
         Context context = getContext();
         assert context != null;
+        listMatchDto.clear();
         // Set the adapter
         if (llMatch instanceof RecyclerView) {
             RecyclerView recyclerView = (RecyclerView) llMatch;
@@ -120,6 +164,7 @@ public class MillesimeMatchFragment extends Fragment implements OnListFragmentIn
             }
             adpMatch = new MatchAdapter(context, listMatchDto, this);
             recyclerView.setAdapter(adpMatch);
+            adpMatch.setCanValidate(canValidate());
         }
 
         if (mMillesimeMatchTask!= null) {
@@ -162,9 +207,9 @@ public class MillesimeMatchFragment extends Fragment implements OnListFragmentIn
     private void loadMatch() {
         Context context = getContext();
         if (mMillesimePosition > 0) {
-            String millesime = listMillesime.get(mMillesimePosition);
+            String millesime = getMillesime();
             adpMatch.setMillesime(millesime);
-            mMillesimeMatchTask = new MyMillesimeMatchTask(context, millesime);
+            mMillesimeMatchTask = new MyMillesimeMatchTask(context, (argMatch == null ? null : argMatch.linkPalmares), millesime);
             mMillesimeMatchTask.execute((Void) null);
         }
     }
@@ -207,8 +252,17 @@ public class MillesimeMatchFragment extends Fragment implements OnListFragmentIn
     }
 
     private void initializeFabValidate() {
-        FragmentTool.initializeFabDrawable(Objects.requireNonNull(getActivity()), FragmentTool.INIT_FAB_IMAGE.VALIDATE);
-        FragmentTool.onClickFab(getActivity(), listMatch.isEmpty() ? null : this::onClickFabCreate);
+        if (canValidate()) {
+            FragmentTool.initializeFabDrawable(Objects.requireNonNull(getActivity()), FragmentTool.INIT_FAB_IMAGE.VALIDATE);
+            FragmentTool.onClickFab(getActivity(), listMatch.isEmpty() ? null : this::onClickFabCreate);
+        } else {
+            initializeFabInfo();
+        }
+    }
+
+    private void initializeFabInfo() {
+        FragmentTool.initializeFabDrawable(Objects.requireNonNull(getActivity()), FragmentTool.INIT_FAB_IMAGE.INFORMATION);
+        FragmentTool.onClickFab(getActivity(), listMatch.isEmpty() ? null : this::onClickFabInformation);
     }
 
     private void initializeFabHideMessage(FragmentActivity activity) {
@@ -222,8 +276,7 @@ public class MillesimeMatchFragment extends Fragment implements OnListFragmentIn
     private void onClickFabCreate(View view) {
         List<User> users = UserResolver.getInstance().queryAll(getContext());
         if (!users.isEmpty()) {
-            String millesime = listMillesime.get(mMillesimePosition);
-            MyCreateInviteTask myCreateInviteTask = new MyCreateInviteTask(getContext(), listMatch, listMatchDto, millesime);
+            MyCreateInviteTask myCreateInviteTask = new MyCreateInviteTask(getContext(), listMatch, listMatchDto, getMillesime());
             myCreateInviteTask.execute((Void) null);
         } else {
             FragmentActivity activity = Objects.requireNonNull(getActivity());
@@ -232,8 +285,16 @@ public class MillesimeMatchFragment extends Fragment implements OnListFragmentIn
         }
     }
 
-    @Override
-    public void onListFragmentInteraction(MatchDto item) {
+    private void onClickFabInformation(View view) {
+        showInformation();
+    }
+
+    private boolean canValidate() {
+        return argMatch == null;
+    }
+
+    private String getMillesime() {
+        return listMillesime.get(mMillesimePosition);
     }
 
     @SuppressLint("StaticFieldLeak")
@@ -265,6 +326,12 @@ public class MillesimeMatchFragment extends Fragment implements OnListFragmentIn
             } finally {
                 if (!listMillesime.isEmpty()) {
                     hideMessage();
+                    if (argMillesime != null && !argMillesime.isEmpty()) {
+                        mMillesimePosition = listMillesime.indexOf(argMillesime);
+                    }
+                    if (mMillesimePosition > 0) {
+                        spMillesime.setSelection(mMillesimePosition);
+                    }
                 } else {
                     initializeFabRefresh();
                     showMessage(R.string.msg_fft_must_connect_to_site);
@@ -284,8 +351,8 @@ public class MillesimeMatchFragment extends Fragment implements OnListFragmentIn
     @SuppressLint("StaticFieldLeak")
     private class MyMillesimeMatchTask extends MillesimeMatchTask {
 
-        MyMillesimeMatchTask(Context context, String millesime) {
-            super(context, millesime);
+        MyMillesimeMatchTask(Context context, String palmaresAction, String millesime) {
+            super(context, palmaresAction, millesime);
         }
 
         @Override
@@ -305,6 +372,10 @@ public class MillesimeMatchFragment extends Fragment implements OnListFragmentIn
             listMatchDto.addAll(MatchContent.toDto2(matchs));
             adpMatch.notifyDataSetChanged();
             initializeFabValidate();
+
+            if (argMatch != null) {
+                showInformation();
+            }
         }
 
         @Override
@@ -313,6 +384,11 @@ public class MillesimeMatchFragment extends Fragment implements OnListFragmentIn
             showProgressMatch(false);
             mMillesimeMatchTask = null;
         }
+    }
+
+    private void showInformation() {
+        String s = MessageFormat.format("Selected Player Match {0} millesime {1}", argMatch.name, getMillesime());
+        Toast.makeText(getContext(), s, Toast.LENGTH_LONG).show();
     }
 
     @SuppressLint("StaticFieldLeak")

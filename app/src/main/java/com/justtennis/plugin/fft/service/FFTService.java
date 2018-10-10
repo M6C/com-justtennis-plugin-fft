@@ -169,7 +169,7 @@ public class FFTService implements IProxy {
 
     public ResponseHttp navigateToPalmares(ResponseHttp loginFormResponse, PalmaresResponse palmaresResponse) throws NotConnectedException {
         logMethod("navigateToPalmares");
-        return doGetConnected(URL_ROOT, palmaresResponse.action, loginFormResponse);
+        return doGetConnected(URL_ROOT, palmaresResponse.getUrlAction(), loginFormResponse);
     }
 
     public PalmaresMillesimeResponse getPalmaresMillesime(ResponseHttp palamresResponseHttp) {

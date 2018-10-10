@@ -22,7 +22,7 @@ public class RankingMatchResponse {
 
         @Override
         public String toString() {
-            return "MatchItem{" +
+            return "RankingItem{" +
                     "name='" + name + '\'' +
                     ", year='" + year + '\'' +
                     ", ranking='" + ranking + '\'' +

@@ -2,8 +2,8 @@ package com.justtennis.plugin.fft.network.tool;
 
 import android.content.Context;
 
-import com.justtennis.plugin.fft.model.LoginFormResponse;
 import com.justtennis.plugin.fft.network.model.ResponseHttp;
+import com.justtennis.plugin.fft.query.response.LoginFormResponse;
 import com.justtennis.plugin.fft.service.FFTService;
 
 import junit.framework.TestCase;
