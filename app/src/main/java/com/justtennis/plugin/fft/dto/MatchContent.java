@@ -3,10 +3,16 @@ package com.justtennis.plugin.fft.dto;
 import com.justtennis.plugin.fft.query.response.MillesimeMatchResponse;
 import com.justtennis.plugin.fft.query.response.RankingMatchResponse;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 public class MatchContent {
+
+    public static SimpleDateFormat sdfFFT = new SimpleDateFormat("dd/MM/yyyy", Locale.FRANCE);
 
     private MatchContent() {}
 
@@ -43,6 +49,19 @@ public class MatchContent {
         return ret;
     }
 
+    public static void sortDefault(List<MatchDto> list) {
+        Collections.sort(list, (m1, m2) -> -(m1.vicDef.compareTo(m2.vicDef) + compareFFTDate(m1.date, m2.date)));
+    }
+
+    private static int compareFFTDate(String date1, String date2) {
+        try {
+            return sdfFFT.parse(date1).compareTo(sdfFFT.parse(date2));
+        } catch (ParseException e) {
+            logMe(e);
+        }
+        return 0;
+    }
+
     private static MatchDto createDao(int position, RankingMatchResponse.RankingItem item) {
         return new MatchDto(String.valueOf(position), item.date, item.name, item.vicDef, item.ranking, null, item.points, item.wo, null);
     }
@@ -57,5 +76,9 @@ public class MatchContent {
 
     private static String makeDetails(MillesimeMatchResponse.MatchItem item) {
         return item.name + " " + item.ranking + " " + item.vicDef + " score:" + item.score;
+    }
+
+    private static void logMe(Exception e) {
+        e.printStackTrace();
     }
 }

@@ -192,6 +192,7 @@ public class RankingMatchFragment extends Fragment implements OnListFragmentInte
             try {
                 mRankingMatchTask = null;
                 listMatchDto.addAll(MatchContent.toDto(matchs));
+                MatchContent.sortDefault(listMatchDto);
                 adpMatch.notifyDataSetChanged();
             } finally {
                 if (!listMatchDto.isEmpty()) {

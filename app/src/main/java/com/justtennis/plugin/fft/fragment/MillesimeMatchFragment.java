@@ -370,6 +370,7 @@ public class MillesimeMatchFragment extends Fragment implements OnListFragmentIn
             showProgressMatch(false);
             listMatch.addAll(matchs);
             listMatchDto.addAll(MatchContent.toDto2(matchs));
+            MatchContent.sortDefault(listMatchDto);
             adpMatch.notifyDataSetChanged();
             initializeFabValidate();
 

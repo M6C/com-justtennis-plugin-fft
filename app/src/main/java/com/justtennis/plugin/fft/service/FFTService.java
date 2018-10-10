@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.justtennis.plugin.converter.LoginFormResponseConverter;
 import com.justtennis.plugin.converter.PalmaresMillesimeFormResponseConverter;
+import com.justtennis.plugin.fft.dto.MatchContent;
 import com.justtennis.plugin.fft.exception.NotConnectedException;
 import com.justtennis.plugin.fft.manager.InviteManager;
 import com.justtennis.plugin.fft.network.HttpGetProxy;
@@ -35,9 +36,7 @@ import org.jsoup.helper.StringUtil;
 
 import java.text.MessageFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 import java.util.Map;
 
 public class FFTService implements IProxy {
@@ -48,8 +47,6 @@ public class FFTService implements IProxy {
     private static final String LOGON_SITE = "mon-espace-tennis.fft.fr";
     private static final int    LOGON_PORT = 80;
     private static final String LOGON_METHOD = "https";
-
-    private static SimpleDateFormat sdfFFT = new SimpleDateFormat("dd/MM/yyyy",Locale.FRANCE);
 
     private Context context;
     private String proxyHost;
@@ -182,9 +179,9 @@ public class FFTService implements IProxy {
         logMethod("submitFormPalmaresMillesime");
         ResponseHttp ret = null;
 
-        System.out.println("");
-        System.out.println("==============> Form Action:" + form.action);
-        System.out.println("==============> Form Method:" + form.method);
+        System.out.println(
+            "\n\n\n==============> Form Action:" + form.action +
+            "\r\n==============> Form Method:" + form.method);
 
         form.select.value = form.millesimeSelected.value;
 
@@ -317,7 +314,7 @@ public class FFTService implements IProxy {
     public static Date getDateFromFFT(String date) {
         Date ret = new Date();
         try {
-            ret = sdfFFT.parse(date);
+            ret = MatchContent.sdfFFT.parse(date);
         } catch (ParseException e) {
             Log.e(TAG, MessageFormat.format("Formatting match.ret:{0}", date), e);
         }
@@ -329,9 +326,10 @@ public class FFTService implements IProxy {
     }
 
     private void logMethod(String method) {
-        System.out.println("\r\n==========================================================================");
-        System.out.println("==============> Method:" + method);
-        System.out.println("==========================================================================\r\n");
+        System.out.println(
+            "\r\n==========================================================================" +
+            "\n==============> Method:" + method +
+            "\r\n==========================================================================\r\n");
 
     }
 }
