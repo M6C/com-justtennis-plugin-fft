@@ -18,7 +18,7 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.Map;
 
-abstract class AbstracFFTService implements IProxy {
+public abstract class AbstracFFTService implements IProxy {
 
     private static final String TAG = AbstracFFTService.class.getName();
 
@@ -37,11 +37,29 @@ abstract class AbstracFFTService implements IProxy {
         MAN("H", "Man"),
         WOMAN("F", "Woman");
 
-        String value = null;
-        String label = null;
+        public String value;
+        public String label;
         PLAYER_SEX(String value, String label) {
             this.value = value;
             this.label = label;
+        }
+
+        public static PLAYER_SEX findByValue(String value) {
+            for(PLAYER_SEX playerSex : PLAYER_SEX.values()) {
+                if (value.equalsIgnoreCase(playerSex.value)) {
+                    return playerSex;
+                }
+            }
+            return PLAYER_SEX.MAN;
+        }
+
+        public static PLAYER_SEX findByLabel(String label) {
+            for(PLAYER_SEX playerSex : PLAYER_SEX.values()) {
+                if (label.equalsIgnoreCase(playerSex.label)) {
+                    return playerSex;
+                }
+            }
+            return PLAYER_SEX.MAN;
         }
     }
 

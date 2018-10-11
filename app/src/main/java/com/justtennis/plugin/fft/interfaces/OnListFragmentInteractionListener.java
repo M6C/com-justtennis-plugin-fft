@@ -1,7 +1,5 @@
 package com.justtennis.plugin.fft.interfaces;
 
-import com.justtennis.plugin.fft.dto.MatchDto;
-
 /**
  * This interface must be implemented by activities that contain this
  * fragment to allow an interaction in this fragment to be communicated
@@ -13,5 +11,5 @@ import com.justtennis.plugin.fft.dto.MatchDto;
  * >Communicating with Other Fragments</a> for more information.
  */
 public interface OnListFragmentInteractionListener {
-    void onListFragmentInteraction(MatchDto item);
+    void onListFragmentInteraction(Object item);
 }

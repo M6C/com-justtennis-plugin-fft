@@ -168,7 +168,7 @@ public class RankingMatchFragment extends Fragment implements OnListFragmentInte
     }
 
     @Override
-    public void onListFragmentInteraction(MatchDto item) {
+    public void onListFragmentInteraction(Object item) {
     }
 
     @SuppressLint("StaticFieldLeak")

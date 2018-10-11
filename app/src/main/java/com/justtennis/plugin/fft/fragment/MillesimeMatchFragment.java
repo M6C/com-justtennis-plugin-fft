@@ -144,9 +144,10 @@ public class MillesimeMatchFragment extends Fragment implements OnListFragmentIn
     }
 
     @Override
-    public void onListFragmentInteraction(MatchDto item) {
-        if (item.linkPalmares != null && !item.linkPalmares.isEmpty()) {
-            FragmentTool.replaceFragment(activity, MillesimeMatchFragment.newInstance(item, getMillesime()));
+    public void onListFragmentInteraction(Object item) {
+        MatchDto match = (MatchDto)item;
+        if (match.linkPalmares != null && !match.linkPalmares.isEmpty()) {
+            FragmentTool.replaceFragment(activity, MillesimeMatchFragment.newInstance(match, getMillesime()));
         }
     }
 

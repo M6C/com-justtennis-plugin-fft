@@ -15,6 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.justtennis.plugin.fft.fragment.FindPlayerFragment;
 import com.justtennis.plugin.fft.fragment.MillesimeMatchFragment;
 import com.justtennis.plugin.fft.fragment.RankingMatchFragment;
 import com.justtennis.plugin.fft.preference.FFTSharedPref;
@@ -95,8 +96,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             FragmentTool.replaceFragment(this, MillesimeMatchFragment.newInstance());
         } else if (id == R.id.nav_ranking_match && !menu.findItem(R.id.nav_ranking_match).isChecked()) {
             FragmentTool.replaceFragment(this, RankingMatchFragment.newInstance());
-//        } else if (id == R.id.nav_slideshow) {
-//
+        } else if (id == R.id.nav_slideshow) {
+            FragmentTool.replaceFragment(this, FindPlayerFragment.newInstance());
 //        } else if (id == R.id.nav_manage) {
 //
         } else if (id == R.id.nav_fft) {
