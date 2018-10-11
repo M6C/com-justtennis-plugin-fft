@@ -19,7 +19,7 @@ import com.justtennis.plugin.fft.model.Saison;
 import com.justtennis.plugin.fft.resolver.InviteResolver;
 import com.justtennis.plugin.fft.resolver.PlayerResolver;
 import com.justtennis.plugin.fft.resolver.SaisonResolver;
-import com.justtennis.plugin.fft.service.FFTService;
+import com.justtennis.plugin.fft.service.FFTServiceLogin;
 import com.justtennis.plugin.fft.viewholder.MatchViewHolder;
 
 import java.util.Date;
@@ -117,8 +117,8 @@ public class MatchAdapter extends RecyclerView.Adapter<MatchViewHolder> {
             }
 
             if (idPlayer >=0) {
-                Date date = FFTService.getDateFromFFT(dto.date);
-                String scoreResult = FFTService.getScoreResultFromFFT(dto.vicDef).toString();
+                Date date = FFTServiceLogin.getDateFromFFT(dto.date);
+                String scoreResult = FFTServiceLogin.getScoreResultFromFFT(dto.vicDef).toString();
                 listIvite = InviteResolver.getInstance().queryInvite(context, idSaison, idPlayer, date, scoreResult);
             }
         }

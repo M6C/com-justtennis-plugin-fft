@@ -9,7 +9,8 @@ import com.justtennis.plugin.fft.exception.NotConnectedException;
 import com.justtennis.plugin.fft.network.model.ResponseHttp;
 import com.justtennis.plugin.fft.query.response.PalmaresMillesimeResponse;
 import com.justtennis.plugin.fft.query.response.PalmaresResponse;
-import com.justtennis.plugin.fft.service.FFTService;
+import com.justtennis.plugin.fft.service.FFTServiceLogin;
+import com.justtennis.plugin.fft.service.FFTServicePalmares;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,15 +34,16 @@ public abstract class MillesimeTask extends AsyncTask<Void, Void, List<PalmaresM
     protected List<PalmaresMillesimeResponse.Millesime> doInBackground(Void... params) {
         List<PalmaresMillesimeResponse.Millesime> ret = new ArrayList<>();
         try {
-            FFTService fftService = newFFTService();
-            ResponseHttp home = fftService.navigateToHomePage(null);
+            FFTServiceLogin fftServiceLogin = newFFTService();
+            FFTServicePalmares fftServicePalmares = newFFTServicePalmares();
+            ResponseHttp home = fftServiceLogin.navigateToHomePage(null);
 
-            PalmaresResponse palmaresResponse = fftService.getPalmares(home);
+            PalmaresResponse palmaresResponse = fftServicePalmares.getPalmares(home);
 
             if (palmaresResponse != null && palmaresResponse.action != null) {
-                ResponseHttp palmares = fftService.navigateToPalmares(null, palmaresResponse);
+                ResponseHttp palmares = fftServicePalmares.navigateToPalmares(null, palmaresResponse);
                 if (palmares.body != null) {
-                    PalmaresMillesimeResponse palmaresMillesimeResponse = fftService.getPalmaresMillesime(palmares);
+                    PalmaresMillesimeResponse palmaresMillesimeResponse = fftServicePalmares.getPalmaresMillesime(palmares);
                     if (palmaresMillesimeResponse != null && !palmaresMillesimeResponse.listMillesime.isEmpty()) {
                         ret = palmaresMillesimeResponse.listMillesime;
                     } else {
@@ -59,7 +61,11 @@ public abstract class MillesimeTask extends AsyncTask<Void, Void, List<PalmaresM
         return ret;
     }
 
-    private FFTService newFFTService() {
-        return FFTService.newInstance(context);
+    private FFTServiceLogin newFFTService() {
+        return FFTServiceLogin.newInstance(context);
+    }
+
+    private FFTServicePalmares newFFTServicePalmares() {
+        return FFTServicePalmares.newInstance(context);
     }
 }

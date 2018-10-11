@@ -9,7 +9,8 @@ import com.justtennis.plugin.fft.network.model.ResponseHttp;
 import com.justtennis.plugin.fft.query.response.MillesimeMatchResponse;
 import com.justtennis.plugin.fft.query.response.PalmaresMillesimeResponse;
 import com.justtennis.plugin.fft.query.response.PalmaresResponse;
-import com.justtennis.plugin.fft.service.FFTService;
+import com.justtennis.plugin.fft.service.FFTServiceLogin;
+import com.justtennis.plugin.fft.service.FFTServicePalmares;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,12 +23,14 @@ public abstract class MillesimeMatchTask extends AsyncTask<Void, String, List<Mi
 
     private static final String TAG = MillesimeMatchTask.class.getName();
 
-    private FFTService fftService;
+    private FFTServiceLogin fftServiceLogin;
+    private FFTServicePalmares fftServicePalmares;
     private String palmaresAction;
     private String millesime;
 
     protected MillesimeMatchTask(Context context, String palmaresAction, String millesime) {
-        fftService = newFFTService(context);
+        fftServiceLogin = newFFTService(context);
+        fftServicePalmares = newFFTServicePalmares(context);
         this.palmaresAction = palmaresAction;
         this.millesime = millesime;
     }
@@ -41,24 +44,24 @@ public abstract class MillesimeMatchTask extends AsyncTask<Void, String, List<Mi
                 palmaresResponse = new PalmaresResponse();
                 palmaresResponse.action = palmaresAction;
             } else {
-                ResponseHttp home = fftService.navigateToHomePage(null);
-                palmaresResponse = fftService.getPalmares(home);
+                ResponseHttp home = fftServiceLogin.navigateToHomePage(null);
+                palmaresResponse = fftServicePalmares.getPalmares(home);
             }
             palmaresResponse.millesime = millesime;
 
             if (palmaresResponse.action != null) {
-                ResponseHttp palmares = fftService.navigateToPalmares(null, palmaresResponse);
+                ResponseHttp palmares = fftServicePalmares.navigateToPalmares(null, palmaresResponse);
                 if (palmares.body != null) {
-                    PalmaresMillesimeResponse palmaresMillesimeResponse = fftService.getPalmaresMillesime(palmares);
+                    PalmaresMillesimeResponse palmaresMillesimeResponse = fftServicePalmares.getPalmaresMillesime(palmares);
                     if (!palmaresMillesimeResponse.listMillesime.isEmpty()) {
 
                         findMillesime(palmaresMillesimeResponse);
 
                         if (palmaresMillesimeResponse.millesimeSelected != null) {
-                            ResponseHttp submitForm = fftService.submitFormPalmaresMillesime(null, palmaresMillesimeResponse);
+                            ResponseHttp submitForm = fftServicePalmares.submitFormPalmaresMillesime(null, palmaresMillesimeResponse);
                             if (submitForm.body != null && !submitForm.body.isEmpty()) {
-                                MillesimeMatchResponse palmaresMillesimeMatch = fftService.getPalmaresMillesimeMatch(submitForm);
-                                if (palmaresMillesimeResponse != null && !palmaresMillesimeResponse.listMillesime.isEmpty()) {
+                                MillesimeMatchResponse palmaresMillesimeMatch = fftServicePalmares.getPalmaresMillesimeMatch(submitForm);
+                                if (!palmaresMillesimeResponse.listMillesime.isEmpty()) {
                                     ret = palmaresMillesimeMatch.matchList;
                                 } else {
                                     Log.w(TAG, "getPalmaresMillesimeMatch is empty");
@@ -94,7 +97,11 @@ public abstract class MillesimeMatchTask extends AsyncTask<Void, String, List<Mi
         }
     }
 
-    private FFTService newFFTService(Context context) {
-        return FFTService.newInstance(context);
+    private FFTServiceLogin newFFTService(Context context) {
+        return FFTServiceLogin.newInstance(context);
+    }
+
+    private FFTServicePalmares newFFTServicePalmares(Context context) {
+        return FFTServicePalmares.newInstance(context);
     }
 }

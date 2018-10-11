@@ -3,6 +3,7 @@ package com.justtennis.plugin.fft.service;
 import com.justtennis.plugin.fft.network.model.ResponseHttp;
 import com.justtennis.plugin.fft.query.response.LoginFormResponse;
 import com.justtennis.plugin.fft.query.response.PalmaresMillesimeResponse;
+import com.justtennis.plugin.fft.skeleton.IProxy;
 
 import junit.framework.TestCase;
 
@@ -19,25 +20,27 @@ abstract class AbstractFFTServiceTest extends TestCase {
 
     private static final boolean useProxy = true;
 
-    static FFTService fftService;
+    abstract IProxy initializeService();
 
-    static LoginFormResponse getLogin() {
-        fftService = newFFTService();
-        return fftService.getLoginForm(LOGIN, PASWD);
+    static FFTServiceLogin fftServiceLogin;
+
+    LoginFormResponse getLogin() {
+        initializeFFTService();
+        return fftServiceLogin.getLoginForm(LOGIN, PASWD);
     }
 
-    static ResponseHttp doLogin() {
+    ResponseHttp doLogin() {
         LoginFormResponse response = getLogin();
 
-        return fftService.submitFormLogin(response);
+        return fftServiceLogin.submitFormLogin(response);
     }
 
-    static void testLogin(LoginFormResponse response) {
+    void testLogin(LoginFormResponse response) {
         assertEquals(LOGIN, response.login.value);
         assertEquals(PASWD, response.password.value);
     }
 
-    static void changeMillesimeSelected(PalmaresMillesimeResponse palmaresMillesimeResponse) {
+    void changeMillesimeSelected(PalmaresMillesimeResponse palmaresMillesimeResponse) {
         for(PalmaresMillesimeResponse.Millesime millesime : palmaresMillesimeResponse.listMillesime) {
             if (!millesime.equals(palmaresMillesimeResponse.millesimeSelected)) {
                 palmaresMillesimeResponse.millesimeSelected = millesime;
@@ -46,14 +49,18 @@ abstract class AbstractFFTServiceTest extends TestCase {
         }
     }
 
-    static FFTService newFFTService() {
-        FFTService instance = FFTService.newInstance(null);
-        if (useProxy) {
+    private void initializeFFTService() {
+        fftServiceLogin = FFTServiceLogin.newInstance(null);
+        initializeProxy(fftServiceLogin);
+        initializeProxy(initializeService());
+    }
+
+    private void initializeProxy(IProxy instance) {
+        if (useProxy && instance != null) {
             instance.setProxyHost(PROXY_HOST)
                     .setProxyPort(PROXY_PORT)
                     .setProxyUser(PROXY_USER)
                     .setProxyPw(PROXY_PW);
         }
-        return instance;
     }
 }

@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.justtennis.plugin.fft.network.model.ResponseHttp;
 import com.justtennis.plugin.fft.query.response.LoginFormResponse;
-import com.justtennis.plugin.fft.service.FFTService;
+import com.justtennis.plugin.fft.service.FFTServiceLogin;
 
 import junit.framework.TestCase;
 
@@ -32,10 +32,10 @@ public class NetworkToolTest extends TestCase {
     public static void testInitCookies(Context context) {
         HttpMethod method = new GetMethod(URL_ROOT + "/bloc_home/redirect/classement");
 
-        FFTService fftService = newFFTService(context);
-        LoginFormResponse response = fftService.getLoginForm(LOGIN, PASWD);
+        FFTServiceLogin fftServiceLogin = newFFTService(context);
+        LoginFormResponse response = fftServiceLogin.getLoginForm(LOGIN, PASWD);
 
-        ResponseHttp form = fftService.submitFormLogin(response);
+        ResponseHttp form = fftServiceLogin.submitFormLogin(response);
 
         NetworkTool.setDoLog(true);
         NetworkTool.initCookies(method, form);
@@ -66,8 +66,8 @@ public class NetworkToolTest extends TestCase {
         assertFalse(NetworkTool.isOk(HttpStatus.SC_MOVED_PERMANENTLY));
     }
 
-    private static FFTService newFFTService(Context context) {
-        FFTService instance = FFTService.newInstance(context);
+    private static FFTServiceLogin newFFTService(Context context) {
+        FFTServiceLogin instance = FFTServiceLogin.newInstance(context);
         if (useProxy) {
             instance.setProxyHost(PROXY_HOST)
                     .setProxyPort(PROXY_PORT)

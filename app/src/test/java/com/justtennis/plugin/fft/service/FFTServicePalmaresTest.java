@@ -5,6 +5,7 @@ import com.justtennis.plugin.fft.network.model.ResponseHttp;
 import com.justtennis.plugin.fft.query.response.MillesimeMatchResponse;
 import com.justtennis.plugin.fft.query.response.PalmaresMillesimeResponse;
 import com.justtennis.plugin.fft.query.response.PalmaresResponse;
+import com.justtennis.plugin.fft.skeleton.IProxy;
 
 import org.junit.Test;
 
@@ -12,36 +13,44 @@ import java.io.IOException;
 
 public class FFTServicePalmaresTest extends AbstractFFTServiceTest {
 
+    FFTServicePalmares fftServicePalmares;
+
+    @Override
+    IProxy initializeService() {
+        fftServicePalmares = FFTServicePalmares.newInstance(null);
+        return fftServicePalmares;
+    }
+
     @Test
-    public static void testGetParmares() throws NotConnectedException {
+    public void testGetParmares() throws NotConnectedException {
         ResponseHttp form = doLogin();
 
-        ResponseHttp home = fftService.navigateToFormRedirect(form);
+        ResponseHttp home = fftServiceLogin.navigateToFormRedirect(form);
 
-        PalmaresResponse palmaresResponse = fftService.getPalmares(home);
+        PalmaresResponse palmaresResponse = fftServicePalmares.getPalmares(home);
 
         assertNotNull(palmaresResponse);
         assertNotNull(palmaresResponse.action);
 
-        ResponseHttp palmares = fftService.navigateToPalmares(form, palmaresResponse);
+        ResponseHttp palmares = fftServicePalmares.navigateToPalmares(form, palmaresResponse);
         assertNotNull(palmares.body);
     }
 
     @Test
-    public static void testGetParmaresMillesime() throws NotConnectedException {
+    public void testGetParmaresMillesime() throws NotConnectedException {
         ResponseHttp form = doLogin();
 
-        ResponseHttp home = fftService.navigateToFormRedirect(form);
+        ResponseHttp home = fftServiceLogin.navigateToFormRedirect(form);
 
-        PalmaresResponse palmaresResponse = fftService.getPalmares(home);
+        PalmaresResponse palmaresResponse = fftServicePalmares.getPalmares(home);
 
         assertNotNull(palmaresResponse);
         assertNotNull(palmaresResponse.action);
 
-        ResponseHttp palmares = fftService.navigateToPalmares(form, palmaresResponse);
+        ResponseHttp palmares = fftServicePalmares.navigateToPalmares(form, palmaresResponse);
         assertNotNull(palmares.body);
 
-        PalmaresMillesimeResponse palmaresMillesimeResponse = fftService.getPalmaresMillesime(palmares);
+        PalmaresMillesimeResponse palmaresMillesimeResponse = fftServicePalmares.getPalmaresMillesime(palmares);
         assertNotNull(palmaresMillesimeResponse.action);
         assertNotNull(palmaresMillesimeResponse.select);
         assertNotNull(palmaresMillesimeResponse.select.name);
@@ -52,53 +61,53 @@ public class FFTServicePalmaresTest extends AbstractFFTServiceTest {
     }
 
     @Test
-    public static void testSubmitFormPalmaresMillesime() throws NotConnectedException, IOException {
+    public void testSubmitFormPalmaresMillesime() throws NotConnectedException, IOException {
         ResponseHttp form = doLogin();
 
-        ResponseHttp home = fftService.navigateToFormRedirect(form);
+        ResponseHttp home = fftServiceLogin.navigateToFormRedirect(form);
 
-        PalmaresResponse palmaresResponse = fftService.getPalmares(home);
+        PalmaresResponse palmaresResponse = fftServicePalmares.getPalmares(home);
 
         assertNotNull(palmaresResponse);
         assertNotNull(palmaresResponse.action);
 
-        ResponseHttp palmares = fftService.navigateToPalmares(form, palmaresResponse);
+        ResponseHttp palmares = fftServicePalmares.navigateToPalmares(form, palmaresResponse);
         assertNotNull(palmares.body);
 
-        PalmaresMillesimeResponse palmaresMillesimeResponse = fftService.getPalmaresMillesime(palmares);
+        PalmaresMillesimeResponse palmaresMillesimeResponse = fftServicePalmares.getPalmaresMillesime(palmares);
         assertTrue(palmaresMillesimeResponse.listMillesime.size() > 0);
 
         changeMillesimeSelected(palmaresMillesimeResponse);
 
-        ResponseHttp submitForm = fftService.submitFormPalmaresMillesime(form, palmaresMillesimeResponse);
+        ResponseHttp submitForm = fftServicePalmares.submitFormPalmaresMillesime(form, palmaresMillesimeResponse);
         assertNotNull(submitForm.body);
         assertNotNull(submitForm.pathRedirect);
 //        assertEquals(13, submitForm.header.size());
     }
 
     @Test
-    public static void testGetPalmaresMillesimeMatch() throws NotConnectedException {
+    public void testGetPalmaresMillesimeMatch() throws NotConnectedException {
         ResponseHttp form = doLogin();
 
-        ResponseHttp home = fftService.navigateToFormRedirect(form);
+        ResponseHttp home = fftServiceLogin.navigateToFormRedirect(form);
 
-        PalmaresResponse palmaresResponse = fftService.getPalmares(home);
+        PalmaresResponse palmaresResponse = fftServicePalmares.getPalmares(home);
 
         assertNotNull(palmaresResponse);
         assertNotNull(palmaresResponse.action);
 
-        ResponseHttp palmares = fftService.navigateToPalmares(form, palmaresResponse);
+        ResponseHttp palmares = fftServicePalmares.navigateToPalmares(form, palmaresResponse);
         assertNotNull(palmares.body);
 
-        PalmaresMillesimeResponse palmaresMillesimeResponse = fftService.getPalmaresMillesime(palmares);
+        PalmaresMillesimeResponse palmaresMillesimeResponse = fftServicePalmares.getPalmaresMillesime(palmares);
         assertTrue(palmaresMillesimeResponse.listMillesime.size() > 0);
 
         changeMillesimeSelected(palmaresMillesimeResponse);
 
-        ResponseHttp submitForm = fftService.submitFormPalmaresMillesime(form, palmaresMillesimeResponse);
+        ResponseHttp submitForm = fftServicePalmares.submitFormPalmaresMillesime(form, palmaresMillesimeResponse);
         assertNotNull(submitForm.body);
 
-        MillesimeMatchResponse palmaresMillesimeMatch = fftService.getPalmaresMillesimeMatch(submitForm);
+        MillesimeMatchResponse palmaresMillesimeMatch = fftServicePalmares.getPalmaresMillesimeMatch(submitForm);
         assertNotNull(palmaresMillesimeMatch);
         assertTrue("Palmares Millesime List must not be empty", palmaresMillesimeMatch.matchList.size() > 0);
        for (MillesimeMatchResponse.MatchItem item : palmaresMillesimeMatch.matchList) {

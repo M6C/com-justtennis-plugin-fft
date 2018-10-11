@@ -7,7 +7,7 @@ import android.util.Log;
 import com.justtennis.plugin.fft.exception.NotConnectedException;
 import com.justtennis.plugin.fft.query.response.RankingListResponse;
 import com.justtennis.plugin.fft.query.response.RankingMatchResponse;
-import com.justtennis.plugin.fft.service.FFTService;
+import com.justtennis.plugin.fft.service.FFTServiceRanking;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,10 +20,10 @@ public abstract class RankingMatchTask extends AsyncTask<Void, Void, List<Rankin
 
     private static final String TAG = RankingMatchTask.class.getName();
 
-    private FFTService fftService;
+    private FFTServiceRanking fftServiceRanking;
 
     protected RankingMatchTask(Context context) {
-        fftService = newFFTService(context);
+        fftServiceRanking = newFFTService(context);
     }
 
     @Override
@@ -31,12 +31,12 @@ public abstract class RankingMatchTask extends AsyncTask<Void, Void, List<Rankin
         List<RankingMatchResponse.RankingItem> ret = new ArrayList<>();
         try {
             Log.d(TAG, "submitFormLogin OK");
-            RankingListResponse rankingList = fftService.getRankingList(null);
+            RankingListResponse rankingList = fftServiceRanking.getRankingList(null);
             if (rankingList != null && !rankingList.rankingList.isEmpty()) {
                 Log.d(TAG, "getRankingList OK");
                 RankingListResponse.RankingItem rank = rankingList.rankingList.get(0);
 
-                RankingMatchResponse ranking = fftService.getRankingMatch(null, rank.id);
+                RankingMatchResponse ranking = fftServiceRanking.getRankingMatch(null, rank.id);
                 ret = ranking.rankingList;
             } else {
                 Log.w(TAG, "getRankingList return empty");
@@ -47,7 +47,7 @@ public abstract class RankingMatchTask extends AsyncTask<Void, Void, List<Rankin
         return ret;
     }
 
-    private FFTService newFFTService(Context context) {
-        return FFTService.newInstance(context);
+    private FFTServiceRanking newFFTService(Context context) {
+        return FFTServiceRanking.newInstance(context);
     }
 }

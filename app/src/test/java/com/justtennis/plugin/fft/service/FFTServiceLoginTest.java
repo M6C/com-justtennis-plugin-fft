@@ -3,13 +3,19 @@ package com.justtennis.plugin.fft.service;
 import com.justtennis.plugin.fft.exception.NotConnectedException;
 import com.justtennis.plugin.fft.network.model.ResponseHttp;
 import com.justtennis.plugin.fft.query.response.LoginFormResponse;
+import com.justtennis.plugin.fft.skeleton.IProxy;
 
 import org.junit.Test;
 
 public class FFTServiceLoginTest extends AbstractFFTServiceTest {
 
+    @Override
+    IProxy initializeService() {
+        return null;
+    }
+
     @Test
-    public static void testGetLoginForm() {
+    public void testGetLoginForm() {
 
         LoginFormResponse response = getLogin();
 
@@ -22,7 +28,7 @@ public class FFTServiceLoginTest extends AbstractFFTServiceTest {
     }
 
     @Test
-    public static void testSubmitFormLogin() {
+    public void testSubmitFormLogin() {
         ResponseHttp form = doLogin();
 
         assertNotNull(form.body);
@@ -31,10 +37,10 @@ public class FFTServiceLoginTest extends AbstractFFTServiceTest {
     }
 
     @Test
-    public static void testNavigateToFormRedirect() throws NotConnectedException {
+    public void testNavigateToFormRedirect() throws NotConnectedException {
         ResponseHttp form = doLogin();
 
-        ResponseHttp formRedirect = fftService.navigateToFormRedirect(form);
+        ResponseHttp formRedirect = fftServiceLogin.navigateToFormRedirect(form);
 
         assertNotNull(formRedirect);
         assertNotNull(formRedirect.body);

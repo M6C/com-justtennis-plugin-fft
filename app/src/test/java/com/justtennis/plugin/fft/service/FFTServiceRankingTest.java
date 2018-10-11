@@ -4,16 +4,25 @@ import com.justtennis.plugin.fft.exception.NotConnectedException;
 import com.justtennis.plugin.fft.network.model.ResponseHttp;
 import com.justtennis.plugin.fft.query.response.RankingListResponse;
 import com.justtennis.plugin.fft.query.response.RankingMatchResponse;
+import com.justtennis.plugin.fft.skeleton.IProxy;
 
 import org.junit.Test;
 
 public class FFTServiceRankingTest extends AbstractFFTServiceTest {
 
+    FFTServiceRanking fftServiceRanking;
+
+    @Override
+    IProxy initializeService() {
+        fftServiceRanking = FFTServiceRanking.newInstance(null);
+        return fftServiceRanking;
+    }
+
     @Test
-    public static void testNavigateToRanking() throws NotConnectedException {
+    public void testNavigateToRanking() throws NotConnectedException {
         ResponseHttp form = doLogin();
 
-        ResponseHttp ranking = fftService.navigateToRanking(form);
+        ResponseHttp ranking = fftServiceRanking.navigateToRanking(form);
 
         assertNotNull(ranking);
         assertNotNull(ranking.body);
@@ -22,10 +31,10 @@ public class FFTServiceRankingTest extends AbstractFFTServiceTest {
     }
 
     @Test
-    public static void testGetRankingList() throws NotConnectedException {
+    public void testGetRankingList() throws NotConnectedException {
         ResponseHttp form = doLogin();
 
-        RankingListResponse ranking = fftService.getRankingList(form);
+        RankingListResponse ranking = fftServiceRanking.getRankingList(form);
 
         assertNotNull(ranking);
         assertTrue("Ranking List must not be empty", ranking.rankingList.size() > 0);
@@ -39,16 +48,16 @@ public class FFTServiceRankingTest extends AbstractFFTServiceTest {
     }
 
     @Test
-    public static void testGetRankingMatch() throws NotConnectedException {
+    public void testGetRankingMatch() throws NotConnectedException {
         ResponseHttp form = doLogin();
 
-        RankingListResponse matchList = fftService.getRankingList(form);
+        RankingListResponse matchList = fftServiceRanking.getRankingList(form);
 
         assertNotNull(matchList);
         assertTrue("Ranking List must not be empty", matchList.rankingList.size() > 0);
         RankingListResponse.RankingItem rank = matchList.rankingList.get(0);
 
-        RankingMatchResponse ranking = fftService.getRankingMatch(form, rank.id);
+        RankingMatchResponse ranking = fftServiceRanking.getRankingMatch(form, rank.id);
         assertNotNull(ranking);
         assertTrue("Ranking List must not be empty", ranking.rankingList.size() > 0);
         for (RankingMatchResponse.RankingItem item : ranking.rankingList) {

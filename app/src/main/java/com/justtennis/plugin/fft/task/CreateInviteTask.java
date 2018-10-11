@@ -20,7 +20,7 @@ import com.justtennis.plugin.fft.resolver.RankingResolver;
 import com.justtennis.plugin.fft.resolver.SaisonResolver;
 import com.justtennis.plugin.fft.resolver.ScoreSetResolver;
 import com.justtennis.plugin.fft.resolver.UserResolver;
-import com.justtennis.plugin.fft.service.FFTService;
+import com.justtennis.plugin.fft.service.FFTServiceLogin;
 
 import java.text.DateFormat;
 import java.text.MessageFormat;
@@ -78,8 +78,8 @@ public abstract class CreateInviteTask extends AsyncTask<Void, Void, Boolean> {
     private void createInvite(MillesimeMatchResponse.MatchItem match, Long idSaison) {
         Long idPlayer = createOrGetPlayer(match, idSaison);
         Long idRanking = getRanking(match);
-        Date date = FFTService.getDateFromFFT(match.date);
-        String scoreResult = FFTService.getScoreResultFromFFT(match.vicDef).toString();
+        Date date = FFTServiceLogin.getDateFromFFT(match.date);
+        String scoreResult = FFTServiceLogin.getScoreResultFromFFT(match.vicDef).toString();
         Long idClub = null;
 
         InviteResolver inviteResolver = InviteResolver.getInstance();

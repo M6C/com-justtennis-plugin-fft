@@ -32,7 +32,7 @@ import com.justtennis.plugin.fft.resolver.ClubResolver;
 import com.justtennis.plugin.fft.resolver.InviteResolver;
 import com.justtennis.plugin.fft.resolver.PlayerResolver;
 import com.justtennis.plugin.fft.resolver.SaisonResolver;
-import com.justtennis.plugin.fft.service.FFTService;
+import com.justtennis.plugin.fft.service.FFTServiceLogin;
 import com.justtennis.plugin.fft.task.UserLoginTask;
 import com.justtennis.plugin.fft.tool.ProgressTool;
 
@@ -360,7 +360,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
 
         @Override
-        protected FFTService newFFTService(Context context) {
+        protected FFTServiceLogin newFFTService(Context context) {
             ProxySharedPref.setUseProxy(context, mUseProxy.isChecked());
             if (mUseProxy.isChecked()) {
                 ProxySharedPref.setSite(context, mProxyHost.getText().toString());

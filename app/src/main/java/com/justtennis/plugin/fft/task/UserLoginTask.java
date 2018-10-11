@@ -8,7 +8,7 @@ import com.justtennis.plugin.fft.network.model.ResponseElement;
 import com.justtennis.plugin.fft.network.model.ResponseHttp;
 import com.justtennis.plugin.fft.preference.FFTSharedPref;
 import com.justtennis.plugin.fft.query.response.LoginFormResponse;
-import com.justtennis.plugin.fft.service.FFTService;
+import com.justtennis.plugin.fft.service.FFTServiceLogin;
 
 /**
  * Represents an asynchronous login/registration task used to authenticate
@@ -20,12 +20,12 @@ public abstract class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
     private final String mEmail;
     private final String mPassword;
-    private FFTService fftService;
+    private FFTServiceLogin fftServiceLogin;
 
     protected UserLoginTask(Context context, String email, String password) {
         mEmail = email;
         mPassword = password;
-        fftService = newFFTService(context);
+        fftServiceLogin = newFFTService(context);
         FFTSharedPref.setLogin(context, mEmail);
         FFTSharedPref.setPwd(context, mPassword);
     }
@@ -34,10 +34,10 @@ public abstract class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
     protected Boolean doInBackground(Void... params) {
         Boolean ret = Boolean.FALSE;
         Log.d(TAG, "getLoginForm login:" + mEmail + " pwd:" + mPassword);
-        LoginFormResponse response = fftService.getLoginForm(mEmail, mPassword);
+        LoginFormResponse response = fftServiceLogin.getLoginForm(mEmail, mPassword);
         if (response != null && response.action != null && !response.action.isEmpty()) {
             Log.d(TAG, "getLoginForm OK");
-            ResponseHttp form = fftService.submitFormLogin(response);
+            ResponseHttp form = fftServiceLogin.submitFormLogin(response);
             ret = isFormLoginConnected(form);
         } else {
             Log.w(TAG, "getLoginForm return empty");
@@ -59,7 +59,7 @@ public abstract class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
         return ret;
     }
 
-    protected FFTService newFFTService(Context context) {
-        return FFTService.newInstance(context);
+    protected FFTServiceLogin newFFTService(Context context) {
+        return FFTServiceLogin.newInstance(context);
     }
 }

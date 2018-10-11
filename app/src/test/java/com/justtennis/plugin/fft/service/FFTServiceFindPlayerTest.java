@@ -4,6 +4,7 @@ import com.justtennis.plugin.fft.exception.NotConnectedException;
 import com.justtennis.plugin.fft.network.model.ResponseHttp;
 import com.justtennis.plugin.fft.query.response.FindPlayerFormResponse;
 import com.justtennis.plugin.fft.query.response.FindPlayerResponse;
+import com.justtennis.plugin.fft.skeleton.IProxy;
 
 import org.junit.Test;
 
@@ -11,13 +12,21 @@ import java.io.IOException;
 
 public class FFTServiceFindPlayerTest extends AbstractFFTServiceTest {
 
+    private FFTServiceFindPlayer fftServiceFindPlayer;
+
+    @Override
+    IProxy initializeService() {
+        fftServiceFindPlayer = FFTServiceFindPlayer.newInstance(null);
+        return fftServiceFindPlayer;
+    }
+
     @Test
-    public static void testSubmitFormFindPlayer() throws NotConnectedException, IOException {
+    public void testSubmitFormFindPlayer() throws NotConnectedException, IOException {
         ResponseHttp form = doLogin();
 
-        ResponseHttp findPlayer = fftService.navigateToFindPlayer(form);
+        ResponseHttp findPlayer = fftServiceFindPlayer.navigateToFindPlayer(form);
 
-        FindPlayerFormResponse findPlayerForm = fftService.getFindPlayerForm(findPlayer, FFTService.PLAYER_SEX.WOMAN,"Leonie", "ROCA");
+        FindPlayerFormResponse findPlayerForm = fftServiceFindPlayer.getFindPlayerForm(findPlayer, FFTServiceLogin.PLAYER_SEX.WOMAN,"Leonie", "ROCA");
 
         assertNotNull(findPlayerForm);
         assertNotNull(findPlayerForm.action);
@@ -25,12 +34,12 @@ public class FFTServiceFindPlayerTest extends AbstractFFTServiceTest {
         assertNotNull(findPlayerForm.lastname.name);
         assertNotNull(findPlayerForm.sex.name);
 
-        ResponseHttp submitForm = fftService.submitFormFindPlayer(form, findPlayerForm);
+        ResponseHttp submitForm = fftServiceFindPlayer.submitFormFindPlayer(form, findPlayerForm);
         assertNotNull(submitForm.body);
         assertNotNull(submitForm.pathRedirect);
 //        assertEquals(13, submitForm.header.size());
 
-        FindPlayerResponse palmaresMillesimeMatch = fftService.getFindPlayer(submitForm);
+        FindPlayerResponse palmaresMillesimeMatch = fftServiceFindPlayer.getFindPlayer(submitForm);
         assertNotNull(palmaresMillesimeMatch);
         assertTrue("Palmares Millesime List must not be empty", palmaresMillesimeMatch.playerList.size() > 0);
        for (FindPlayerResponse.PlayerItem item : palmaresMillesimeMatch.playerList) {
