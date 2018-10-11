@@ -1,6 +1,10 @@
 package com.justtennis.plugin.fft.parser;
 
+import com.justtennis.plugin.fft.query.request.AbstractFormRequest;
+import com.justtennis.plugin.fft.query.request.FFTFindPlayerFormRequest;
 import com.justtennis.plugin.fft.query.request.LoginFormRequest;
+import com.justtennis.plugin.fft.query.response.AbstractFormResponse;
+import com.justtennis.plugin.fft.query.response.FindPlayerFormResponse;
 import com.justtennis.plugin.fft.query.response.FormElement;
 import com.justtennis.plugin.fft.query.response.LoginFormResponse;
 
@@ -14,32 +18,52 @@ public class FormParser {
     private FormParser() {}
 
     public static LoginFormResponse parseFormLogin(String content, LoginFormRequest request) {
-        LoginFormResponse ret = null;
+        LoginFormResponse ret = new LoginFormResponse();
+        Element form = parseForm(content, request, ret);
+        if (form != null) {
+            ret.login = parseElement(form, request.loginQuery);
+            ret.password = parseElement(form, request.passwordQuery);
+            return ret;
+        } else {
+            return null;
+        }
+    }
+
+    public static FindPlayerFormResponse parseFormFindPlayer(String content, FFTFindPlayerFormRequest request) {
+        FindPlayerFormResponse ret = new FindPlayerFormResponse();
+        Element form = parseForm(content, request, ret);
+        if (form != null) {
+            ret.sex = parseElement(form, request.sexQuery);
+            ret.firstname = parseElement(form, request.firstnameQuery);
+            ret.lastname = parseElement(form, request.lastnameQuery);
+        }
+        return ret;
+    }
+
+    public static Element parseForm(String content, AbstractFormRequest request, AbstractFormResponse response) {
+        Element ret = null;
         Document doc = Jsoup.parse(content);
         if (doc != null) {
             Elements forms = doc.select(request.formQuery);
             if (forms != null && !forms.isEmpty()) {
-                ret = new LoginFormResponse();
-                Element form = forms.first();
-                ret.action = form.attr("action");
-                System.out.println("==============> form action:" + ret.action);
+                ret = forms.first();
+                response.action = ret.attr("action");
+                System.out.println("==============> ret action:" + response.action);
 
-                Elements inputs = form.select(request.hiddenQuery);
+                Elements inputs = ret.select(request.hiddenQuery);
                 if (inputs != null && !inputs.isEmpty()) {
                     for(int i=0 ; i<inputs.size() ; i++) {
                         Element input = inputs.get(i);
                         String name = input.attr("name");
                         String value = input.attr("value");
-                        ret.input.put(name, value);
-                        System.out.println("==============> form hidden -" + name + ":" + value);
+                        response.input.put(name, value);
+                        System.out.println("==============> ret hidden -" + name + ":" + value);
                     }
                 } else {
-                    System.err.println("\r\n==============> form hidden '"+request.hiddenQuery+"' not found");
+                    System.err.println("\r\n==============> ret hidden '"+request.hiddenQuery+"' not found");
                 }
 
-                ret.button = parseElement(form, request.submitQuery);
-                ret.login = parseElement(form, request.loginQuery);
-                ret.password = parseElement(form, request.passwordQuery);
+                response.button = parseElement(ret, request.submitQuery);
             } else {
                 System.err.println("\r\n==============> form '"+request.formQuery+"' not found");
             }

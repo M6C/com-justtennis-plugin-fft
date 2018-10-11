@@ -11,15 +11,13 @@ public class FFTServiceLoginTest extends AbstractFFTServiceTest {
     @Test
     public static void testGetLoginForm() {
 
-        FFTService fftService = newFFTService();
-        LoginFormResponse response = fftService.getLoginForm(LOGIN, PASWD);
+        LoginFormResponse response = getLogin();
 
         assertNotNull(response.action);
         assertNotNull(response.button.name);
         assertNotNull(response.login.name);
         assertNotNull(response.password.name);
-        assertEquals(LOGIN, response.login.value);
-        assertEquals(PASWD, response.password.value);
+        testLogin(response);
         assertEquals(2, response.input.size());
     }
 

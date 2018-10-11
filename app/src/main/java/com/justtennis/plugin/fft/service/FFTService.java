@@ -3,6 +3,7 @@ package com.justtennis.plugin.fft.service;
 import android.content.Context;
 import android.util.Log;
 
+import com.justtennis.plugin.converter.FindPlayerFormResponseConverter;
 import com.justtennis.plugin.converter.LoginFormResponseConverter;
 import com.justtennis.plugin.converter.PalmaresMillesimeFormResponseConverter;
 import com.justtennis.plugin.fft.dto.MatchContent;
@@ -12,18 +13,23 @@ import com.justtennis.plugin.fft.network.HttpGetProxy;
 import com.justtennis.plugin.fft.network.HttpPostProxy;
 import com.justtennis.plugin.fft.network.model.ResponseHttp;
 import com.justtennis.plugin.fft.network.tool.NetworkTool;
+import com.justtennis.plugin.fft.parser.FindPlayerParser;
 import com.justtennis.plugin.fft.parser.FormParser;
 import com.justtennis.plugin.fft.parser.MillesimeMatchParser;
 import com.justtennis.plugin.fft.parser.PalmaresParser;
 import com.justtennis.plugin.fft.parser.RankingParser;
 import com.justtennis.plugin.fft.preference.FFTSharedPref;
 import com.justtennis.plugin.fft.preference.ProxySharedPref;
+import com.justtennis.plugin.fft.query.request.FFTFindPlayerFormRequest;
+import com.justtennis.plugin.fft.query.request.FFTFindPlayerRequest;
 import com.justtennis.plugin.fft.query.request.FFTLoginFormRequest;
 import com.justtennis.plugin.fft.query.request.FFTMillessimeMatchRequest;
 import com.justtennis.plugin.fft.query.request.FFTRankingListRequest;
 import com.justtennis.plugin.fft.query.request.FFTRankingMatchRequest;
 import com.justtennis.plugin.fft.query.request.PalmaresMillesimeRequest;
 import com.justtennis.plugin.fft.query.request.PalmaresRequest;
+import com.justtennis.plugin.fft.query.response.FindPlayerFormResponse;
+import com.justtennis.plugin.fft.query.response.FindPlayerResponse;
 import com.justtennis.plugin.fft.query.response.LoginFormResponse;
 import com.justtennis.plugin.fft.query.response.MillesimeMatchResponse;
 import com.justtennis.plugin.fft.query.response.PalmaresMillesimeResponse;
@@ -53,6 +59,18 @@ public class FFTService implements IProxy {
     private int    proxyPort;
     private String proxyUser;
     private String proxyPw;
+
+    public enum PLAYER_SEX {
+        MAN("H", "Man"),
+        WOMAN("F", "Woman");
+
+        String value = null;
+        String label = null;
+        PLAYER_SEX(String value, String label) {
+            this.value = value;
+            this.label = label;
+        }
+    }
 
     private FFTService(Context context) {
         this.context = context;
@@ -202,6 +220,47 @@ public class FFTService implements IProxy {
         logMethod("getPalmaresMillesimeMatch");
         System.out.println("==============> body:" + palamresMillesimeResponseHttp.body);
         return MillesimeMatchParser.parseMillesimeMatch(palamresMillesimeResponseHttp.body, new FFTMillessimeMatchRequest());
+    }
+
+    public FindPlayerFormResponse getFindPlayerForm(ResponseHttp findPlayerResponseHttp, PLAYER_SEX sex, String fistname, String lastname) {
+        logMethod("getFindPlayerForm");
+        FindPlayerFormResponse ret = null;
+
+        System.out.println("==============> connection Return:\r\n" + findPlayerResponseHttp.body);
+
+        if (!StringUtil.isBlank(findPlayerResponseHttp.body)) {
+            ret = FormParser.parseFormFindPlayer(findPlayerResponseHttp.body, new FFTFindPlayerFormRequest());
+            ret.sex.value = sex.value;
+            ret.firstname.value = fistname;
+            ret.lastname.value = lastname;
+        }
+
+        return ret;
+    }
+
+    public ResponseHttp submitFormFindPlayer(ResponseHttp loginFormResponse, FindPlayerFormResponse form) throws NotConnectedException {
+        logMethod("submitFormFindPlayer");
+        ResponseHttp ret = null;
+
+        System.out.println("\n\n\n==============> Form Action:" + form.action);
+
+        Map<String, String> data = FindPlayerFormResponseConverter.toDataMap(form);
+        if (!StringUtil.isBlank(form.action)) {
+            ret = doPostConnected(URL_ROOT, form.action, data, loginFormResponse);
+        }
+
+        return ret;
+    }
+
+    public FindPlayerResponse getFindPlayer(ResponseHttp findPlayerResponseHttp) {
+        logMethod("getFindPlayer");
+        System.out.println("==============> body:" + findPlayerResponseHttp.body);
+        return FindPlayerParser.parseFindPlayer(findPlayerResponseHttp.body, new FFTFindPlayerRequest());
+    }
+
+    public ResponseHttp navigateToFindPlayer(ResponseHttp loginFormResponse) throws NotConnectedException {
+        logMethod("navigateToFindPlayer");
+        return doGetConnected(URL_ROOT, "/recherche-joueur", loginFormResponse);
     }
 
     private String format(String str) {

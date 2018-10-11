@@ -16,6 +16,7 @@ import org.apache.commons.httpclient.cookie.CookieSpec;
 public class NetworkTool {
 
     private static CookieSpec cookiespec = CookiePolicy.getDefaultSpec();
+    private static boolean doLog = false;
 
     private NetworkTool() {}
 
@@ -32,7 +33,7 @@ public class NetworkTool {
             return;
         }
 
-        System.out.println("NetworkTool - initCookies - Cookie = " + cookie);
+        logMe("NetworkTool - initCookies - Cookie = " + cookie);
         method.getParams().setCookiePolicy(CookiePolicy.IGNORE_COOKIES);
         method.setRequestHeader("Cookie", cookie);
     }
@@ -43,7 +44,7 @@ public class NetworkTool {
         for(ResponseElement head : response.header) {
             if ("Set-Cookie".equals(head.name)) {
                 String value = head.value.split(";", 2)[0];
-                System.out.println(("NetworkTool - initCookies head:" + head + " value:" + value).trim());
+                logMe(("NetworkTool - initCookies head:" + head + " value:" + value).trim());
                 if (strCookie.length()>0) {
                     strCookie.append("; ");
                 }
@@ -54,18 +55,18 @@ public class NetworkTool {
     }
 
     public static void showCookies(HttpClient client, String logonSite, int logonPort) {
-        System.out.println("");
+        logMe("");
         // See if we got any cookies
         Cookie[] initcookies = cookiespec.match(logonSite, logonPort, "/", true, client.getState().getCookies());
-        System.out.println("NetworkTool - showCookies - Initial set of cookies:");
+        logMe("NetworkTool - showCookies - Initial set of cookies:");
         if (initcookies.length == 0) {
-            System.out.println("NetworkTool - showCookes - None");
+            logMe("NetworkTool - showCookes - None");
         } else {
             for (int i = 0; i < initcookies.length; i++) {
-                System.out.println("NetworkTool - showCookies - " + initcookies[i].toString());
+                logMe("NetworkTool - showCookies - " + initcookies[i].toString());
             }
         }
-        System.out.println("");
+        logMe("");
     }
 
     public static void showheaders(HttpMethod method) {
@@ -74,19 +75,19 @@ public class NetworkTool {
     }
 
     public static void showRequestHeaders(HttpMethod method) {
-        System.out.println("\r\nNetworkTool - showRequestHeaders-----------------------------");
+        logMe("\r\nNetworkTool - showRequestHeaders-----------------------------");
         for (Header head : method.getRequestHeaders()) {
-            System.out.println("NetworkTool - " + head.getName() + ":" + head.getValue());
+            logMe("NetworkTool - " + head.getName() + ":" + head.getValue());
         }
-        System.out.println("-------------------------------------------------------------\r\n");
+        logMe("-------------------------------------------------------------\r\n");
     }
 
     public static void showResponseHeaders(HttpMethod method) {
-        System.out.println("\r\nNetworkTool - showResponseHeaders ---------------------------");
+        logMe("\r\nNetworkTool - showResponseHeaders ---------------------------");
         for (Header head : method.getResponseHeaders()) {
-            System.out.println("NetworkTool - " + head.getName() + ":" + head.getValue());
+            logMe("NetworkTool - " + head.getName() + ":" + head.getValue());
         }
-        System.out.println("-------------------------------------------------------------\r\n");
+        logMe("-------------------------------------------------------------\r\n");
     }
 
     public static boolean isOk(int statusCode) {
@@ -98,5 +99,15 @@ public class NetworkTool {
                 statusCode== HttpStatus.SC_MOVED_PERMANENTLY ||
                 statusCode== HttpStatus.SC_SEE_OTHER ||
                 statusCode == HttpStatus.SC_TEMPORARY_REDIRECT;
+    }
+
+    public static void setDoLog(boolean doLog) {
+        NetworkTool.doLog = doLog;
+    }
+
+    private static void logMe(String message) {
+        if (doLog) {
+            System.out.println(message);
+        }
     }
 }

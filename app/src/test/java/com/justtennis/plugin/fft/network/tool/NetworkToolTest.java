@@ -37,6 +37,7 @@ public class NetworkToolTest extends TestCase {
 
         ResponseHttp form = fftService.submitFormLogin(response);
 
+        NetworkTool.setDoLog(true);
         NetworkTool.initCookies(method, form);
 
         assertEquals(method.getParams().getCookiePolicy(), CookiePolicy.IGNORE_COOKIES);
@@ -46,10 +47,12 @@ public class NetworkToolTest extends TestCase {
 
     public static void testShowCookies() {
         HttpClient client = new HttpClient();
+        NetworkTool.setDoLog(true);
         NetworkTool.showCookies(client, LOGON_SITE, LOGON_PORT);
     }
 
     public static void testIsRedirect() {
+        NetworkTool.setDoLog(true);
         assertTrue(NetworkTool.isRedirect(HttpStatus.SC_MOVED_TEMPORARILY));
         assertTrue(NetworkTool.isRedirect(HttpStatus.SC_MOVED_PERMANENTLY));
         assertTrue(NetworkTool.isRedirect(HttpStatus.SC_SEE_OTHER));
@@ -58,6 +61,7 @@ public class NetworkToolTest extends TestCase {
     }
 
     public static void testIsOk() {
+        NetworkTool.setDoLog(true);
         assertTrue(NetworkTool.isOk(HttpStatus.SC_OK));
         assertFalse(NetworkTool.isOk(HttpStatus.SC_MOVED_PERMANENTLY));
     }

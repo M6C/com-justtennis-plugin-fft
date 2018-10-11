@@ -6,7 +6,7 @@ import com.justtennis.plugin.fft.query.response.PalmaresMillesimeResponse;
 
 import junit.framework.TestCase;
 
-public abstract class AbstractFFTServiceTest extends TestCase {
+abstract class AbstractFFTServiceTest extends TestCase {
 
     private static final String PROXY_USER = "pckh146";
     private static final String PROXY_PW = "k5F+n7S!";
@@ -14,18 +14,27 @@ public abstract class AbstractFFTServiceTest extends TestCase {
     private static final int PROXY_PORT = 8080;
 
     // ROCAdavid75 / JEkonCAEN26 - leonie.roca / ymNgfBeJ36 - delphin.roca / 123456789
-    static final String LOGIN = "leandre.roca2006";
-    static final String PASWD = "lR123456789";
+    private static final String LOGIN = "leandre.roca2006";
+    private static final String PASWD = "lR123456789";
 
     private static final boolean useProxy = true;
 
     static FFTService fftService;
 
-    static ResponseHttp doLogin() {
+    static LoginFormResponse getLogin() {
         fftService = newFFTService();
-        LoginFormResponse response = fftService.getLoginForm(LOGIN, PASWD);
+        return fftService.getLoginForm(LOGIN, PASWD);
+    }
+
+    static ResponseHttp doLogin() {
+        LoginFormResponse response = getLogin();
 
         return fftService.submitFormLogin(response);
+    }
+
+    static void testLogin(LoginFormResponse response) {
+        assertEquals(LOGIN, response.login.value);
+        assertEquals(PASWD, response.password.value);
     }
 
     static void changeMillesimeSelected(PalmaresMillesimeResponse palmaresMillesimeResponse) {

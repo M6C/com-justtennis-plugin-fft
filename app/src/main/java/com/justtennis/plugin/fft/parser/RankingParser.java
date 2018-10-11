@@ -10,7 +10,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-public class RankingParser {
+public class RankingParser extends AbstractParser {
 
     private RankingParser() {}
 
@@ -25,13 +25,13 @@ public class RankingParser {
                 if (tbodys != null && !tbodys.isEmpty()) {
                     for (Element e : tbodys) {
                         RankingListResponse.RankingItem item = new RankingListResponse.RankingItem();
-                        item.year = e.select(request.year).text();
-                        item.ranking = e.select(request.ranking).text();
-                        item.date = e.select(request.date).text();
-                        item.origin = e.select(request.origin).text();
-                        item.id = e.select(request.id).text();
+                        item.year = getText(e, request.year);
+                        item.ranking = getText(e, request.ranking);
+                        item.date = getText(e, request.date);
+                        item.origin = getText(e, request.origin);
+                        item.id = getText(e, request.id);
                         ret.rankingList.add(item);
-                        System.err.println("\r\n==============> ranking " + item);
+                        System.out.println("\r\n==============> Ranking:" + item);
                     }
                 } else {
                     System.err.println("\r\n==============> table body '"+request.tableBodyContent +"' not found");
@@ -54,19 +54,19 @@ public class RankingParser {
                 if (tbodys != null && !tbodys.isEmpty()) {
                     for (Element e : tbodys) {
                         RankingMatchResponse.RankingItem item = new RankingMatchResponse.RankingItem();
-                        item.name = e.select(request.name).text();
-                        item.year = e.select(request.year).text();
-                        item.ranking = e.select(request.ranking).text();
-                        item.vicDef = e.select(request.vicDef).text();
-                        item.wo = e.select(request.wo).text();
-                        item.coef = e.select(request.coef).text();
-                        item.points = e.select(request.points).text();
-                        item.tournament = e.select(request.tournament).text();
-                        item.type = e.select(request.type).text();
-                        item.date = e.select(request.date).text();
+                        item.name = getText(e, request.name);
+                        item.year = getText(e, request.year);
+                        item.ranking = getText(e, request.ranking);
+                        item.vicDef = getText(e, request.vicDef);
+                        item.wo = getText(e, request.wo);
+                        item.coef = getText(e, request.coef);
+                        item.points = getText(e, request.points);
+                        item.tournament = getText(e, request.tournament);
+                        item.type = getText(e, request.type);
+                        item.date = getText(e, request.date);
 
                         ret.rankingList.add(item);
-                        System.err.println("\r\n==============> ranking " + item);
+                        System.out.println("\r\n==============> Ranking:" + item);
                     }
                 } else {
                     System.err.println("\r\n==============> table body '"+request.tableBodyContent +"' not found");

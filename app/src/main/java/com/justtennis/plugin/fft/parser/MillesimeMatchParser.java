@@ -8,7 +8,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-public class MillesimeMatchParser {
+public class MillesimeMatchParser extends AbstractParser {
 
     private MillesimeMatchParser() {}
 
@@ -23,28 +23,22 @@ public class MillesimeMatchParser {
                 if (tbodys != null && !tbodys.isEmpty()) {
                     for (Element e : tbodys) {
                         MillesimeMatchResponse.MatchItem item = new MillesimeMatchResponse.MatchItem();
-                        item.name = e.select(request.name).text();
-                        item.year = e.select(request.year).text();
-                        item.ranking = e.select(request.ranking).text();
-                        item.vicDef = e.select(request.vicDef).text();
-                        item.score = e.select(request.score).text();
-                        item.wo = e.select(request.wo).text();
-                        item.tournament = e.select(request.tournament).text();
-                        item.type = e.select(request.type).text();
-                        item.date = e.select(request.date).text();
+                        item.name = getText(e, request.name);
+                        item.year = getText(e, request.year);
+                        item.ranking = getText(e, request.ranking);
+                        item.vicDef = getText(e, request.vicDef);
+                        item.score = getText(e, request.score);
+                        item.wo = getText(e, request.wo);
+                        item.tournament = getText(e, request.tournament);
+                        item.type = getText(e, request.type);
+                        item.date = getText(e, request.date);
 
-                        Elements linkPalmares = e.select(request.linkPalmares);
-                        if (linkPalmares != null && !linkPalmares.isEmpty()) {
-                            item.linkPalmares = linkPalmares.attr("href");
-                        }
 
-                        Elements linkTournoi = e.select(request.linkTournoi);
-                        if (linkTournoi != null && !linkTournoi.isEmpty()) {
-                            item.linkTournoi = linkTournoi.attr("href");
-                        }
+                        item.linkTournoi = getLink(e, request.linkTournoi);
+                        item.linkPalmares = getLink(e, request.linkPalmares);
 
                         ret.matchList.add(item);
-                        System.err.println("\r\n==============> ranking " + item);
+                        System.out.println("\r\n==============> Match:" + item);
                     }
                 } else {
                     System.err.println("\r\n==============> table body '"+request.tableBodyContent +"' not found");

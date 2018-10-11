@@ -3,7 +3,6 @@ package com.justtennis.plugin.fft.network;
 import com.justtennis.plugin.fft.StreamTool;
 import com.justtennis.plugin.fft.network.model.ResponseHttp;
 import com.justtennis.plugin.fft.network.tool.NetworkTool;
-import com.justtennis.plugin.fft.skeleton.IProxy;
 
 import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.HostConfiguration;
@@ -19,12 +18,12 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Map;
 
-public class HttpGetProxy implements IProxy {
+public class HttpGetProxy extends AbstractHttpProxy {
 
-    private String proxyHost;
-    private int    proxyPort;
-    private String proxyUser;
-    private String proxyPw;
+    private static final String TAG = HttpGetProxy.class.getName();
+
+    private boolean doRedirect = true;
+    private boolean doLog = true;
 
     private HttpGetProxy() {}
 
@@ -77,7 +76,7 @@ public class HttpGetProxy implements IProxy {
         }
         HttpMethod method = new GetMethod(url.toString());
 
-        System.out.println("HttpGetProxy - url: " + url.toString());
+        logMe("HttpGetProxy - url: " + url.toString());
 
         NetworkTool.initCookies(method, cookie);
 
@@ -100,19 +99,17 @@ public class HttpGetProxy implements IProxy {
             ret.statusCode = method.getStatusCode();
             ret.pathRedirect = method.getPath();
 
-            System.out.println("HttpGetProxy - StatusCode:" + ret.statusCode);
-
             if (ret.statusCode == HttpStatus.SC_OK) {
                 ret.body = StreamTool.readStream(method.getResponseBodyAsStream());
-                System.out.println("HttpGetProxy - Response: " + ret.body);
             } else {
-                while (NetworkTool.isRedirect(ret.statusCode)) {
+                while (doRedirect && NetworkTool.isRedirect(ret.statusCode)) {
                     method.releaseConnection();
                     method = null;
-                    System.out.println("Move to pathRedirect = " + root + ret.pathRedirect);
-                    ret = get(root, ret.pathRedirect);
+                    logMe("Move to pathRedirect = " + root + ret.pathRedirect);
+                    ret = get(root, ret.pathRedirect, cookie);
                 }
             }
+            logResponse(TAG, ret);
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -123,28 +120,26 @@ public class HttpGetProxy implements IProxy {
 
         return ret;
     }
+    public HttpGetProxy setDoRedirect(boolean doRedirect) {
+        this.doRedirect = doRedirect;
+        return this;
+    }
 
-    @Override
-    public IProxy setProxyHost(String proxyHost) {
-        this.proxyHost = proxyHost;
+    public HttpGetProxy setDoLog(boolean doLog) {
+        this.doLog = doLog;
         return this;
     }
 
     @Override
-    public IProxy setProxyPort(int proxyPort) {
-        this.proxyPort = proxyPort;
-        return this;
+    void logResponse(String TAG, ResponseHttp ret, String hearder) {
+        if (doLog) {
+            super.logResponse(TAG, ret, hearder);
+        }
     }
 
-    @Override
-    public IProxy setProxyUser(String proxyUser) {
-        this.proxyUser = proxyUser;
-        return this;
-    }
-
-    @Override
-    public IProxy setProxyPw(String proxyPw) {
-        this.proxyPw = proxyPw;
-        return this;
+    private void logMe(String message) {
+        if (doLog) {
+            System.out.println(message);
+        }
     }
 }

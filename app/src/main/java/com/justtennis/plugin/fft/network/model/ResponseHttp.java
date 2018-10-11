@@ -16,6 +16,15 @@ public class ResponseHttp {
 //    public ResponseElement button = new ResponseElement();
 
 
+    public String getHeader(String name) {
+        for(ResponseElement head : header) {
+            if (name.equalsIgnoreCase(head.name)) {
+                return head.value;
+            }
+        }
+        return null;
+    }
+
     @Override
     public String toString() {
         return "ResponseHttp{" +
