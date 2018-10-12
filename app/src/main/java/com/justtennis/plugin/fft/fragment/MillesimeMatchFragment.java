@@ -67,8 +67,8 @@ public class MillesimeMatchFragment extends Fragment implements OnListFragmentIn
     private ProgressBar pgMatch;
     private ProgressBar pgMillesime;
     private TextView tvMessage;
-    private LinearLayout llMessage;
-    private LinearLayout llContent;
+    private View llMessage;
+    private View llContent;
     private FragmentActivity activity;
 
     /**
@@ -360,6 +360,7 @@ public class MillesimeMatchFragment extends Fragment implements OnListFragmentIn
         protected void onPreExecute() {
             super.onPreExecute();
             showProgressMatch(true);
+            hideMessage();
             listMatch.clear();
             listMatchDto.clear();
             adpMatch.notifyDataSetChanged();
@@ -374,6 +375,9 @@ public class MillesimeMatchFragment extends Fragment implements OnListFragmentIn
             MatchContent.sortDefault(listMatchDto);
             adpMatch.notifyDataSetChanged();
             initializeFabValidate();
+            if (listMatchDto.isEmpty()) {
+                showMessage(R.string.msg_no_match_found);
+            }
 
             if (argMatch != null) {
                 showInformation();

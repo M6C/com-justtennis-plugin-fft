@@ -181,6 +181,7 @@ public class RankingMatchFragment extends Fragment implements OnListFragmentInte
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            hideMessage();
             showProgressMatch(true);
             listMatch.clear();
             listMatchDto.clear();
@@ -200,7 +201,8 @@ public class RankingMatchFragment extends Fragment implements OnListFragmentInte
                     hideMessage();
                 } else {
                     initializeFabRefresh();
-                    showMessage(R.string.msg_fft_must_connect_to_site);
+                    showMessage(R.string.msg_no_match_found);
+//                    showMessage(R.string.msg_fft_must_connect_to_site);
                 }
                 showProgressMatch(false);
             }

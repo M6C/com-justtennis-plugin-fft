@@ -16,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -52,8 +51,8 @@ public class FindPlayerFragment extends Fragment implements OnListFragmentIntera
     private MyFindPlayerTask mFindPlayerTask;
     private ProgressBar pgPlayer;
     private TextView tvMessage;
-    private LinearLayout llMessage;
-    private LinearLayout llContent;
+    private View llMessage;
+    private View llContent;
     private FragmentActivity activity;
     private EditText etFirstname;
     private EditText etLastname;
@@ -207,8 +206,8 @@ public class FindPlayerFragment extends Fragment implements OnListFragmentIntera
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            hideMessage();
             showProgressMatch(true);
-//            hideFab();
             listPlayer.clear();
             listPlayerDto.clear();
             adpPlayer.notifyDataSetChanged();
@@ -222,10 +221,11 @@ public class FindPlayerFragment extends Fragment implements OnListFragmentIntera
             listPlayerDto.addAll(PlayerContent.toDto(players));
             PlayerContent.sortDefault(listPlayerDto);
             adpPlayer.notifyDataSetChanged();
-            if (!listPlayer.isEmpty()) {
-                initializeFabValidate();
+            if (listPlayerDto.isEmpty()) {
+//                initializeFabHideMessage();
+                showMessage(R.string.msg_no_player_found);
             } else {
-                initializeFabHideMessage();
+//                initializeFabValidate();
             }
         }
 

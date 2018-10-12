@@ -46,7 +46,7 @@ public abstract class FindPlayerTask extends AsyncTask<Void, String, List<FindPl
                 ResponseHttp submitForm = fftServiceFindPlayer.submitFormFindPlayer(null, findPlayerFormResponse);
                 if (submitForm.body != null) {
                     FindPlayerResponse palmaresMillesimeMatch = fftServiceFindPlayer.getFindPlayer(submitForm);
-                    if (!palmaresMillesimeMatch.playerList.isEmpty()) {
+                    if (palmaresMillesimeMatch != null && !palmaresMillesimeMatch.playerList.isEmpty()) {
                         ret = palmaresMillesimeMatch.playerList;
                     } else {
                         Log.w(TAG, "getPalmaresMillesime is empty");

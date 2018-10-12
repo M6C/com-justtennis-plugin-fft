@@ -8,6 +8,13 @@
     android:orientation="vertical"
     android:gravity="center"
 >
+    <ProgressBar
+        android:id="@+id/progress_match"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
+
     <LinearLayout
         android:id="@+id/llMessage"
         android:layout_width="match_parent"
@@ -21,16 +28,8 @@
             android:id="@+id/tv_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="24sp"
-            android:text="Empty list"/>
+            android:textSize="24sp"/>
     </LinearLayout>
-
-    <ProgressBar
-        android:id="@+id/progress_match"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"/>
 
     <HorizontalScrollView
         android:id="@+id/llContent"
