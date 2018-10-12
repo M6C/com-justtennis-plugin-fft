@@ -33,7 +33,7 @@ public class FormParser {
         FindPlayerFormResponse ret = new FindPlayerFormResponse();
         Element form = parseForm(content, request, ret);
         if (form != null) {
-            ret.sex = parseElement(form, request.sexQuery);
+            ret.genre = parseElement(form, request.genreQuery);
             ret.firstname = parseElement(form, request.firstnameQuery);
             ret.lastname = parseElement(form, request.lastnameQuery);
         }

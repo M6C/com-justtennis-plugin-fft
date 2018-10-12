@@ -23,13 +23,13 @@ public abstract class FindPlayerTask extends AsyncTask<Void, String, List<FindPl
     private static final String TAG = FindPlayerTask.class.getName();
 
     private FFTServiceFindPlayer fftServiceFindPlayer;
-    private final AbstracFFTService.PLAYER_SEX sex;
+    private final AbstracFFTService.PLAYER_GENRE genre;
     private final String firstname;
     private final String lastname;
 
-    protected FindPlayerTask(Context context, AbstracFFTService.PLAYER_SEX sex, String firstname, String lastname) {
+    protected FindPlayerTask(Context context, AbstracFFTService.PLAYER_GENRE genre, String firstname, String lastname) {
         fftServiceFindPlayer = newFFTServiceFindPlayer(context);
-        this.sex = sex;
+        this.genre = genre;
         this.firstname = firstname;
         this.lastname = lastname;
     }
@@ -40,7 +40,7 @@ public abstract class FindPlayerTask extends AsyncTask<Void, String, List<FindPl
         try {
             FindPlayerFormResponse findPlayerFormResponse;
             ResponseHttp findPlayer = fftServiceFindPlayer.navigateToFindPlayer(null);
-            findPlayerFormResponse = fftServiceFindPlayer.getFindPlayerForm(findPlayer, sex,firstname, lastname);
+            findPlayerFormResponse = fftServiceFindPlayer.getFindPlayerForm(findPlayer, genre,firstname, lastname);
 
             if (findPlayerFormResponse.action != null) {
                 ResponseHttp submitForm = fftServiceFindPlayer.submitFormFindPlayer(null, findPlayerFormResponse);

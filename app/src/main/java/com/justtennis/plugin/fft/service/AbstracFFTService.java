@@ -33,33 +33,33 @@ public abstract class AbstracFFTService implements IProxy {
     protected String proxyUser;
     protected String proxyPw;
 
-    public enum PLAYER_SEX {
+    public enum PLAYER_GENRE {
         MAN("H", "Man"),
         WOMAN("F", "Woman");
 
         public String value;
         public String label;
-        PLAYER_SEX(String value, String label) {
+        PLAYER_GENRE(String value, String label) {
             this.value = value;
             this.label = label;
         }
 
-        public static PLAYER_SEX findByValue(String value) {
-            for(PLAYER_SEX playerSex : PLAYER_SEX.values()) {
+        public static PLAYER_GENRE findByValue(String value) {
+            for(PLAYER_GENRE playerSex : PLAYER_GENRE.values()) {
                 if (value.equalsIgnoreCase(playerSex.value)) {
                     return playerSex;
                 }
             }
-            return PLAYER_SEX.MAN;
+            return PLAYER_GENRE.MAN;
         }
 
-        public static PLAYER_SEX findByLabel(String label) {
-            for(PLAYER_SEX playerSex : PLAYER_SEX.values()) {
+        public static PLAYER_GENRE findByLabel(String label) {
+            for(PLAYER_GENRE playerSex : PLAYER_GENRE.values()) {
                 if (label.equalsIgnoreCase(playerSex.label)) {
                     return playerSex;
                 }
             }
-            return PLAYER_SEX.MAN;
+            return PLAYER_GENRE.MAN;
         }
     }
 

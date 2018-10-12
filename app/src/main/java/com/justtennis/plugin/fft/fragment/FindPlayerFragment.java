@@ -84,7 +84,7 @@ public class FindPlayerFragment extends Fragment implements OnListFragmentIntera
         View view = inflater.inflate(R.layout.fragment_find_player, container, false);
 
         llMatch = view.findViewById(R.id.list);
-        spSex = view.findViewById(R.id.sp_sex);
+        spSex = view.findViewById(R.id.sp_genre);
         etFirstname = view.findViewById(R.id.et_firstname);
         etLastname = view.findViewById(R.id.et_lastname);
         pgPlayer = view.findViewById(R.id.progress_match);
@@ -114,7 +114,9 @@ public class FindPlayerFragment extends Fragment implements OnListFragmentIntera
     public void onListFragmentInteraction(Object item) {
         PlayerDto player = (PlayerDto) item;
         if (player.linkPalmares != null && !player.linkPalmares.isEmpty()) {
-            MatchDto matchDto = new MatchDto(null,null,null,null,null,null,null,null,player.linkPalmares);
+            String firstname = (player.firstname.length() > 1) ? player.firstname.substring(0, 1).toUpperCase() + player.firstname.substring(1).toLowerCase() : player.firstname.toLowerCase();
+            String name = player.lastname.toUpperCase() + " " + firstname;
+            MatchDto matchDto = new MatchDto(null,null, name,null,player.ranking,null,null,null,player.linkPalmares);
             FragmentTool.replaceFragment(activity, MillesimeMatchFragment.newInstance(matchDto, null));
         }
     }
@@ -124,7 +126,7 @@ public class FindPlayerFragment extends Fragment implements OnListFragmentIntera
         assert context != null;
 
         List<String> listValue = new ArrayList<>();
-        for(AbstracFFTService.PLAYER_SEX playerSex : AbstracFFTService.PLAYER_SEX.values()) {
+        for(AbstracFFTService.PLAYER_GENRE playerSex : AbstracFFTService.PLAYER_GENRE.values()) {
             listValue.add(playerSex.label);
         }
 
@@ -154,8 +156,8 @@ public class FindPlayerFragment extends Fragment implements OnListFragmentIntera
     }
 
     private void findPlayer() {
-        AbstracFFTService.PLAYER_SEX sex = AbstracFFTService.PLAYER_SEX.findByLabel(spSex.getSelectedItem().toString());
-        mFindPlayerTask = new MyFindPlayerTask(getContext(), sex, etFirstname.getText().toString(), etLastname.getText().toString());
+        AbstracFFTService.PLAYER_GENRE genre = AbstracFFTService.PLAYER_GENRE.findByLabel(spSex.getSelectedItem().toString());
+        mFindPlayerTask = new MyFindPlayerTask(getContext(), genre, etFirstname.getText().toString(), etLastname.getText().toString());
         mFindPlayerTask.execute((Void) null);
     }
 
@@ -199,8 +201,8 @@ public class FindPlayerFragment extends Fragment implements OnListFragmentIntera
     @SuppressLint("StaticFieldLeak")
     private class MyFindPlayerTask extends FindPlayerTask {
 
-        MyFindPlayerTask(Context context, AbstracFFTService.PLAYER_SEX sex, String firstname, String lastname) {
-            super(context, sex, firstname, lastname);
+        MyFindPlayerTask(Context context, AbstracFFTService.PLAYER_GENRE genre, String firstname, String lastname) {
+            super(context, genre, firstname, lastname);
         }
 
         @Override

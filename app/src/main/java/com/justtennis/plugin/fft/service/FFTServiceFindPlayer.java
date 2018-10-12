@@ -29,7 +29,7 @@ public class FFTServiceFindPlayer extends AbstracFFTService {
         return new FFTServiceFindPlayer(context);
     }
 
-    public FindPlayerFormResponse getFindPlayerForm(ResponseHttp findPlayerResponseHttp, PLAYER_SEX sex, String fistname, String lastname) {
+    public FindPlayerFormResponse getFindPlayerForm(ResponseHttp findPlayerResponseHttp, PLAYER_GENRE genre, String fistname, String lastname) {
         logMethod("getFindPlayerForm");
         FindPlayerFormResponse ret = null;
 
@@ -37,7 +37,7 @@ public class FFTServiceFindPlayer extends AbstracFFTService {
 
         if (!StringUtil.isBlank(findPlayerResponseHttp.body)) {
             ret = FormParser.parseFormFindPlayer(findPlayerResponseHttp.body, new FFTFindPlayerFormRequest());
-            ret.sex.value = sex.value;
+            ret.genre.value = genre.value;
             ret.firstname.value = fistname;
             ret.lastname.value = lastname;
         }

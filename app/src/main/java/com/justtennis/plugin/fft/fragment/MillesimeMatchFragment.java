@@ -329,6 +329,8 @@ public class MillesimeMatchFragment extends Fragment implements OnListFragmentIn
                     hideMessage();
                     if (argMillesime != null && !argMillesime.isEmpty()) {
                         mMillesimePosition = listMillesime.indexOf(argMillesime);
+                    } else {
+                        mMillesimePosition = (listMillesime.size() > 1) ? 1 : 0;
                     }
                     if (mMillesimePosition > 0) {
                         spMillesime.setSelection(mMillesimePosition);

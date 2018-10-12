@@ -14,7 +14,7 @@ public class FindPlayerFormResponseConverter {
         Map<String, String> data = new HashMap<>();
         data.put(form.firstname.name, form.firstname.value);
         data.put(form.lastname.name, form.lastname.value);
-        data.put(form.sex.name, form.sex.value);
+        data.put(form.genre.name, form.genre.value);
         data.putAll(form.input);
         return data;
     }

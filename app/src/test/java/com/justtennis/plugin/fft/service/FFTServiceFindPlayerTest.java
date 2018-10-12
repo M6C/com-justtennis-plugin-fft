@@ -26,13 +26,13 @@ public class FFTServiceFindPlayerTest extends AbstractFFTServiceTest {
 
         ResponseHttp findPlayer = fftServiceFindPlayer.navigateToFindPlayer(form);
 
-        FindPlayerFormResponse findPlayerForm = fftServiceFindPlayer.getFindPlayerForm(findPlayer, FFTServiceLogin.PLAYER_SEX.WOMAN,"Leonie", "ROCA");
+        FindPlayerFormResponse findPlayerForm = fftServiceFindPlayer.getFindPlayerForm(findPlayer, FFTServiceLogin.PLAYER_GENRE.WOMAN,"Leonie", "ROCA");
 
         assertNotNull(findPlayerForm);
         assertNotNull(findPlayerForm.action);
         assertNotNull(findPlayerForm.firstname.name);
         assertNotNull(findPlayerForm.lastname.name);
-        assertNotNull(findPlayerForm.sex.name);
+        assertNotNull(findPlayerForm.genre.name);
 
         ResponseHttp submitForm = fftServiceFindPlayer.submitFormFindPlayer(form, findPlayerForm);
         assertNotNull(submitForm.body);
