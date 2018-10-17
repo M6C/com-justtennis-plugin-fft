@@ -18,7 +18,7 @@ import org.jsoup.helper.StringUtil;
 
 import java.util.Map;
 
-public class FFTServicePalmares extends AbstracFFTService {
+public class FFTServicePalmares extends AbstractFFTService {
 
     private static final String TAG = FFTServicePalmares.class.getName();
 

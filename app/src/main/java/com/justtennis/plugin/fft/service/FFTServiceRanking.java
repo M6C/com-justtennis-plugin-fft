@@ -12,7 +12,7 @@ import com.justtennis.plugin.fft.query.response.RankingMatchResponse;
 
 import org.jsoup.helper.StringUtil;
 
-public class FFTServiceRanking extends AbstracFFTService {
+public class FFTServiceRanking extends AbstractFFTService {
 
     private static final String TAG = FFTServiceRanking.class.getName();
 

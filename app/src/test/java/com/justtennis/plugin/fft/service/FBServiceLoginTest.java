@@ -1,18 +1,11 @@
 package com.justtennis.plugin.fft.service;
 
-import com.justtennis.plugin.fft.exception.NotConnectedException;
 import com.justtennis.plugin.fft.network.model.ResponseHttp;
 import com.justtennis.plugin.fft.query.response.LoginFormResponse;
-import com.justtennis.plugin.fft.skeleton.IProxy;
 
 import org.junit.Test;
 
-public class FFTServiceLoginTest extends AbstractFFTServiceTest {
-
-    @Override
-    IProxy initializeService() {
-        return null;
-    }
+public class FBServiceLoginTest extends AbstractFBServiceTest {
 
     @Test
     public void testGetLoginForm() {
@@ -24,7 +17,7 @@ public class FFTServiceLoginTest extends AbstractFFTServiceTest {
         assertNotNull(response.login.name);
         assertNotNull(response.password.name);
         testLogin(response);
-        assertEquals(2, response.input.size());
+        assertEquals(12, response.input.size());
     }
 
     @Test
@@ -36,15 +29,15 @@ public class FFTServiceLoginTest extends AbstractFFTServiceTest {
         assertEquals(form.header.size(), 16);
     }
 
-    @Test
-    public void testNavigateToFormRedirect() throws NotConnectedException {
-        ResponseHttp form = doLogin();
-
-        ResponseHttp formRedirect = fftServiceLogin.navigateToFormRedirect(form);
-
-        assertNotNull(formRedirect);
-        assertNotNull(formRedirect.body);
-        assertNotNull(formRedirect.pathRedirect);
-        assertEquals(formRedirect.header.size(), 0);
-    }
+//    @Test
+//    public void testNavigateToFormRedirect() throws NotConnectedException {
+//        ResponseHttp form = doLogin();
+//
+//        ResponseHttp formRedirect = serviceLogin.navigateToFormRedirect(form);
+//
+//        assertNotNull(formRedirect);
+//        assertNotNull(formRedirect.body);
+//        assertNotNull(formRedirect.pathRedirect);
+//        assertEquals(formRedirect.header.size(), 0);
+//    }
 }

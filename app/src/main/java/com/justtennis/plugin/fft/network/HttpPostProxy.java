@@ -44,7 +44,8 @@ public class HttpPostProxy extends AbstractHttpProxy {
         }
         client.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
 
-        System.out.println("HttpPostProxy - url: " + root + path);
+        String s = (path.contains("://")) ? path : root + path;
+        System.out.println("HttpPostProxy - url: " + s);
 
         HttpMethod method = new PostMethod(root + path);
 

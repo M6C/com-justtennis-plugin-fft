@@ -8,7 +8,7 @@ import com.justtennis.plugin.fft.exception.NotConnectedException;
 import com.justtennis.plugin.fft.network.model.ResponseHttp;
 import com.justtennis.plugin.fft.query.response.FindPlayerFormResponse;
 import com.justtennis.plugin.fft.query.response.FindPlayerResponse;
-import com.justtennis.plugin.fft.service.AbstracFFTService;
+import com.justtennis.plugin.fft.service.AbstractFFTService;
 import com.justtennis.plugin.fft.service.FFTServiceFindPlayer;
 
 import java.util.ArrayList;
@@ -23,11 +23,11 @@ public abstract class FindPlayerTask extends AsyncTask<Void, String, List<FindPl
     private static final String TAG = FindPlayerTask.class.getName();
 
     private FFTServiceFindPlayer fftServiceFindPlayer;
-    private final AbstracFFTService.PLAYER_GENRE genre;
+    private final AbstractFFTService.PLAYER_GENRE genre;
     private final String firstname;
     private final String lastname;
 
-    protected FindPlayerTask(Context context, AbstracFFTService.PLAYER_GENRE genre, String firstname, String lastname) {
+    protected FindPlayerTask(Context context, AbstractFFTService.PLAYER_GENRE genre, String firstname, String lastname) {
         fftServiceFindPlayer = newFFTServiceFindPlayer(context);
         this.genre = genre;
         this.firstname = firstname;

@@ -8,24 +8,24 @@ import com.justtennis.plugin.fft.network.model.ResponseHttp;
 import com.justtennis.plugin.fft.network.tool.NetworkTool;
 import com.justtennis.plugin.fft.parser.FormParser;
 import com.justtennis.plugin.fft.preference.FFTSharedPref;
-import com.justtennis.plugin.fft.query.request.FFTLoginFormRequest;
+import com.justtennis.plugin.fft.query.request.FBLoginFormRequest;
 import com.justtennis.plugin.fft.query.response.LoginFormResponse;
 
 import org.jsoup.helper.StringUtil;
 
 import java.util.Map;
 
-public class FFTServiceLogin extends AbstractFFTService {
+public class FBServiceLogin extends AbstractFBService {
 
-    private static final String TAG = FFTServiceLogin.class.getName();
+    private static final String TAG = FBServiceLogin.class.getName();
 
-    private FFTServiceLogin(Context context) {
+    private FBServiceLogin(Context context) {
         super(context);
         initializeProxy(this);
     }
 
-    public static FFTServiceLogin newInstance(Context context) {
-        return new FFTServiceLogin(context);
+    public static FBServiceLogin newInstance(Context context) {
+        return new FBServiceLogin(context);
     }
 
     public LoginFormResponse getLoginForm(String login, String password) {
@@ -37,7 +37,7 @@ public class FFTServiceLogin extends AbstractFFTService {
         System.out.println("==============> connection Return:\r\n" + respRoot.body);
 
         if (!StringUtil.isBlank(respRoot.body)) {
-            ret = FormParser.parseFormLogin(respRoot.body, new FFTLoginFormRequest());
+            ret = FormParser.parseFormLogin(respRoot.body, new FBLoginFormRequest());
             ret.login.value = login;
             ret.password.value = password;
         }

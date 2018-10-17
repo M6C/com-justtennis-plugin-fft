@@ -16,7 +16,7 @@ import org.jsoup.helper.StringUtil;
 
 import java.util.Map;
 
-public class FFTServiceFindPlayer extends AbstracFFTService {
+public class FFTServiceFindPlayer extends AbstractFFTService {
 
     private static final String TAG = FFTServiceFindPlayer.class.getName();
 

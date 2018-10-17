@@ -27,7 +27,7 @@ import com.justtennis.plugin.fft.dto.PlayerContent;
 import com.justtennis.plugin.fft.dto.PlayerDto;
 import com.justtennis.plugin.fft.interfaces.OnListFragmentInteractionListener;
 import com.justtennis.plugin.fft.query.response.FindPlayerResponse;
-import com.justtennis.plugin.fft.service.AbstracFFTService;
+import com.justtennis.plugin.fft.service.AbstractFFTService;
 import com.justtennis.plugin.fft.task.FindPlayerTask;
 import com.justtennis.plugin.fft.tool.FragmentTool;
 import com.justtennis.plugin.fft.tool.ProgressTool;
@@ -126,7 +126,7 @@ public class FindPlayerFragment extends Fragment implements OnListFragmentIntera
         assert context != null;
 
         List<String> listValue = new ArrayList<>();
-        for(AbstracFFTService.PLAYER_GENRE playerSex : AbstracFFTService.PLAYER_GENRE.values()) {
+        for(AbstractFFTService.PLAYER_GENRE playerSex : AbstractFFTService.PLAYER_GENRE.values()) {
             listValue.add(playerSex.label);
         }
 
@@ -156,7 +156,7 @@ public class FindPlayerFragment extends Fragment implements OnListFragmentIntera
     }
 
     private void findPlayer() {
-        AbstracFFTService.PLAYER_GENRE genre = AbstracFFTService.PLAYER_GENRE.findByLabel(spSex.getSelectedItem().toString());
+        AbstractFFTService.PLAYER_GENRE genre = AbstractFFTService.PLAYER_GENRE.findByLabel(spSex.getSelectedItem().toString());
         mFindPlayerTask = new MyFindPlayerTask(getContext(), genre, etFirstname.getText().toString(), etLastname.getText().toString());
         mFindPlayerTask.execute((Void) null);
     }
@@ -201,7 +201,7 @@ public class FindPlayerFragment extends Fragment implements OnListFragmentIntera
     @SuppressLint("StaticFieldLeak")
     private class MyFindPlayerTask extends FindPlayerTask {
 
-        MyFindPlayerTask(Context context, AbstracFFTService.PLAYER_GENRE genre, String firstname, String lastname) {
+        MyFindPlayerTask(Context context, AbstractFFTService.PLAYER_GENRE genre, String firstname, String lastname) {
             super(context, genre, firstname, lastname);
         }
 
