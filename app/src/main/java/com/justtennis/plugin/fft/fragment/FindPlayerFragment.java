@@ -121,6 +121,14 @@ public class FindPlayerFragment extends Fragment implements OnListFragmentIntera
         }
     }
 
+    @Override
+    public void onDestroyView() {
+        if (mFindPlayerTask != null) {
+            mFindPlayerTask.cancel(true);
+        }
+        super.onDestroyView();
+    }
+
     private void initializeSex() {
         Context context = getContext();
         assert context != null;
@@ -234,9 +242,14 @@ public class FindPlayerFragment extends Fragment implements OnListFragmentIntera
         @Override
         protected void onCancelled() {
             super.onCancelled();
+            logMe("MyFindPlayerTask cancelled.");
             showProgressMatch(false);
             initializeFabValidate();
             mFindPlayerTask = null;
         }
+    }
+
+    private static void logMe(String msg) {
+        System.out.println(msg);
     }
 }

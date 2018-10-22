@@ -131,6 +131,17 @@ public class MillesimeMatchFragment extends Fragment implements OnListFragmentIn
     }
 
     @Override
+    public void onDestroyView() {
+        if (mMillesimeTask != null) {
+            mMillesimeTask.cancel(true);
+        }
+        if (mMillesimeMatchTask != null) {
+            mMillesimeMatchTask.cancel(true);
+        }
+        super.onDestroyView();
+    }
+
+    @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putInt(ARG_COLUMN_COUNT, mColumnCount);
@@ -346,6 +357,7 @@ public class MillesimeMatchFragment extends Fragment implements OnListFragmentIn
         @Override
         protected void onCancelled() {
             super.onCancelled();
+            logMe("MyMillesimeTask cancelled.");
             showProgressMillesime(false);
             mMillesimeTask = null;
         }
@@ -389,6 +401,7 @@ public class MillesimeMatchFragment extends Fragment implements OnListFragmentIn
         @Override
         protected void onCancelled() {
             super.onCancelled();
+            logMe("MyMillesimeMatchTask cancelled.");
             showProgressMatch(false);
             mMillesimeMatchTask = null;
         }
@@ -422,7 +435,12 @@ public class MillesimeMatchFragment extends Fragment implements OnListFragmentIn
         @Override
         protected void onCancelled() {
             super.onCancelled();
+            logMe("MyCreateInviteTask cancelled.");
             initializeFabValidate();
         }
+    }
+
+    private static void logMe(String msg) {
+        System.out.println(msg);
     }
 }

@@ -57,8 +57,10 @@ public class HttpPostProxy extends AbstractHttpProxy {
 
         for(String key : data.keySet()) {
             String d = data.get(key);
-            System.out.println("HttpPostProxy - Data key: " + key + " value:" + d);
-            ((PostMethod)method).addParameter(key, d);
+            if (key != null && !key.isEmpty()) {
+                System.out.println("HttpPostProxy - Data key: " + key + " value:" + d);
+                ((PostMethod) method).addParameter(key, d);
+            }
         }
 
         if (proxyHost != null && proxyPort > 0) {

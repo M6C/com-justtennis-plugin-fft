@@ -93,6 +93,14 @@ public class RankingMatchFragment extends Fragment implements OnListFragmentInte
         return view;
     }
 
+    @Override
+    public void onDestroyView() {
+        if (mRankingMatchTask != null) {
+            mRankingMatchTask.cancel(true);
+        }
+        super.onDestroyView();
+    }
+
     private void initializeMatch() {
         Context context = getContext();
         assert context != null;
@@ -211,8 +219,13 @@ public class RankingMatchFragment extends Fragment implements OnListFragmentInte
         @Override
         protected void onCancelled() {
             super.onCancelled();
+            logMe("MyRankingMatchTask cancelled.");
             showProgressMatch(false);
             mRankingMatchTask = null;
         }
+    }
+
+    private static void logMe(String msg) {
+        System.out.println(msg);
     }
 }
