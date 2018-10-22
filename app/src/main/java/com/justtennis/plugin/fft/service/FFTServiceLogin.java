@@ -56,7 +56,7 @@ public class FFTServiceLogin extends AbstractFFTService {
         if (!StringUtil.isBlank(form.action)) {
             ret = doPost(URL_ROOT, form.action, data);
 
-            String cookie = NetworkTool.buildCookie(ret);
+            String cookie = NetworkTool.getInstance().buildCookie(ret);
             if (!cookie.isEmpty()) {
                 FFTSharedPref.setCookie(context, cookie);
                 FFTSharedPref.setHomePage(context, form.action);
@@ -74,7 +74,7 @@ public class FFTServiceLogin extends AbstractFFTService {
         logMethod("navigateToFormRedirect");
         if (loginFormResponse.pathRedirect != null && !loginFormResponse.pathRedirect.isEmpty()) {
             ResponseHttp responseHttp = doGetConnected(URL_ROOT, loginFormResponse.pathRedirect, loginFormResponse);
-            if (NetworkTool.isOk(responseHttp.statusCode)) {
+            if (NetworkTool.getInstance().isOk(responseHttp.statusCode)) {
                 FFTSharedPref.setHomePage(context, responseHttp.pathRedirect);
             } else {
                 FFTSharedPref.cleanSecurity(context);

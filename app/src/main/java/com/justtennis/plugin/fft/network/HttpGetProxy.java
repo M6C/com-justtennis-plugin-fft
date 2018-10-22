@@ -36,7 +36,7 @@ public class HttpGetProxy extends AbstractHttpProxy {
     }
 
     public ResponseHttp get(String root, String path, ResponseHttp http) {
-        String cookie = NetworkTool.buildCookie(http);
+        String cookie = NetworkTool.getInstance(doLog).buildCookie(http);
         return get(root, path, cookie);
     }
 
@@ -49,7 +49,7 @@ public class HttpGetProxy extends AbstractHttpProxy {
     }
 
     public ResponseHttp get(String root, String path, Map<String, String> data, ResponseHttp http) {
-        String cookie = NetworkTool.buildCookie(http);
+        String cookie = NetworkTool.getInstance(doLog).buildCookie(http);
         return get(root, path, data, cookie);
     }
 
@@ -57,7 +57,8 @@ public class HttpGetProxy extends AbstractHttpProxy {
         ResponseHttp ret = new ResponseHttp();
         HttpClient client = new HttpClient();
 
-        StringBuilder url = new StringBuilder(root).append(path);
+        String s = buildUrl(root, path);
+        StringBuilder url = new StringBuilder(s);
         if (data != null && data.size() > 0) {
             try {
                 boolean first = true;
@@ -74,11 +75,12 @@ public class HttpGetProxy extends AbstractHttpProxy {
                 e.printStackTrace();
             }
         }
-        HttpMethod method = new GetMethod(url.toString());
+        s = url.toString();
 
-        logMe("HttpGetProxy - url: " + url.toString());
+        logMe("HttpGetProxy - url: " + s);
+        HttpMethod method = new GetMethod(s);
 
-        NetworkTool.initCookies(method, cookie);
+        NetworkTool.getInstance(doLog).initCookies(method, cookie);
 
         if (proxyHost != null && proxyPort > 0) {
             HostConfiguration config = client.getHostConfiguration();
@@ -94,7 +96,7 @@ public class HttpGetProxy extends AbstractHttpProxy {
         try {
             client.executeMethod(method);
 
-            NetworkTool.showheaders(method);
+            NetworkTool.getInstance(doLog).showheaders(method);
 
             ret.statusCode = method.getStatusCode();
             ret.pathRedirect = method.getPath();
@@ -102,7 +104,7 @@ public class HttpGetProxy extends AbstractHttpProxy {
             if (ret.statusCode == HttpStatus.SC_OK) {
                 ret.body = StreamTool.readStream(method.getResponseBodyAsStream());
             } else {
-                while (doRedirect && NetworkTool.isRedirect(ret.statusCode)) {
+                while (doRedirect && NetworkTool.getInstance(doLog).isRedirect(ret.statusCode)) {
                     method.releaseConnection();
                     method = null;
                     logMe("Move to pathRedirect = " + root + ret.pathRedirect);

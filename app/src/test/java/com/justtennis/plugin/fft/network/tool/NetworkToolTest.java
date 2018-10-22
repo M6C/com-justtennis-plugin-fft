@@ -37,8 +37,8 @@ public class NetworkToolTest extends TestCase {
 
         ResponseHttp form = fftServiceLogin.submitFormLogin(response);
 
-        NetworkTool.setDoLog(true);
-        NetworkTool.initCookies(method, form);
+        NetworkTool.getInstance().setDoLog(true);
+        NetworkTool.getInstance().initCookies(method, form);
 
         assertEquals(method.getParams().getCookiePolicy(), CookiePolicy.IGNORE_COOKIES);
         assertNotNull(method.getRequestHeader("Cookie"));
@@ -47,23 +47,23 @@ public class NetworkToolTest extends TestCase {
 
     public static void testShowCookies() {
         HttpClient client = new HttpClient();
-        NetworkTool.setDoLog(true);
-        NetworkTool.showCookies(client, LOGON_SITE, LOGON_PORT);
+        NetworkTool.getInstance().setDoLog(true);
+        NetworkTool.getInstance().showCookies(client, LOGON_SITE, LOGON_PORT);
     }
 
     public static void testIsRedirect() {
-        NetworkTool.setDoLog(true);
-        assertTrue(NetworkTool.isRedirect(HttpStatus.SC_MOVED_TEMPORARILY));
-        assertTrue(NetworkTool.isRedirect(HttpStatus.SC_MOVED_PERMANENTLY));
-        assertTrue(NetworkTool.isRedirect(HttpStatus.SC_SEE_OTHER));
-        assertTrue(NetworkTool.isRedirect(HttpStatus.SC_TEMPORARY_REDIRECT));
-        assertFalse(NetworkTool.isRedirect(HttpStatus.SC_OK));
+        NetworkTool.getInstance().setDoLog(true);
+        assertTrue(NetworkTool.getInstance().isRedirect(HttpStatus.SC_MOVED_TEMPORARILY));
+        assertTrue(NetworkTool.getInstance().isRedirect(HttpStatus.SC_MOVED_PERMANENTLY));
+        assertTrue(NetworkTool.getInstance().isRedirect(HttpStatus.SC_SEE_OTHER));
+        assertTrue(NetworkTool.getInstance().isRedirect(HttpStatus.SC_TEMPORARY_REDIRECT));
+        assertFalse(NetworkTool.getInstance().isRedirect(HttpStatus.SC_OK));
     }
 
     public static void testIsOk() {
-        NetworkTool.setDoLog(true);
-        assertTrue(NetworkTool.isOk(HttpStatus.SC_OK));
-        assertFalse(NetworkTool.isOk(HttpStatus.SC_MOVED_PERMANENTLY));
+        NetworkTool.getInstance().setDoLog(true);
+        assertTrue(NetworkTool.getInstance().isOk(HttpStatus.SC_OK));
+        assertFalse(NetworkTool.getInstance().isOk(HttpStatus.SC_MOVED_PERMANENTLY));
     }
 
     private static FFTServiceLogin newFFTService(Context context) {

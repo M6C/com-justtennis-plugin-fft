@@ -1,5 +1,7 @@
 package com.justtennis.plugin.fft.network;
 
+import android.support.annotation.NonNull;
+
 import com.justtennis.plugin.fft.network.model.ResponseElement;
 import com.justtennis.plugin.fft.network.model.ResponseHttp;
 import com.justtennis.plugin.fft.skeleton.IProxy;
@@ -65,8 +67,9 @@ public class AbstractHttpProxy implements IProxy {
 
     void addResponseHeader(ResponseHttp ret, HttpMethod method) {
         Header[] responseHeaders = method.getResponseHeaders();
+        System.out.println("HttpPostProxy - addResponseHeader size:" + responseHeaders.length);
         for(Header header : responseHeaders) {
-            System.out.println("HttpPostProxy - addResponseHeader name:" + header.getName() + " value:" + header.getValue());
+//            System.out.println("HttpPostProxy - addResponseHeader name:" + header.getName() + " value:" + header.getValue());
             ResponseElement head = new ResponseElement();
             head.name = header.getName();
             head.value = header.getValue();
@@ -84,5 +87,24 @@ public class AbstractHttpProxy implements IProxy {
             "\r\n"+TAG+" - Response = " + ret.body +
             "\r\n"+TAG+" - Response = " + (ret.body != null ? ret.body.length() : 0)
         );
+    }
+
+    /**
+     * NON PROXY METHOD - COMMON UTIL METHOD
+     */
+
+    @NonNull
+    String buildUrl(String root, String path) {
+        String s;
+        if (path.contains("://")) {
+            s = path;
+        } else {
+            if (root.endsWith("/") && path.startsWith("/")) {
+                s = root + path.substring(1);
+            } else {
+                s = root + path;
+            }
+        }
+        return s;
     }
 }

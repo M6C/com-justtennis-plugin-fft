@@ -33,6 +33,7 @@ public class FFTServiceLoginTest extends AbstractFFTServiceTest {
 
         assertNotNull(form.body);
         assertNotNull(form.pathRedirect);
+        assertEquals(form.statusCode, 302);
         assertEquals(form.header.size(), 16);
     }
 
@@ -45,6 +46,7 @@ public class FFTServiceLoginTest extends AbstractFFTServiceTest {
         assertNotNull(formRedirect);
         assertNotNull(formRedirect.body);
         assertNotNull(formRedirect.pathRedirect);
+        assertEquals(formRedirect.statusCode, 200);
         assertEquals(formRedirect.header.size(), 0);
     }
 }

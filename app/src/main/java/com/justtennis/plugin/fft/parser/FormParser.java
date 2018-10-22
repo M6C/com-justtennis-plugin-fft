@@ -50,17 +50,21 @@ public class FormParser {
                 response.action = ret.attr("action");
                 System.out.println("==============> ret action:" + response.action);
 
-                Elements inputs = ret.select(request.hiddenQuery);
-                if (inputs != null && !inputs.isEmpty()) {
-                    for(int i=0 ; i<inputs.size() ; i++) {
-                        Element input = inputs.get(i);
-                        String name = input.attr("name");
-                        String value = input.attr("value");
-                        response.input.put(name, value);
-                        System.out.println("==============> ret hidden -" + name + ":" + value);
+                if (request.hiddenQuery != null && !request.hiddenQuery.isEmpty()) {
+                    Elements inputs = ret.select(request.hiddenQuery);
+                    if (inputs != null && !inputs.isEmpty()) {
+                        for (int i = 0; i < inputs.size(); i++) {
+                            Element input = inputs.get(i);
+                            String name = input.attr("name");
+                            String value = input.attr("value");
+                            response.input.put(name, value);
+                            System.out.println("==============> ret hidden -" + name + ":" + value);
+                        }
+                    } else {
+                        System.err.println("\r\n==============> ret hidden '" + request.hiddenQuery + "' not found");
                     }
                 } else {
-                    System.err.println("\r\n==============> ret hidden '"+request.hiddenQuery+"' not found");
+                    System.err.println("\r\n==============> ret hidden is empty.");
                 }
 
                 response.button = parseElement(ret, request.submitQuery);

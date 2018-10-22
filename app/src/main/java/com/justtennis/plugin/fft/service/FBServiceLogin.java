@@ -13,6 +13,7 @@ import com.justtennis.plugin.fft.query.response.LoginFormResponse;
 
 import org.jsoup.helper.StringUtil;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class FBServiceLogin extends AbstractFBService {
@@ -53,10 +54,11 @@ public class FBServiceLogin extends AbstractFBService {
         System.out.println("==============> Form Action:" + form.action);
 
         Map<String, String> data = LoginFormResponseConverter.toDataMap(form);
+
         if (!StringUtil.isBlank(form.action)) {
             ret = doPost(URL_ROOT, form.action, data);
 
-            String cookie = NetworkTool.buildCookie(ret);
+            String cookie = NetworkTool.getInstance().buildCookie(ret);
             if (!cookie.isEmpty()) {
                 FFTSharedPref.setCookie(context, cookie);
                 FFTSharedPref.setHomePage(context, form.action);
@@ -74,7 +76,7 @@ public class FBServiceLogin extends AbstractFBService {
         logMethod("navigateToFormRedirect");
         if (loginFormResponse.pathRedirect != null && !loginFormResponse.pathRedirect.isEmpty()) {
             ResponseHttp responseHttp = doGetConnected(URL_ROOT, loginFormResponse.pathRedirect, loginFormResponse);
-            if (NetworkTool.isOk(responseHttp.statusCode)) {
+            if (NetworkTool.getInstance().isOk(responseHttp.statusCode)) {
                 FFTSharedPref.setHomePage(context, responseHttp.pathRedirect);
             } else {
                 FFTSharedPref.cleanSecurity(context);
@@ -86,11 +88,7 @@ public class FBServiceLogin extends AbstractFBService {
 
     public ResponseHttp navigateToHomePage(ResponseHttp loginFormResponse) throws NotConnectedException {
         logMethod("navigateToHomePage");
-        String homePage = FFTSharedPref.getHomePage(context);
-        if (homePage != null && !homePage.isEmpty()) {
-            return doGetConnected(URL_ROOT, homePage, loginFormResponse);
-        } else {
-            throw new NotConnectedException("navigateToHomePage - No Home Page found");
-        }
+        String homePage = loginFormResponse.pathRedirect;//;
+        return doPostConnected(URL_ROOT, homePage, new HashMap<>(), loginFormResponse);
     }
 }

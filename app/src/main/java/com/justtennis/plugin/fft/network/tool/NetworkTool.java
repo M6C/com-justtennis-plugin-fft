@@ -15,12 +15,24 @@ import org.apache.commons.httpclient.cookie.CookieSpec;
 
 public class NetworkTool {
 
-    private static CookieSpec cookiespec = CookiePolicy.getDefaultSpec();
-    private static boolean doLog = false;
+    private static NetworkTool instance;
+    private CookieSpec cookiespec = CookiePolicy.getDefaultSpec();
+    private boolean doLog = false;
 
     private NetworkTool() {}
 
-    public static void initCookies(HttpMethod method, ResponseHttp response) {
+    public static NetworkTool getInstance() {
+        if (instance == null) {
+            instance = new NetworkTool();
+        }
+        return instance;
+    }
+
+    public static NetworkTool getInstance(boolean doLog) {
+        return getInstance().setDoLog(doLog);
+    }
+
+    public void initCookies(HttpMethod method, ResponseHttp response) {
         if (method == null || response == null) {
             return;
         }
@@ -28,18 +40,29 @@ public class NetworkTool {
         initCookies(method, buildCookie(response));
     }
 
-    public static void initCookies(HttpMethod method, String cookie) {
+    public void initCookies(HttpMethod method, String cookie) {
         if (cookie == null || cookie.isEmpty()) {
-            return;
+            logMe("NetworkTool - initCookies - Cookie FAKE");
+            cookie = "sb=ib7NW5bLUHA8AqcU3pUTadLS; datr=ib7NW_JkbLr3pUBT7WyqD0tP; fr=1qQG9g3uHVHy6FCg0..Bbzb6J.lT.AAA.0.0.Bbzb6J.AWXAM1eo; reg_ext_ref=https%3A%2F%2Fwww.google.fr%2F; reg_fb_ref=https%3A%2F%2Ffr-fr.facebook.com%2F; reg_fb_gate=https%3A%2F%2Ffr-fr.facebook.com%2F";
         }
-
         logMe("NetworkTool - initCookies - Cookie = " + cookie);
-        method.getParams().setCookiePolicy(CookiePolicy.IGNORE_COOKIES);
+
+        method.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
         method.setRequestHeader("Cookie", cookie);
+
+//            method.setRequestHeader("Accept-Encoding", "gzip, deflate, br");
+        method.setRequestHeader("Accept-Language", "fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7");
+        method.setRequestHeader("Cache-Control", "max-age=0");
+//            client.getParams().setParameter("content-length", "745");
+        method.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        method.setRequestHeader("Origin", "https://fr-fr.facebook.com");
+        method.setRequestHeader("Referer", "https://fr-fr.facebook.com/");
+        method.setRequestHeader("Upgrade-Insecure-Requests", "1");
+        method.setRequestHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36");
     }
 
     @NonNull
-    public static String buildCookie(ResponseHttp response) {
+    public String buildCookie(ResponseHttp response) {
         StringBuilder strCookie = new StringBuilder("");
         for(ResponseElement head : response.header) {
             if ("Set-Cookie".equals(head.name)) {
@@ -54,7 +77,7 @@ public class NetworkTool {
         return strCookie.toString();
     }
 
-    public static void showCookies(HttpClient client, String logonSite, int logonPort) {
+    public void showCookies(HttpClient client, String logonSite, int logonPort) {
         logMe("");
         // See if we got any cookies
         Cookie[] initcookies = cookiespec.match(logonSite, logonPort, "/", true, client.getState().getCookies());
@@ -69,43 +92,44 @@ public class NetworkTool {
         logMe("");
     }
 
-    public static void showheaders(HttpMethod method) {
+    public void showheaders(HttpMethod method) {
         showRequestHeaders(method);
         showResponseHeaders(method);
     }
 
-    public static void showRequestHeaders(HttpMethod method) {
-        logMe("\r\nNetworkTool - showRequestHeaders-----------------------------");
+    public void showRequestHeaders(HttpMethod method) {
+        logMe("\r\nNetworkTool - showRequestHeaders----------------------------- size:" + method.getRequestHeaders().length);
         for (Header head : method.getRequestHeaders()) {
             logMe("NetworkTool - " + head.getName() + ":" + head.getValue());
         }
         logMe("-------------------------------------------------------------\r\n");
     }
 
-    public static void showResponseHeaders(HttpMethod method) {
-        logMe("\r\nNetworkTool - showResponseHeaders ---------------------------");
+    public void showResponseHeaders(HttpMethod method) {
+        logMe("\r\nNetworkTool - showResponseHeaders --------------------------- size:" + method.getResponseHeaders().length);
         for (Header head : method.getResponseHeaders()) {
             logMe("NetworkTool - " + head.getName() + ":" + head.getValue());
         }
         logMe("-------------------------------------------------------------\r\n");
     }
 
-    public static boolean isOk(int statusCode) {
+    public boolean isOk(int statusCode) {
         return statusCode == HttpStatus.SC_OK;
     }
 
-    public static boolean isRedirect(int statusCode) {
+    public boolean isRedirect(int statusCode) {
         return statusCode == HttpStatus.SC_MOVED_TEMPORARILY ||
                 statusCode== HttpStatus.SC_MOVED_PERMANENTLY ||
                 statusCode== HttpStatus.SC_SEE_OTHER ||
                 statusCode == HttpStatus.SC_TEMPORARY_REDIRECT;
     }
 
-    public static void setDoLog(boolean doLog) {
-        NetworkTool.doLog = doLog;
+    public NetworkTool setDoLog(boolean doLog) {
+        NetworkTool.getInstance().doLog = doLog;
+        return this;
     }
 
-    private static void logMe(String message) {
+    private void logMe(String message) {
         if (doLog) {
             System.out.println(message);
         }
