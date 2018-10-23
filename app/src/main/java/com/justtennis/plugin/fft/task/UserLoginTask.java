@@ -4,9 +4,9 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.justtennis.plugin.fft.network.model.ResponseElement;
-import com.justtennis.plugin.fft.network.model.ResponseHttp;
-import com.justtennis.plugin.fft.preference.FFTSharedPref;
+import com.justtennis.plugin.shared.network.model.ResponseElement;
+import com.justtennis.plugin.shared.network.model.ResponseHttp;
+import com.justtennis.plugin.shared.preference.LoginSharedPref;
 import com.justtennis.plugin.fft.query.response.LoginFormResponse;
 import com.justtennis.plugin.fft.service.FFTServiceLogin;
 
@@ -26,8 +26,8 @@ public abstract class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
         mEmail = email;
         mPassword = password;
         fftServiceLogin = newFFTService(context);
-        FFTSharedPref.setLogin(context, mEmail);
-        FFTSharedPref.setPwd(context, mPassword);
+        LoginSharedPref.setLogin(context, mEmail);
+        LoginSharedPref.setPwd(context, mPassword);
     }
 
     @Override

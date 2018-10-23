@@ -26,8 +26,8 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.justtennis.plugin.fft.preference.FFTSharedPref;
-import com.justtennis.plugin.fft.preference.ProxySharedPref;
+import com.justtennis.plugin.shared.preference.LoginSharedPref;
+import com.justtennis.plugin.shared.preference.ProxySharedPref;
 import com.justtennis.plugin.fft.resolver.ClubResolver;
 import com.justtennis.plugin.fft.resolver.InviteResolver;
 import com.justtennis.plugin.fft.resolver.PlayerResolver;
@@ -108,7 +108,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         initializeForm();
 
-        FFTSharedPref.cleanSecurity(context);
+        LoginSharedPref.cleanSecurity(context);
     }
 
     @Override
@@ -300,14 +300,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mProxyLogin.setText(ProxySharedPref.getUser(context));
         mProxyPassword.setText(ProxySharedPref.getPwd(context));
 
-        String login = FFTSharedPref.getLogin(context);
+        String login = LoginSharedPref.getLogin(context);
         if (login == null || login.isEmpty()) {
             mLoginView.setText("");
         } else {
             mLoginView.setText(login);
         }
 
-        String paswd = FFTSharedPref.getPwd(context);
+        String paswd = LoginSharedPref.getPwd(context);
         if (paswd == null || paswd.isEmpty()) {
             mPasswordView.setText("");
         } else {

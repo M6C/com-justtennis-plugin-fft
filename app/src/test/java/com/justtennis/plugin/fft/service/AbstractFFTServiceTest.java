@@ -1,9 +1,10 @@
 package com.justtennis.plugin.fft.service;
 
-import com.justtennis.plugin.fft.network.model.ResponseHttp;
 import com.justtennis.plugin.fft.query.response.LoginFormResponse;
 import com.justtennis.plugin.fft.query.response.PalmaresMillesimeResponse;
-import com.justtennis.plugin.fft.skeleton.IProxy;
+import com.justtennis.plugin.shared.network.model.ResponseHttp;
+import com.justtennis.plugin.shared.service.AbstractServiceTest;
+import com.justtennis.plugin.shared.skeleton.IProxy;
 
 abstract class AbstractFFTServiceTest extends AbstractServiceTest {
 
@@ -11,9 +12,9 @@ abstract class AbstractFFTServiceTest extends AbstractServiceTest {
     private static final String LOGIN = "leandre.roca2006";
     private static final String PASWD = "lR123456789";
 
-    abstract IProxy initializeService();
-
     static FFTServiceLogin fftServiceLogin;
+
+    abstract IProxy initializeService();
 
     @Override
     protected LoginFormResponse getLoginForm() {

@@ -2,6 +2,7 @@ package com.justtennis.plugin.fft.parser;
 
 import com.justtennis.plugin.fft.query.request.FFTFindPlayerRequest;
 import com.justtennis.plugin.fft.query.response.FindPlayerResponse;
+import com.justtennis.plugin.shared.parser.AbstractParser;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

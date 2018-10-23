@@ -1,5 +1,7 @@
 package com.justtennis.plugin.fft.query.response;
 
+import com.justtennis.plugin.shared.query.response.FormElement;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

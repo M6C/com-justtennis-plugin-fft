@@ -1,12 +1,12 @@
 package com.justtennis.plugin.fft.parser;
 
-import com.justtennis.plugin.fft.query.request.AbstractFormRequest;
 import com.justtennis.plugin.fft.query.request.FFTFindPlayerFormRequest;
-import com.justtennis.plugin.fft.query.request.LoginFormRequest;
-import com.justtennis.plugin.fft.query.response.AbstractFormResponse;
 import com.justtennis.plugin.fft.query.response.FindPlayerFormResponse;
-import com.justtennis.plugin.fft.query.response.FormElement;
 import com.justtennis.plugin.fft.query.response.LoginFormResponse;
+import com.justtennis.plugin.shared.query.request.AbstractFormRequest;
+import com.justtennis.plugin.shared.query.request.LoginFormRequest;
+import com.justtennis.plugin.shared.query.response.AbstractFormResponse;
+import com.justtennis.plugin.shared.query.response.FormElement;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -40,7 +40,7 @@ public class FormParser {
         return ret;
     }
 
-    public static Element parseForm(String content, AbstractFormRequest request, AbstractFormResponse response) {
+    private static Element parseForm(String content, AbstractFormRequest request, AbstractFormResponse response) {
         Element ret = null;
         Document doc = Jsoup.parse(content);
         if (doc != null) {
