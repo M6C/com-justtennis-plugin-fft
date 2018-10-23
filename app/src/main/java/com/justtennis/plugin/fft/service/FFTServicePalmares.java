@@ -2,9 +2,7 @@ package com.justtennis.plugin.fft.service;
 
 import android.content.Context;
 
-import com.justtennis.plugin.converter.PalmaresMillesimeFormResponseConverter;
-import com.justtennis.plugin.fft.exception.NotConnectedException;
-import com.justtennis.plugin.fft.network.model.ResponseHttp;
+import com.justtennis.plugin.fft.converter.PalmaresMillesimeFormResponseConverter;
 import com.justtennis.plugin.fft.parser.MillesimeMatchParser;
 import com.justtennis.plugin.fft.parser.PalmaresParser;
 import com.justtennis.plugin.fft.query.request.FFTMillessimeMatchRequest;
@@ -13,6 +11,8 @@ import com.justtennis.plugin.fft.query.request.PalmaresRequest;
 import com.justtennis.plugin.fft.query.response.MillesimeMatchResponse;
 import com.justtennis.plugin.fft.query.response.PalmaresMillesimeResponse;
 import com.justtennis.plugin.fft.query.response.PalmaresResponse;
+import com.justtennis.plugin.shared.exception.NotConnectedException;
+import com.justtennis.plugin.shared.network.model.ResponseHttp;
 
 import org.jsoup.helper.StringUtil;
 
@@ -24,7 +24,6 @@ public class FFTServicePalmares extends AbstractFFTService {
 
     private FFTServicePalmares(Context context) {
         super(context);
-        initializeProxy(this);
     }
 
     public static FFTServicePalmares newInstance(Context context) {

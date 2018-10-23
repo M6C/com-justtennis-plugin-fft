@@ -1,10 +1,10 @@
 package com.justtennis.plugin.fft.service;
 
-import com.justtennis.plugin.fft.exception.NotConnectedException;
-import com.justtennis.plugin.fft.network.model.ResponseHttp;
+import com.justtennis.plugin.shared.exception.NotConnectedException;
+import com.justtennis.plugin.shared.network.model.ResponseHttp;
 import com.justtennis.plugin.fft.query.response.RankingListResponse;
 import com.justtennis.plugin.fft.query.response.RankingMatchResponse;
-import com.justtennis.plugin.fft.skeleton.IProxy;
+import com.justtennis.plugin.shared.skeleton.IProxy;
 
 import org.junit.Test;
 

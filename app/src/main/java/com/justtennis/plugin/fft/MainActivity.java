@@ -19,7 +19,7 @@ import android.view.MenuItem;
 import com.justtennis.plugin.fft.fragment.FindPlayerFragment;
 import com.justtennis.plugin.fft.fragment.MillesimeMatchFragment;
 import com.justtennis.plugin.fft.fragment.RankingMatchFragment;
-import com.justtennis.plugin.fft.preference.FFTSharedPref;
+import com.justtennis.plugin.shared.preference.LoginSharedPref;
 import com.justtennis.plugin.fft.tool.FragmentTool;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             startActivity(i);
         } else if (id == R.id.nav_disconnect) {
             Context context = getApplicationContext();
-            FFTSharedPref.cleanSecurity(context);
+            LoginSharedPref.cleanSecurity(context);
             startActivity(new Intent(context, LoginActivity.class));
             finish();
         }

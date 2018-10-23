@@ -1,5 +1,7 @@
 package com.justtennis.plugin.fft.query.request;
 
+import com.justtennis.plugin.shared.query.request.LoginFormRequest;
+
 public class FFTLoginFormRequest extends LoginFormRequest {
 
     private static final String QUERY_FORM_USER_LOGIN = "form.user-login";

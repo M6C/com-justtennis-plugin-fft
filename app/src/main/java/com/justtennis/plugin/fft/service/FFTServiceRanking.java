@@ -2,13 +2,13 @@ package com.justtennis.plugin.fft.service;
 
 import android.content.Context;
 
-import com.justtennis.plugin.fft.exception.NotConnectedException;
-import com.justtennis.plugin.fft.network.model.ResponseHttp;
 import com.justtennis.plugin.fft.parser.RankingParser;
 import com.justtennis.plugin.fft.query.request.FFTRankingListRequest;
 import com.justtennis.plugin.fft.query.request.FFTRankingMatchRequest;
 import com.justtennis.plugin.fft.query.response.RankingListResponse;
 import com.justtennis.plugin.fft.query.response.RankingMatchResponse;
+import com.justtennis.plugin.shared.exception.NotConnectedException;
+import com.justtennis.plugin.shared.network.model.ResponseHttp;
 
 import org.jsoup.helper.StringUtil;
 
@@ -18,7 +18,6 @@ public class FFTServiceRanking extends AbstractFFTService {
 
     private FFTServiceRanking(Context context) {
         super(context);
-        initializeProxy(this);
     }
 
     public static FFTServiceRanking newInstance(Context context) {

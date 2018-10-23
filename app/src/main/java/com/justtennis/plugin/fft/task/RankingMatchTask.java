@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.justtennis.plugin.fft.exception.NotConnectedException;
+import com.justtennis.plugin.shared.exception.NotConnectedException;
 import com.justtennis.plugin.fft.query.response.RankingListResponse;
 import com.justtennis.plugin.fft.query.response.RankingMatchResponse;
 import com.justtennis.plugin.fft.service.FFTServiceRanking;
