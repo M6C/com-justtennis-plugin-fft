@@ -4,6 +4,7 @@ import com.justtennis.plugin.fft.query.request.FFTRankingListRequest;
 import com.justtennis.plugin.fft.query.request.FFTRankingMatchRequest;
 import com.justtennis.plugin.fft.query.response.RankingListResponse;
 import com.justtennis.plugin.fft.query.response.RankingMatchResponse;
+import com.justtennis.plugin.shared.parser.AbstractParser;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

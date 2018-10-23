@@ -4,8 +4,8 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.justtennis.plugin.fft.exception.NotConnectedException;
-import com.justtennis.plugin.fft.network.model.ResponseHttp;
+import com.justtennis.plugin.shared.exception.NotConnectedException;
+import com.justtennis.plugin.shared.network.model.ResponseHttp;
 import com.justtennis.plugin.fft.query.response.FindPlayerFormResponse;
 import com.justtennis.plugin.fft.query.response.FindPlayerResponse;
 import com.justtennis.plugin.fft.service.AbstractFFTService;

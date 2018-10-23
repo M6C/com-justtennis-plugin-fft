@@ -2,15 +2,15 @@ package com.justtennis.plugin.fft.service;
 
 import android.content.Context;
 
-import com.justtennis.plugin.converter.FindPlayerFormResponseConverter;
-import com.justtennis.plugin.fft.exception.NotConnectedException;
-import com.justtennis.plugin.fft.network.model.ResponseHttp;
+import com.justtennis.plugin.fft.converter.FindPlayerFormResponseConverter;
 import com.justtennis.plugin.fft.parser.FindPlayerParser;
 import com.justtennis.plugin.fft.parser.FormParser;
 import com.justtennis.plugin.fft.query.request.FFTFindPlayerFormRequest;
 import com.justtennis.plugin.fft.query.request.FFTFindPlayerRequest;
 import com.justtennis.plugin.fft.query.response.FindPlayerFormResponse;
 import com.justtennis.plugin.fft.query.response.FindPlayerResponse;
+import com.justtennis.plugin.shared.exception.NotConnectedException;
+import com.justtennis.plugin.shared.network.model.ResponseHttp;
 
 import org.jsoup.helper.StringUtil;
 

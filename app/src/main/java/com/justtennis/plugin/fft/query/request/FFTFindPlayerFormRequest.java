@@ -1,5 +1,7 @@
 package com.justtennis.plugin.fft.query.request;
 
+import com.justtennis.plugin.shared.query.request.AbstractFormRequest;
+
 public class FFTFindPlayerFormRequest extends AbstractFormRequest {
 
     private static final String QUERY_FORM = "form[id$=-actency-recherche-joueur-form]";
