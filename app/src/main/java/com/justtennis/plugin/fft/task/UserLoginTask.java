@@ -7,8 +7,8 @@ import android.util.Log;
 import com.justtennis.plugin.shared.network.model.ResponseElement;
 import com.justtennis.plugin.shared.network.model.ResponseHttp;
 import com.justtennis.plugin.shared.preference.LoginSharedPref;
-import com.justtennis.plugin.fft.query.response.LoginFormResponse;
-import com.justtennis.plugin.fft.service.FFTServiceLogin;
+import com.justtennis.plugin.shared.query.response.LoginFormResponse;
+import com.justtennis.plugin.shared.service.IServiceLogin;
 
 /**
  * Represents an asynchronous login/registration task used to authenticate
@@ -20,14 +20,15 @@ public abstract class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
     private final String mEmail;
     private final String mPassword;
-    private FFTServiceLogin fftServiceLogin;
+    private IServiceLogin fftServiceLogin;
+
+    protected abstract IServiceLogin newLoginService(Context context);
 
     protected UserLoginTask(Context context, String email, String password) {
         mEmail = email;
         mPassword = password;
-        fftServiceLogin = newFFTService(context);
-        LoginSharedPref.setLogin(context, mEmail);
-        LoginSharedPref.setPwd(context, mPassword);
+        fftServiceLogin = newLoginService(context);
+        saveData(context);
     }
 
     @Override
@@ -45,6 +46,11 @@ public abstract class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
         return ret;
     }
 
+    protected void saveData(Context context) {
+        LoginSharedPref.setLogin(context, mEmail);
+        LoginSharedPref.setPwd(context, mPassword);
+    }
+
     private boolean isFormLoginConnected(ResponseHttp form) {
         boolean ret = false;
         if (form != null && form.header != null && !form.header.isEmpty()) {
@@ -57,9 +63,5 @@ public abstract class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
         }
         Log.d(TAG, "isFormLoginConnected:" + ret);
         return ret;
-    }
-
-    protected FFTServiceLogin newFFTService(Context context) {
-        return FFTServiceLogin.newInstance(context);
     }
 }

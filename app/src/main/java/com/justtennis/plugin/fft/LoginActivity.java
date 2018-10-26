@@ -26,8 +26,6 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.justtennis.plugin.shared.preference.LoginSharedPref;
-import com.justtennis.plugin.shared.preference.ProxySharedPref;
 import com.justtennis.plugin.fft.resolver.ClubResolver;
 import com.justtennis.plugin.fft.resolver.InviteResolver;
 import com.justtennis.plugin.fft.resolver.PlayerResolver;
@@ -35,6 +33,9 @@ import com.justtennis.plugin.fft.resolver.SaisonResolver;
 import com.justtennis.plugin.fft.service.FFTServiceLogin;
 import com.justtennis.plugin.fft.task.UserLoginTask;
 import com.justtennis.plugin.fft.tool.ProgressTool;
+import com.justtennis.plugin.shared.preference.LoginSharedPref;
+import com.justtennis.plugin.shared.preference.ProxySharedPref;
+import com.justtennis.plugin.shared.service.IServiceLogin;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -360,7 +361,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
 
         @Override
-        protected FFTServiceLogin newFFTService(Context context) {
+        protected IServiceLogin newLoginService(Context context) {
+            return FFTServiceLogin.newInstance(context);
+        }
+
+        @Override
+        protected void saveData(Context context) {
+            super.saveData(context);
             ProxySharedPref.setUseProxy(context, mUseProxy.isChecked());
             if (mUseProxy.isChecked()) {
                 ProxySharedPref.setSite(context, mProxyHost.getText().toString());
@@ -368,7 +375,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 ProxySharedPref.setUser(context, mProxyLogin.getText().toString());
                 ProxySharedPref.setPwd(context, mProxyPassword.getText().toString());
             }
-            return super.newFFTService(context);
         }
     }
 }

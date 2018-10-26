@@ -1,6 +1,6 @@
 package com.justtennis.plugin.shared.service;
 
-import com.justtennis.plugin.fft.query.response.LoginFormResponse;
+import com.justtennis.plugin.shared.query.response.LoginFormResponse;
 import com.justtennis.plugin.shared.network.model.ResponseHttp;
 import com.justtennis.plugin.shared.skeleton.IProxy;
 

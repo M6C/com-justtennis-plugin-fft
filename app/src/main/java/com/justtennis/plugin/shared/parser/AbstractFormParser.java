@@ -1,8 +1,10 @@
 package com.justtennis.plugin.shared.parser;
 
 import com.justtennis.plugin.shared.query.request.AbstractFormRequest;
+import com.justtennis.plugin.shared.query.request.LoginFormRequest;
 import com.justtennis.plugin.shared.query.response.AbstractFormResponse;
 import com.justtennis.plugin.shared.query.response.FormElement;
+import com.justtennis.plugin.shared.query.response.LoginFormResponse;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -10,6 +12,18 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 public abstract class AbstractFormParser extends AbstractParser {
+
+    public static LoginFormResponse parseFormLogin(String content, LoginFormRequest request) {
+        LoginFormResponse ret = new LoginFormResponse();
+        Element form = parseForm(content, request, ret);
+        if (form != null) {
+            ret.login = parseElement(form, request.loginQuery);
+            ret.password = parseElement(form, request.passwordQuery);
+            return ret;
+        } else {
+            return null;
+        }
+    }
 
     protected static Element parseForm(String content, AbstractFormRequest request, AbstractFormResponse response) {
         Element ret = null;

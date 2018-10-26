@@ -1,6 +1,6 @@
 package com.justtennis.plugin.fft.service;
 
-import com.justtennis.plugin.fft.query.response.LoginFormResponse;
+import com.justtennis.plugin.shared.query.response.LoginFormResponse;
 import com.justtennis.plugin.fft.query.response.PalmaresMillesimeResponse;
 import com.justtennis.plugin.shared.network.model.ResponseHttp;
 import com.justtennis.plugin.shared.service.AbstractServiceTest;

@@ -3,19 +3,20 @@ package com.justtennis.plugin.fb.service;
 import android.content.Context;
 
 import com.justtennis.plugin.fb.query.request.FBLoginFormRequest;
-import com.justtennis.plugin.fft.converter.LoginFormResponseConverter;
 import com.justtennis.plugin.fft.parser.FormParser;
-import com.justtennis.plugin.fft.query.response.LoginFormResponse;
+import com.justtennis.plugin.shared.converter.LoginFormResponseConverter;
 import com.justtennis.plugin.shared.exception.NotConnectedException;
 import com.justtennis.plugin.shared.network.model.ResponseHttp;
 import com.justtennis.plugin.shared.network.tool.NetworkTool;
 import com.justtennis.plugin.shared.preference.LoginSharedPref;
+import com.justtennis.plugin.shared.query.response.LoginFormResponse;
+import com.justtennis.plugin.shared.service.IServiceLogin;
 
 import org.jsoup.helper.StringUtil;
 
 import java.util.Map;
 
-public class FBServiceLogin extends AbstractFBService {
+public class FBServiceLogin extends AbstractFBService implements IServiceLogin {
 
     private static final String TAG = FBServiceLogin.class.getName();
 
@@ -28,6 +29,7 @@ public class FBServiceLogin extends AbstractFBService {
         return new FBServiceLogin(context);
     }
 
+    @Override
     public LoginFormResponse getLoginForm(String login, String password) {
         logMethod("getLoginForm");
         LoginFormResponse ret = null;
@@ -44,6 +46,7 @@ public class FBServiceLogin extends AbstractFBService {
         return ret;
     }
 
+    @Override
     public ResponseHttp submitFormLogin(LoginFormResponse form) {
         logMethod("submitFormLogin");
         ResponseHttp ret = null;
