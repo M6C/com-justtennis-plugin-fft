@@ -16,20 +16,20 @@ public class FBServiceHomePageTest extends AbstractFBServiceTest {
         return fbServiceHomePage;
     }
 
-//    @Test
-//    public void testNavigateToHomePage() throws NotConnectedException {
-//        ResponseHttp form = doLogin();
-//
-//        ResponseHttp formRedirect = fbServiceHomePage.navigateToHomePage(form);
-//
-//        assertNotNull(formRedirect);
-//        assertNotNull(formRedirect.body);
-//        assertNotNull(formRedirect.pathRedirect);
-//        assertEquals(200, formRedirect.statusCode);
-//        assertEquals(16, formRedirect.header.size());
-//
-//        System.out.println("Test body:"+formRedirect.body);
-//    }
+    @Test
+    public void testNavigateToHomePage() throws NotConnectedException {
+        ResponseHttp form = doLogin();
+
+        ResponseHttp formRedirect = fbServiceHomePage.navigateToHomePage(form);
+
+        assertNotNull(formRedirect);
+        assertNotNull(formRedirect.body);
+        assertNotNull(formRedirect.pathRedirect);
+        assertEquals(200, formRedirect.statusCode);
+        assertEquals(16, formRedirect.header.size());
+
+        System.out.println("Test body:"+formRedirect.body);
+    }
 
     @Test
     public void testNavigateToPathRedirect() throws NotConnectedException {
@@ -46,20 +46,6 @@ public class FBServiceHomePageTest extends AbstractFBServiceTest {
         System.out.println("testNavigateToPathRedirect body:"+formRedirect.body);
     }
 
-//    @Test
-//    public void testGetHomePage() throws NotConnectedException {
-//        ResponseHttp form = doLogin();
-//
-//        ResponseHttp formRedirect = fbServiceHomePage.navigateToHomePage(form);
-//
-//        assertNotNull(formRedirect);
-//        assertNotNull(formRedirect.body);
-//
-//        FBHomePageResponse homePageResponse = fbServiceHomePage.getHomePage(formRedirect);
-//        assertNotNull(homePageResponse.name);
-//        assertNotNull(homePageResponse.linkProfil);
-//    }
-
     @Test
     public void testGetHomePage() throws NotConnectedException {
         ResponseHttp form = doLogin();
@@ -69,28 +55,26 @@ public class FBServiceHomePageTest extends AbstractFBServiceTest {
         assertNotNull(formRedirect);
         assertNotNull(formRedirect.body);
 
-        System.out.println("testGetHomePage body:"+formRedirect.body);
-
         FBHomePageResponse homePageResponse = fbServiceHomePage.getHomePage(formRedirect);
         assertNotNull(homePageResponse.name);
         assertNotNull(homePageResponse.linkProfil);
     }
 
-//    @Test
-//    public void testNavigateToProfil() throws NotConnectedException {
-//        ResponseHttp form = doLogin();
-//
-//        ResponseHttp formRedirect = fbServiceHomePage.navigateToHomePage(form);
-//
-//        assertNotNull(formRedirect);
-//        assertNotNull(formRedirect.body);
-//
-//        ResponseHttp homePageResponse = fbServiceHomePage.navigateToProfil(form, formRedirect);
-//        assertNotNull(homePageResponse);
-//        assertNotNull(homePageResponse.body);
-//        assertEquals(200, homePageResponse.statusCode);
-//        assertEquals(16, homePageResponse.header.size());
-//
-//        System.out.println("Test body:"+homePageResponse.body);
-//    }
+    @Test
+    public void testNavigateToProfil() throws NotConnectedException {
+        ResponseHttp form = doLogin();
+
+        ResponseHttp formRedirect = fbServiceHomePage.navigateToHomePage(form);
+
+        assertNotNull(formRedirect);
+        assertNotNull(formRedirect.body);
+
+        ResponseHttp homePageResponse = fbServiceHomePage.navigateToProfil(form, formRedirect);
+        assertNotNull(homePageResponse);
+        assertNotNull(homePageResponse.body);
+        assertEquals(200, homePageResponse.statusCode);
+        assertEquals(16, homePageResponse.header.size());
+
+        System.out.println("Test body:"+homePageResponse.body);
+    }
 }
