@@ -33,18 +33,18 @@ public abstract class AbstractFFTService extends AbstractService {
         }
 
         public static PLAYER_GENRE findByValue(String value) {
-            for(PLAYER_GENRE playerSex : PLAYER_GENRE.values()) {
-                if (value.equalsIgnoreCase(playerSex.value)) {
-                    return playerSex;
+            for(PLAYER_GENRE playerGenre : PLAYER_GENRE.values()) {
+                if (value.equalsIgnoreCase(playerGenre.value)) {
+                    return playerGenre;
                 }
             }
             return PLAYER_GENRE.MAN;
         }
 
         public static PLAYER_GENRE findByLabel(String label) {
-            for(PLAYER_GENRE playerSex : PLAYER_GENRE.values()) {
-                if (label.equalsIgnoreCase(playerSex.label)) {
-                    return playerSex;
+            for(PLAYER_GENRE playerGenre : PLAYER_GENRE.values()) {
+                if (label.equalsIgnoreCase(playerGenre.label)) {
+                    return playerGenre;
                 }
             }
             return PLAYER_GENRE.MAN;

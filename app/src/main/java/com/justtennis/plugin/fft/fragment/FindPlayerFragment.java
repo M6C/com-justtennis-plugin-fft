@@ -46,7 +46,7 @@ public class FindPlayerFragment extends Fragment implements OnListFragmentIntera
     private List<FindPlayerResponse.PlayerItem> listPlayer = new ArrayList<>();
     private List<PlayerDto> listPlayerDto = new ArrayList<>();
     private View llMatch;
-    private Spinner spSex;
+    private Spinner spGenre;
     private FindPlayerAdapter adpPlayer;
     private MyFindPlayerTask mFindPlayerTask;
     private ProgressBar pgPlayer;
@@ -84,7 +84,7 @@ public class FindPlayerFragment extends Fragment implements OnListFragmentIntera
         View view = inflater.inflate(R.layout.fragment_find_player, container, false);
 
         llMatch = view.findViewById(R.id.list);
-        spSex = view.findViewById(R.id.sp_genre);
+        spGenre = view.findViewById(R.id.sp_genre);
         etFirstname = view.findViewById(R.id.et_firstname);
         etLastname = view.findViewById(R.id.et_lastname);
         pgPlayer = view.findViewById(R.id.progress_match);
@@ -97,7 +97,7 @@ public class FindPlayerFragment extends Fragment implements OnListFragmentIntera
             mColumnCount = arguments.getInt(ARG_COLUMN_COUNT, mColumnCount);
         }
 
-        initializeSex();
+        initializeGenre();
         initializeMatch();
         initializeFabValidate();
 
@@ -129,17 +129,17 @@ public class FindPlayerFragment extends Fragment implements OnListFragmentIntera
         super.onDestroyView();
     }
 
-    private void initializeSex() {
+    private void initializeGenre() {
         Context context = getContext();
         assert context != null;
 
         List<String> listValue = new ArrayList<>();
-        for(AbstractFFTService.PLAYER_GENRE playerSex : AbstractFFTService.PLAYER_GENRE.values()) {
-            listValue.add(playerSex.label);
+        for(AbstractFFTService.PLAYER_GENRE playerGenre : AbstractFFTService.PLAYER_GENRE.values()) {
+            listValue.add(playerGenre.label);
         }
 
-        ArrayAdapter<String> adpSex = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, listValue);
-        spSex.setAdapter(adpSex);
+        ArrayAdapter<String> adpGenre = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, listValue);
+        spGenre.setAdapter(adpGenre);
     }
 
     private void initializeMatch() {
@@ -164,7 +164,7 @@ public class FindPlayerFragment extends Fragment implements OnListFragmentIntera
     }
 
     private void findPlayer() {
-        AbstractFFTService.PLAYER_GENRE genre = AbstractFFTService.PLAYER_GENRE.findByLabel(spSex.getSelectedItem().toString());
+        AbstractFFTService.PLAYER_GENRE genre = AbstractFFTService.PLAYER_GENRE.findByLabel(spGenre.getSelectedItem().toString());
         mFindPlayerTask = new MyFindPlayerTask(getContext(), genre, etFirstname.getText().toString(), etLastname.getText().toString());
         mFindPlayerTask.execute((Void) null);
     }

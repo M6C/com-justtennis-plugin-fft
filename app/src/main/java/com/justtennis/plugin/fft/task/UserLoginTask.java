@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.justtennis.plugin.fft.manager.ServiceManager;
 import com.justtennis.plugin.shared.network.model.ResponseElement;
 import com.justtennis.plugin.shared.network.model.ResponseHttp;
 import com.justtennis.plugin.shared.preference.LoginSharedPref;
@@ -47,8 +48,10 @@ public abstract class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
     }
 
     protected void saveData(Context context) {
-        LoginSharedPref.setLogin(context, mEmail);
-        LoginSharedPref.setPwd(context, mPassword);
+        if (ServiceManager.getInstance().doSaveLogin()) {
+            LoginSharedPref.setLogin(context, mEmail);
+            LoginSharedPref.setPwd(context, mPassword);
+        }
     }
 
     private boolean isFormLoginConnected(ResponseHttp form) {

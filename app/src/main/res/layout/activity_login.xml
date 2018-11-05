@@ -73,13 +73,23 @@
                 android:text="@string/action_sign_in"
                 android:textStyle="bold" />
 
-            <CheckBox
-                android:id="@+id/chk_use_proxy"
+            <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="@string/use_proxy"
-                android:checked="true"/>
+                android:layout_gravity="center">
+                <Spinner
+                    android:id="@+id/sp_service"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"/>
+                <CheckBox
+                    android:id="@+id/chk_use_proxy"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:text="@string/use_proxy"
+                    android:checked="true"/>
+            </RelativeLayout>
 
             <HorizontalScrollView
                 android:layout_width="match_parent"

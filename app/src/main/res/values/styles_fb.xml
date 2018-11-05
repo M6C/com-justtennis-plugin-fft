@@ -1,0 +1,10 @@
+<resources>
+    <style name="ItemListPublicationAvatar">
+        <item name="android:background">@drawable/ic_default_user_background</item>
+    </style>
+    <style name="ButtonPublicationCreate" parent="@style/Widget.AppCompat.Button.Borderless">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">@dimen/default_button_height</item>
+        <item name="android:background">@color/fb_create_form_button</item>
+    </style>
+</resources>

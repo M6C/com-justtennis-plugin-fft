@@ -1,8 +1,5 @@
 package com.justtennis.plugin.fft;
 
-import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -16,11 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.justtennis.plugin.fft.fragment.FindPlayerFragment;
-import com.justtennis.plugin.fft.fragment.MillesimeMatchFragment;
-import com.justtennis.plugin.fft.fragment.RankingMatchFragment;
-import com.justtennis.plugin.shared.preference.LoginSharedPref;
-import com.justtennis.plugin.fft.tool.FragmentTool;
+import com.justtennis.plugin.fft.manager.ServiceManager;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -50,8 +43,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (bundle != null) {
             // Something to do
         }
-        navigationView.getMenu().getItem(0).setChecked(true);
-        FragmentTool.replaceFragment(this, MillesimeMatchFragment.newInstance());
+        ServiceManager.getInstance().initializeNavigation(navigationView);
+        ServiceManager.getInstance().initializeFragment(this);
     }
 
     @Override
@@ -89,33 +82,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-        Menu menu = navigationView.getMenu();
-
-        if (isMenuItem(id, menu, R.id.nav_millesime_match)) {
-            FragmentTool.replaceFragment(this, MillesimeMatchFragment.newInstance());
-        } else if (isMenuItem(id, menu, R.id.nav_ranking_match)) {
-            FragmentTool.replaceFragment(this, RankingMatchFragment.newInstance());
-        } else if (isMenuItem(id, menu, R.id.nav_slideshow)) {
-            FragmentTool.replaceFragment(this, FindPlayerFragment.newInstance());
-//        } else if (id == R.id.nav_manage) {
-//
-        } else if (id == R.id.nav_fft) {
-            String url = "https://mon-espace-tennis.fft.fr";
-            Intent i = new Intent(Intent.ACTION_VIEW);
-            i.setData(Uri.parse(url));
-            startActivity(i);
-        } else if (id == R.id.nav_disconnect) {
-            Context context = getApplicationContext();
-            LoginSharedPref.cleanSecurity(context);
-            startActivity(new Intent(context, LoginActivity.class));
-            finish();
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
+        return ServiceManager.getInstance().onNavigationItemSelected(this, navigationView, item);
     }
 
     private boolean isMenuItem(int id, Menu menu, int p) {

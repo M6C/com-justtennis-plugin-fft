@@ -19,23 +19,25 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.justtennis.plugin.fft.manager.ServiceManager;
 import com.justtennis.plugin.fft.resolver.ClubResolver;
 import com.justtennis.plugin.fft.resolver.InviteResolver;
 import com.justtennis.plugin.fft.resolver.PlayerResolver;
 import com.justtennis.plugin.fft.resolver.SaisonResolver;
-import com.justtennis.plugin.fft.service.FFTServiceLogin;
+import com.justtennis.plugin.fft.task.UserLoginServiceTask;
 import com.justtennis.plugin.fft.task.UserLoginTask;
 import com.justtennis.plugin.fft.tool.ProgressTool;
 import com.justtennis.plugin.shared.preference.LoginSharedPref;
 import com.justtennis.plugin.shared.preference.ProxySharedPref;
-import com.justtennis.plugin.shared.service.IServiceLogin;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,6 +75,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mProxyPort;
     private EditText mProxyLogin;
     private EditText mProxyPassword;
+    private Spinner mService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +101,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
         mResponse = findViewById(R.id.tv_response);
+        mService = findViewById(R.id.sp_service);
         mUseProxy = findViewById(R.id.chk_use_proxy);
 
         mProxyForm = findViewById(R.id.proxy_form);
@@ -106,8 +110,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mProxyLogin = findViewById(R.id.proxy_login);
         mProxyPassword = findViewById(R.id.proxy_password);
 
-
         initializeForm();
+        initializeService();
 
         LoginSharedPref.cleanSecurity(context);
     }
@@ -225,7 +229,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new MyUserLoginTask(email, password);
+            mAuthTask = new MyUserLoginTask(email, password, mService.getSelectedItem().toString());
             mAuthTask.execute((Void) null);
         }
     }
@@ -316,6 +320,22 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
     }
 
+    private void initializeService() {
+        ArrayAdapter<String> adpService = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, ServiceManager.getServiceLabel());
+        mService.setAdapter(adpService);
+
+        mService.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                ServiceManager.getInstance().setService(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+    }
+
     private interface ProfileQuery {
         String[] PROJECTION = {
                 ContactsContract.CommonDataKinds.Email.ADDRESS,
@@ -327,10 +347,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     @SuppressLint("StaticFieldLeak")
-    private class MyUserLoginTask extends UserLoginTask {
+    private class MyUserLoginTask extends UserLoginServiceTask {
 
-        MyUserLoginTask(String email, String password) {
-            super(context, email, password);
+        MyUserLoginTask(String email, String password, String label) {
+            super(context, email, password, label);
         }
 
         @Override
@@ -358,11 +378,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         protected void onCancelled() {
             mAuthTask = null;
             showProgress(false);
-        }
-
-        @Override
-        protected IServiceLogin newLoginService(Context context) {
-            return FFTServiceLogin.newInstance(context);
         }
 
         @Override

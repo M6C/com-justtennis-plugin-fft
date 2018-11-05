@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/cardview_light_background"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/fb_create_layout_margin"
+                android:paddingBottom="@dimen/fb_create_layout_margin"
+                android:background="@color/fb_create_form_background"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/fb_field_margin"
+                    android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="@dimen/fb_icon_size"
+                    android:layout_height="@dimen/fb_icon_size"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="5dp"
+                    android:tint="@color/fb_create_form_button"
+                    android:contentDescription="@string/defaultUserImage" />
+                    <!--app:srcCompat="@drawable/ic_keyboard_black_24dp"-->
+
+                <AutoCompleteTextView
+                    android:id="@+id/publication_message"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_gravity="center"
+                    android:hint="@string/hint_fb_text_create"
+                    android:minLines="1"
+                    android:maxLines="4"
+                    android:gravity="top"
+                    android:inputType="textMultiLine"
+                    android:padding="5dp"
+                    android:background="@drawable/fb_message_background"/>
+
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/publication_button"
+                    style="@style/ButtonPublicationCreate"
+                    android:layout_gravity="end"
+                    android:layout_marginEnd="@dimen/fb_field_margin"
+                    android:text="@string/text_fb_button_create"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </android.support.design.widget.CoordinatorLayout>
+
+</layout>

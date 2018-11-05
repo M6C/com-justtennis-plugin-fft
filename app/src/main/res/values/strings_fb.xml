@@ -1,0 +1,8 @@
+<resources>
+    <string name="defaultUserImage">defaultUserImage</string>
+
+    <string name="desc_fb_post_date">Post date</string>
+    <string name="desc_fb_message">Message</string>
+    <string name="hint_fb_text_create">Quoi de neuf ?</string>
+    <string name="text_fb_button_create">Publish</string>
+</resources>
