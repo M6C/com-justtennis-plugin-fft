@@ -16,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -36,6 +35,7 @@ import com.justtennis.plugin.fft.task.MillesimeMatchTask;
 import com.justtennis.plugin.fft.task.MillesimeTask;
 import com.justtennis.plugin.fft.tool.FragmentTool;
 import com.justtennis.plugin.fft.tool.ProgressTool;
+import com.justtennis.plugin.shared.manager.NotificationManager;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -311,8 +311,11 @@ public class MillesimeMatchFragment extends Fragment implements OnListFragmentIn
 
     @SuppressLint("StaticFieldLeak")
     private class MyMillesimeTask  extends MillesimeTask {
+        private Context context;
+
         MyMillesimeTask(Context context) {
             super(context);
+            this.context = context;
         }
 
         @Override
@@ -355,6 +358,12 @@ public class MillesimeMatchFragment extends Fragment implements OnListFragmentIn
         }
 
         @Override
+        protected void onProgressUpdate(String... values) {
+            super.onProgressUpdate(values);
+            NotificationManager.onTaskProcessUpdate(context, values);
+        }
+
+        @Override
         protected void onCancelled() {
             super.onCancelled();
             logMe("MyMillesimeTask cancelled.");
@@ -366,8 +375,11 @@ public class MillesimeMatchFragment extends Fragment implements OnListFragmentIn
     @SuppressLint("StaticFieldLeak")
     private class MyMillesimeMatchTask extends MillesimeMatchTask {
 
+        private Context context;
+
         MyMillesimeMatchTask(Context context, String palmaresAction, String millesime) {
             super(context, palmaresAction, millesime);
+            this.context = context;
         }
 
         @Override
@@ -396,6 +408,12 @@ public class MillesimeMatchFragment extends Fragment implements OnListFragmentIn
             if (argMatch != null) {
                 showInformation();
             }
+        }
+
+        @Override
+        protected void onProgressUpdate(String... values) {
+            super.onProgressUpdate(values);
+            NotificationManager.onTaskProcessUpdate(context, values);
         }
 
         @Override

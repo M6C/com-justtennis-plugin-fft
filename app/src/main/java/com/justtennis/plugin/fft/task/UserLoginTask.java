@@ -15,7 +15,7 @@ import com.justtennis.plugin.shared.service.IServiceLogin;
  * Represents an asynchronous login/registration task used to authenticate
  * the user.
  */
-public abstract class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+public abstract class UserLoginTask extends AsyncTask<Void, String, Boolean> {
 
     private static final String TAG = UserLoginTask.class.getName();
 
@@ -36,12 +36,15 @@ public abstract class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
     protected Boolean doInBackground(Void... params) {
         Boolean ret = Boolean.FALSE;
         Log.d(TAG, "getLoginForm login:" + mEmail + " pwd:" + mPassword);
+        this.publishProgress("Info - Navigate to Login");
         LoginFormResponse response = fftServiceLogin.getLoginForm(mEmail, mPassword);
         if (response != null && response.action != null && !response.action.isEmpty()) {
+            this.publishProgress("Successfull - Navigate to Login so Submitting Form");
             Log.d(TAG, "getLoginForm OK");
             ResponseHttp form = fftServiceLogin.submitFormLogin(response);
             ret = isFormLoginConnected(form);
         } else {
+            this.publishProgress("Failed - Navigate to Login");
             Log.w(TAG, "getLoginForm return empty");
         }
         return ret;

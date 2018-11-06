@@ -36,6 +36,7 @@ import com.justtennis.plugin.fft.resolver.SaisonResolver;
 import com.justtennis.plugin.fft.task.UserLoginServiceTask;
 import com.justtennis.plugin.fft.task.UserLoginTask;
 import com.justtennis.plugin.fft.tool.ProgressTool;
+import com.justtennis.plugin.shared.manager.NotificationManager;
 import com.justtennis.plugin.shared.preference.LoginSharedPref;
 import com.justtennis.plugin.shared.preference.ProxySharedPref;
 
@@ -372,6 +373,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 startActivity(intent);
                 finish();
             }
+        }
+
+        @Override
+        protected void onProgressUpdate(String... values) {
+            super.onProgressUpdate(values);
+            NotificationManager.onTaskProcessUpdate(context, values);
         }
 
         @Override

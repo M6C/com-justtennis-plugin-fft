@@ -18,6 +18,7 @@ import com.justtennis.plugin.fft.R;
 import com.justtennis.plugin.fft.databinding.FragmentFbPublicationListBinding;
 import com.justtennis.plugin.fft.tool.FragmentTool;
 import com.justtennis.plugin.shared.fragment.AppFragment;
+import com.justtennis.plugin.shared.manager.NotificationManager;
 
 import java.util.Objects;
 
@@ -100,6 +101,12 @@ public class FBPublishFragment extends AppFragment {
             protected void onPostExecute(Boolean aBoolean) {
                 super.onPostExecute(aBoolean);
                 Toast.makeText(context, "Publish " + (aBoolean ? "Successfull" : "failed"), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            protected void onProgressUpdate(String... values) {
+                super.onProgressUpdate(values);
+                NotificationManager.onTaskProcessUpdate(context, values);
             }
         }.execute(message);
         clear();

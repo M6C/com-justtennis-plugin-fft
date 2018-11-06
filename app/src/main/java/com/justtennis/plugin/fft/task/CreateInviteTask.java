@@ -35,7 +35,7 @@ import java.util.Locale;
  * Represents an asynchronous login/registration task used to authenticate
  * the user.
  */
-public abstract class CreateInviteTask extends AsyncTask<Void, Void, Boolean> {
+public abstract class CreateInviteTask extends AsyncTask<Void, String, Boolean> {
 
     private static final String TAG = CreateInviteTask.class.getName();
 

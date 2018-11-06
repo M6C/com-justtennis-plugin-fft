@@ -16,7 +16,7 @@ import java.util.List;
  * Represents an asynchronous login/registration task used to authenticate
  * the user.
  */
-public abstract class RankingMatchTask extends AsyncTask<Void, Void, List<RankingMatchResponse.RankingItem>> {
+public abstract class RankingMatchTask extends AsyncTask<Void, String, List<RankingMatchResponse.RankingItem>> {
 
     private static final String TAG = RankingMatchTask.class.getName();
 
@@ -31,6 +31,7 @@ public abstract class RankingMatchTask extends AsyncTask<Void, Void, List<Rankin
         List<RankingMatchResponse.RankingItem> ret = new ArrayList<>();
         try {
             Log.d(TAG, "submitFormLogin OK");
+            this.publishProgress("Info - Navigate to Ranking and Getting Ranking");
             RankingListResponse rankingList = fftServiceRanking.getRankingList(null);
             if (rankingList != null && !rankingList.rankingList.isEmpty()) {
                 Log.d(TAG, "getRankingList OK");
@@ -39,9 +40,11 @@ public abstract class RankingMatchTask extends AsyncTask<Void, Void, List<Rankin
                 RankingMatchResponse ranking = fftServiceRanking.getRankingMatch(null, rank.id);
                 ret = ranking.rankingList;
             } else {
+                this.publishProgress("Failed - Navigate to Ranking and Getting Ranking");
                 Log.w(TAG, "getRankingList return empty");
             }
         } catch (NotConnectedException e) {
+            this.publishProgress("Error - Ranking Match message:" + e.getMessage());
             Log.e(TAG, "doInBackground", e);
         }
         return ret;

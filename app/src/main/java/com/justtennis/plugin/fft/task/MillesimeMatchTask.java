@@ -44,22 +44,29 @@ public abstract class MillesimeMatchTask extends AsyncTask<Void, String, List<Mi
                 palmaresResponse = new PalmaresResponse();
                 palmaresResponse.action = palmaresAction;
             } else {
+                this.publishProgress("Info - Navigate to HomePage");
                 ResponseHttp home = fftServiceLogin.navigateToHomePage(null);
+                this.publishProgress("Info - Navigate to Parsing Palmares Form");
                 palmaresResponse = fftServicePalmares.getPalmares(home);
             }
             palmaresResponse.millesime = millesime;
 
             if (palmaresResponse.action != null) {
+                this.publishProgress("Successfull - Getting Palmares URL so Navigate to Palmares");
                 ResponseHttp palmares = fftServicePalmares.navigateToPalmares(null, palmaresResponse);
                 if (palmares.body != null) {
+                    this.publishProgress("Successfull - Navigate to Palmares so Parsing Millesime");
                     PalmaresMillesimeResponse palmaresMillesimeResponse = fftServicePalmares.getPalmaresMillesime(palmares);
                     if (!palmaresMillesimeResponse.listMillesime.isEmpty()) {
+                        this.publishProgress("Successfull - Parsing Palmares so Find Millesime");
 
                         findMillesime(palmaresMillesimeResponse);
 
                         if (palmaresMillesimeResponse.millesimeSelected != null) {
+                            this.publishProgress("Successfull - Finding Millesime so Submitting Palmares Form");
                             ResponseHttp submitForm = fftServicePalmares.submitFormPalmaresMillesime(null, palmaresMillesimeResponse);
                             if (submitForm.body != null && !submitForm.body.isEmpty()) {
+                                this.publishProgress("Successfull - Submitting Palmares Form so Parsing Palmares");
                                 MillesimeMatchResponse palmaresMillesimeMatch = fftServicePalmares.getPalmaresMillesimeMatch(submitForm);
                                 if (!palmaresMillesimeResponse.listMillesime.isEmpty()) {
                                     ret = palmaresMillesimeMatch.matchList;
@@ -67,21 +74,27 @@ public abstract class MillesimeMatchTask extends AsyncTask<Void, String, List<Mi
                                     Log.w(TAG, "getPalmaresMillesimeMatch is empty");
                                 }
                             } else {
+                                this.publishProgress("Failed - Submitting Palmares Form");
                                 Log.w(TAG, "submitFormPalmaresMillesime error");
                             }
                         } else {
+                            this.publishProgress("Failed - Finding Millesime");
                             Log.w(TAG, "millesime '"+millesime+"' not found");
                         }
                     } else {
+                        this.publishProgress("Failed - Parsing Millesime");
                         Log.w(TAG, "getPalmaresMillesime is empty");
                     }
                 } else {
+                    this.publishProgress("Failed - Navigate to Palmares");
                     Log.w(TAG, "navigateToPalmares  body is empty");
                 }
             } else {
+                this.publishProgress("Failed - Getting Palmares URL");
                 Log.w(TAG, "getPalmares action is empty");
             }
         } catch (NotConnectedException e) {
+            this.publishProgress("Error - Millesime Match message:" + e.getMessage());
             Log.e(TAG, "doInBackground", e);
         }
         return ret;

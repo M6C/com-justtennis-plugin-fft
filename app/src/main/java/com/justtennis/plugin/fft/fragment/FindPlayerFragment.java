@@ -31,6 +31,7 @@ import com.justtennis.plugin.fft.service.AbstractFFTService;
 import com.justtennis.plugin.fft.task.FindPlayerTask;
 import com.justtennis.plugin.fft.tool.FragmentTool;
 import com.justtennis.plugin.fft.tool.ProgressTool;
+import com.justtennis.plugin.shared.manager.NotificationManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -209,8 +210,11 @@ public class FindPlayerFragment extends Fragment implements OnListFragmentIntera
     @SuppressLint("StaticFieldLeak")
     private class MyFindPlayerTask extends FindPlayerTask {
 
+        private Context context;
+
         MyFindPlayerTask(Context context, AbstractFFTService.PLAYER_GENRE genre, String firstname, String lastname) {
             super(context, genre, firstname, lastname);
+            this.context = context;
         }
 
         @Override
@@ -237,6 +241,12 @@ public class FindPlayerFragment extends Fragment implements OnListFragmentIntera
             } else {
 //                initializeFabValidate();
             }
+        }
+
+        @Override
+        protected void onProgressUpdate(String... values) {
+            super.onProgressUpdate(values);
+            NotificationManager.onTaskProcessUpdate(context, values);
         }
 
         @Override

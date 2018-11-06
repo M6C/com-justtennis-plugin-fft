@@ -29,6 +29,7 @@ import com.justtennis.plugin.fft.resolver.UserResolver;
 import com.justtennis.plugin.fft.task.RankingMatchTask;
 import com.justtennis.plugin.fft.tool.FragmentTool;
 import com.justtennis.plugin.fft.tool.ProgressTool;
+import com.justtennis.plugin.shared.manager.NotificationManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -182,8 +183,11 @@ public class RankingMatchFragment extends Fragment implements OnListFragmentInte
     @SuppressLint("StaticFieldLeak")
     private class MyRankingMatchTask extends RankingMatchTask {
 
+        private Context context;
+
         MyRankingMatchTask(Context context) {
             super(context);
+            this.context = context;
         }
 
         @Override
@@ -214,6 +218,12 @@ public class RankingMatchFragment extends Fragment implements OnListFragmentInte
                 }
                 showProgressMatch(false);
             }
+        }
+
+        @Override
+        protected void onProgressUpdate(String... values) {
+            super.onProgressUpdate(values);
+            NotificationManager.onTaskProcessUpdate(context, values);
         }
 
         @Override

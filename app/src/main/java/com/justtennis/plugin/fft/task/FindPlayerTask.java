@@ -39,10 +39,13 @@ public abstract class FindPlayerTask extends AsyncTask<Void, String, List<FindPl
         List<FindPlayerResponse.PlayerItem> ret = new ArrayList<>();
         try {
             FindPlayerFormResponse findPlayerFormResponse;
+            this.publishProgress("Info - Navigate to Find Player");
             ResponseHttp findPlayer = fftServiceFindPlayer.navigateToFindPlayer(null);
+            this.publishProgress("Info - Navigate to Parsing Player Form");
             findPlayerFormResponse = fftServiceFindPlayer.getFindPlayerForm(findPlayer, genre,firstname, lastname);
 
             if (findPlayerFormResponse.action != null) {
+                this.publishProgress("Successfull - Navigate to Find Player so Submitting Form");
                 ResponseHttp submitForm = fftServiceFindPlayer.submitFormFindPlayer(null, findPlayerFormResponse);
                 if (submitForm.body != null) {
                     FindPlayerResponse palmaresMillesimeMatch = fftServiceFindPlayer.getFindPlayer(submitForm);
@@ -52,12 +55,15 @@ public abstract class FindPlayerTask extends AsyncTask<Void, String, List<FindPl
                         Log.w(TAG, "getPalmaresMillesime is empty");
                     }
                 } else {
+                    this.publishProgress("Failed - Submitting Find Player Form");
                     Log.w(TAG, "navigateToPalmares  body is empty");
                 }
             } else {
+                this.publishProgress("Failed - Parsing Player Form");
                 Log.w(TAG, "getPalmares action is empty");
             }
         } catch (NotConnectedException e) {
+            this.publishProgress("Error - Find Player message:" + e.getMessage());
             Log.e(TAG, "doInBackground", e);
         }
         return ret;
