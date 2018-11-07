@@ -2,6 +2,7 @@ package com.justtennis.plugin.fb.fragment;
 
 import android.content.Context;
 import android.databinding.DataBindingUtil;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -13,6 +14,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.Toast;
 
+import com.justtennis.plugin.fb.adapter.PublicationListAdapter;
+import com.justtennis.plugin.fb.dto.PublicationDto;
 import com.justtennis.plugin.fb.task.FBPublishTask;
 import com.justtennis.plugin.fft.R;
 import com.justtennis.plugin.fft.databinding.FragmentFbPublicationListBinding;
@@ -20,6 +23,10 @@ import com.justtennis.plugin.fft.tool.FragmentTool;
 import com.justtennis.plugin.shared.fragment.AppFragment;
 import com.justtennis.plugin.shared.manager.NotificationManager;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 public class FBPublishFragment extends AppFragment {
@@ -27,6 +34,8 @@ public class FBPublishFragment extends AppFragment {
     private static final String TAG = FBPublishFragment.class.getName();
 
     private FragmentFbPublicationListBinding binding;
+    private PublicationListAdapter publicationListAdapter;
+    private List<PublicationDto> listPublication = new ArrayList<>();
 
     public static Fragment newInstance() {
         return new FBPublishFragment();
@@ -36,12 +45,22 @@ public class FBPublishFragment extends AppFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_fb_publication_list, container, false);
+        binding.setLoading(false);
 
         initializePublicationMessage();
         initializePublicationButton();
         initializeFabValidate();
+        initializePublicationList();
 
         return binding.getRoot();
+    }
+
+    private void initializePublicationList() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            publicationListAdapter = new PublicationListAdapter(null);
+            publicationListAdapter.setList(listPublication);
+            binding.publicationList.setAdapter(publicationListAdapter);
+        }
     }
 
     private void clear() {
@@ -96,19 +115,35 @@ public class FBPublishFragment extends AppFragment {
     private void onClickFabPublish(View view) {
         String message = binding.publicationMessage.getText().toString();
         final Context context = getContext();
+
+        PublicationDto dto = createDto(message);
+        listPublication.add(dto);
+
         new FBPublishTask(context) {
             @Override
-            protected void onPostExecute(Boolean aBoolean) {
-                super.onPostExecute(aBoolean);
-                Toast.makeText(context, "Publish " + (aBoolean ? "Successfull" : "failed"), Toast.LENGTH_SHORT).show();
+            protected void onPostExecute(Boolean success) {
+                super.onPostExecute(success);
+                String text = "Publish " + (success ? "Successfull" : "Failed");
+                Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
             }
-
             @Override
-            protected void onProgressUpdate(String... values) {
+            protected void onProgressUpdate(Serializable... values) {
                 super.onProgressUpdate(values);
-                NotificationManager.onTaskProcessUpdate(context, values);
+                if (values != null && values.length > 0) {
+                    if (values instanceof String[]) {
+                        NotificationManager.onTaskProcessUpdate(context, (String[]) values);
+                    } else {
+                        publicationListAdapter.notifyDataSetChanged();
+                    }
+                }
             }
-        }.execute(message);
+        }.execute(dto);
         clear();
+    }
+
+    private PublicationDto createDto(String message) {
+        Date date = new Date();
+        long id = date.getTime();
+        return new PublicationDto(id, date, message);
     }
 }

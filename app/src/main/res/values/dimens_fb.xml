@@ -6,10 +6,13 @@
     <dimen name="default_icon_size">24dp</dimen>
     <dimen name="image_margin">8dp</dimen>
 
+    <dimen name="fb_text_vertical_margin">12dp</dimen>
+    <dimen name="fb_text_horizontal_margin">12dp</dimen>
     <dimen name="fb_list_item_padding">@dimen/app_list_item_padding</dimen>
     <dimen name="fb_create_layout_margin">@dimen/default_layout_margin</dimen>
     <dimen name="fb_field_margin">@dimen/default_field_margin</dimen>
     <dimen name="fb_icon_size">@dimen/default_icon_size</dimen>
     <dimen name="fb_user_avatar_size">60dp</dimen>
     <dimen name="fb_user_avatar_margin">@dimen/image_margin</dimen>
+    <dimen name="fb_publication_loader_horizontal_size">10dp</dimen>
 </resources>

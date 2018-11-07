@@ -10,7 +10,8 @@ public final class NotificationManager {
     public static void onTaskProcessUpdate(Context context, String... values) {
         if (values != null && values.length > 0) {
             String text = values[0];
-            int duration = Toast.LENGTH_SHORT;//text.toLowerCase().startsWith("info") ? Toast.LENGTH_SHORT : Toast.LENGTH_LONG;
+            String textLow = text.toLowerCase();
+            int duration = textLow.startsWith("failed") || textLow.startsWith("error") ? Toast.LENGTH_LONG : Toast.LENGTH_SHORT;
             Toast.makeText(context, text, duration).show();
         }
     }

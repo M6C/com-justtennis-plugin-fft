@@ -5,4 +5,8 @@
     <string name="desc_fb_message">Message</string>
     <string name="hint_fb_text_create">Quoi de neuf ?</string>
     <string name="text_fb_button_create">Publish</string>
+    <string name="loading_publication">Loading publications…</string>
+    <string name="msg_no_publications_found">No publications found</string>
+    <string name="desc_publication_message">Publication Message</string>
+    <string name="desc_publication_date">Publication Date</string>
 </resources>

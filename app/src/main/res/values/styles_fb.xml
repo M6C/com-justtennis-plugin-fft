@@ -7,4 +7,9 @@
         <item name="android:layout_height">@dimen/default_button_height</item>
         <item name="android:background">@color/fb_create_form_button</item>
     </style>
+    <style name="ItemListPublicationMessage" parent="@style/TextAppearance.AppCompat.Medium">
+    </style>
+    <style name="ItemListPublicationDate" parent="@style/TextAppearance.AppCompat.Small">
+        <item name="android:textColor">#a0a0a1</item>
+    </style>
 </resources>
