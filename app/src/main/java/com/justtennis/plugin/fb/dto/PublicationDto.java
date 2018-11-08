@@ -1,5 +1,7 @@
 package com.justtennis.plugin.fb.dto;
 
+import com.justtennis.plugin.fb.enums.STATUS_PUBLICATION;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -13,6 +15,7 @@ public class PublicationDto implements Serializable {
     public final Date postDate;
     public final String message;
     public Date publishDate;
+    public STATUS_PUBLICATION statusPublication = STATUS_PUBLICATION.CREATED;
 
     public PublicationDto(Long id, Date postDate, String message) {
         this.id = id;
@@ -27,6 +30,7 @@ public class PublicationDto implements Serializable {
                 ", postDate=" + postDate +
                 ", message='" + message + '\'' +
                 ", publishDate=" + publishDate +
+                ", statusPublication=" + statusPublication +
                 '}';
     }
 }

@@ -5,6 +5,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.justtennis.plugin.fb.dto.PublicationDto;
+import com.justtennis.plugin.fb.enums.STATUS_PUBLICATION;
 import com.justtennis.plugin.fft.R;
 import com.justtennis.plugin.shared.adapter.RecyclerViewHolder;
 
@@ -32,6 +33,6 @@ public class PublicationViewHolder extends RecyclerViewHolder<PublicationDto> {
 
         mMessage.setText(pub.message);
         mDate.setText(dateTimeInstance.format(pub.postDate));
-        mProgress.setVisibility(pub.publishDate != null ? View.GONE : View.VISIBLE);
+        mProgress.setVisibility(pub.statusPublication == STATUS_PUBLICATION.PENDING ? View.VISIBLE : View.GONE);
     }
 }

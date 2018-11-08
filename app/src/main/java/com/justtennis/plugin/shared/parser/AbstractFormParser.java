@@ -61,13 +61,21 @@ public abstract class AbstractFormParser extends AbstractParser {
     }
 
     protected static FormElement parseElement(Element form, String query) {
+        return parseElement(form, query, "name", "value");
+    }
+
+    protected static FormElement parseElement(Element form, String query, String keyAttrName, String keyAttrValue) {
         FormElement ret = new FormElement();
         Elements buttons = form.select(query);
         if (buttons != null && !buttons.isEmpty()) {
             Element button = buttons.first();
-            ret.name = button.attr("name");
-            ret.value = button.attr("value");
-            System.out.println("==============> form button name:" + ret.name + " value:" + ret.value);
+            if (keyAttrName != null) {
+                ret.name = button.attr(keyAttrName);
+            }
+            if (keyAttrValue != null) {
+                ret.value = button.attr(keyAttrValue);
+            }
+            System.out.println("==============> form element name:" + ret.name + " value:" + ret.value);
         } else {
             System.err.println("\r\n==============> form element '"+query+"' not found");
         }

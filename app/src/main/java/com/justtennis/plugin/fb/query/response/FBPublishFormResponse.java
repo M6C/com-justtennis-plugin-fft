@@ -6,4 +6,5 @@ import com.justtennis.plugin.shared.query.response.FormElement;
 public class FBPublishFormResponse extends AbstractFormResponse {
 
     public FormElement message = new FormElement();
+    public FormElement audience = new FormElement();
 }

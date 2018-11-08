@@ -96,7 +96,7 @@ public class HttpPostProxy extends AbstractHttpProxy {
                 doRedirect(root, cookie, ret);
             }
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         } finally {
             if (method != null) {

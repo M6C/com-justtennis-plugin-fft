@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_fb_publish"
+            android:icon="@drawable/ic_menu_send"
+            android:title="@string/drawer_fb_item_publish" />
+    </group>
+
+    <item android:title="@string/drawer_fb_title_communicate">
+        <menu>
+            <item
+                android:id="@+id/nav_fb_redirect"
+                android:icon="@drawable/ic_menu_share"
+                android:title="@string/drawer_fb_item_fb" />
+            <item
+                android:id="@+id/nav_fb_disconnect"
+                android:icon="@drawable/ic_menu_send"
+                android:title="@string/drawer_fb_item_disconnect" />
+        </menu>
+    </item>
+</menu>

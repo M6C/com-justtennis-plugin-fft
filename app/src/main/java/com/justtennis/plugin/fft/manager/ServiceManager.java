@@ -108,6 +108,8 @@ public class ServiceManager {
 	public void initializeNavigation(NavigationView navigationView) {
 		switch (service) {
 			case FB:
+				navigationView.inflateMenu(R.menu.activity_fb_drawer);
+				navigationView.getMenu().getItem(0).setChecked(true);
 				break;
 			case FFT:
 			default:
@@ -117,6 +119,40 @@ public class ServiceManager {
 	}
 
 	public boolean onNavigationItemSelected(@NonNull FragmentActivity activity, @NonNull NavigationView navigationView, @NonNull MenuItem item) {
+		switch (service) {
+			case FB:
+				return onFBNavigationItemSelected(activity, navigationView, item);
+			case FFT:
+			default:
+				return onFFTNavigationItemSelected(activity, navigationView, item);
+		}
+	}
+
+	private boolean onFBNavigationItemSelected(@NonNull FragmentActivity activity, @NonNull NavigationView navigationView, @NonNull MenuItem item) {
+		// Handle navigation view item clicks here.
+		int id = item.getItemId();
+		Menu menu = navigationView.getMenu();
+
+		if (isMenuItem(id, menu, R.id.nav_fb_publish)) {
+			FragmentTool.replaceFragment(activity, FBPublishFragment.newInstance());
+		} else if (id == R.id.nav_fb_redirect) {
+			String url = "https://www.facebook.com";
+			Intent i = new Intent(Intent.ACTION_VIEW);
+			i.setData(Uri.parse(url));
+			activity.startActivity(i);
+		} else if (id == R.id.nav_fb_disconnect) {
+			Context context = activity.getApplicationContext();
+			LoginSharedPref.cleanSecurity(context);
+			activity.startActivity(new Intent(context, LoginActivity.class));
+			activity.finish();
+		}
+
+		DrawerLayout drawer = activity.findViewById(R.id.drawer_layout);
+		drawer.closeDrawer(GravityCompat.START);
+		return true;
+	}
+
+	private boolean onFFTNavigationItemSelected(@NonNull FragmentActivity activity, @NonNull NavigationView navigationView, @NonNull MenuItem item) {
 		// Handle navigation view item clicks here.
 		int id = item.getItemId();
 		Menu menu = navigationView.getMenu();

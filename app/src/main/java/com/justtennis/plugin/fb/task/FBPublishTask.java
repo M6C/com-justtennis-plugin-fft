@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.justtennis.plugin.fb.dto.PublicationDto;
+import com.justtennis.plugin.fb.enums.STATUS_PUBLICATION;
 import com.justtennis.plugin.fb.query.response.FBPublishFormResponse;
 import com.justtennis.plugin.fb.service.FBServiceHomePage;
 import com.justtennis.plugin.fb.service.FBServicePublish;
@@ -20,10 +21,12 @@ public abstract class FBPublishTask extends AsyncTask<PublicationDto, Serializab
 
     private final FBServiceHomePage fbServiceHomePage;
     private final FBServicePublish fbServicePublish;
+    private FBPublishFormResponse publishFormResponse;
 
-    protected FBPublishTask(Context context) {
+    protected FBPublishTask(Context context, FBPublishFormResponse publishFormResponse) {
         fbServiceHomePage = newFBServiceHomePage(context);
         fbServicePublish = newFBServicePublish(context);
+        this.publishFormResponse = publishFormResponse;
     }
 
     @Override
@@ -34,18 +37,26 @@ public abstract class FBPublishTask extends AsyncTask<PublicationDto, Serializab
         int cntPublished = 0;
         try {
             ResponseHttp form = null;
-            this.publishProgress("Info - Navigate to HomePage");
-            ResponseHttp formRedirect = fbServiceHomePage.navigateToHomePage(form);
+            if (publishFormResponse == null) {
+                this.publishProgress("Info - Navigate to HomePage");
+                ResponseHttp formRedirect = fbServiceHomePage.navigateToHomePage(form);
 
-            if(formRedirect != null && formRedirect.body != null && formRedirect.statusCode == 200) {
-                this.publishProgress("Successfull - Navigate to HomePage so Parsing Publish Form");
+                if (formRedirect != null && formRedirect.body != null && formRedirect.statusCode == 200) {
+                    this.publishProgress("Successfull - Navigate to HomePage so Parsing Publish Form");
 
+                    publishFormResponse = fbServicePublish.getForm(formRedirect);
+                }
+            }
+
+            if (publishFormResponse != null) {
                 for (PublicationDto d : dto) {
-                    FBPublishFormResponse publishFormResponse = fbServicePublish.getForm(formRedirect);
+                    d.statusPublication = STATUS_PUBLICATION.PENDING;
+                    this.publishProgress(d);
                     if (publishFormResponse != null && publishFormResponse.message != null) {
                         this.publish(form, d, publishFormResponse);
                         cntPublished++;
                     } else {
+                        d.statusPublication = STATUS_PUBLICATION.FAILED;
                         this.publishProgress("Failed - Parsing Publish Form");
                     }
                     this.publishProgress(d);
@@ -70,6 +81,9 @@ public abstract class FBPublishTask extends AsyncTask<PublicationDto, Serializab
 
         if (submitFormResponse.statusCode == 302) {
             d.publishDate = new Date();
+            d.statusPublication = STATUS_PUBLICATION.PUBLISHED;
+        } else {
+            d.statusPublication = STATUS_PUBLICATION.FAILED;
         }
         this.publishProgress(d);
     }

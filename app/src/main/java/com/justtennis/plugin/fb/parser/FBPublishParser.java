@@ -17,6 +17,7 @@ public class FBPublishParser extends AbstractFormParser {
         Element form = parseForm(activateForm(content), request, ret);
         if (form != null) {
             ret.message = parseElement(form, request.messageQuery);
+            ret.audience = parseElement(form, request.audienceQuery, null, request.audienceAttrQuery);
             return ret;
         } else {
             return null;
