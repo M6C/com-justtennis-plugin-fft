@@ -59,22 +59,4 @@ public class FBServiceHomePageTest extends AbstractFBServiceTest {
         assertNotNull(homePageResponse.name);
         assertNotNull(homePageResponse.linkProfil);
     }
-
-    @Test
-    public void testNavigateToProfil() throws NotConnectedException {
-        ResponseHttp form = doLogin();
-
-        ResponseHttp formRedirect = fbServiceHomePage.navigateToHomePage(form);
-
-        assertNotNull(formRedirect);
-        assertNotNull(formRedirect.body);
-
-        ResponseHttp homePageResponse = fbServiceHomePage.navigateToProfil(form, formRedirect);
-        assertNotNull(homePageResponse);
-        assertNotNull(homePageResponse.body);
-        assertEquals(200, homePageResponse.statusCode);
-        assertEquals(16, homePageResponse.header.size());
-
-        System.out.println("Test body:"+homePageResponse.body);
-    }
 }

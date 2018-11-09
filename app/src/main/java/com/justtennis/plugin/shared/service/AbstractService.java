@@ -140,7 +140,7 @@ public abstract class AbstractService implements IProxy {
         return this;
     }
 
-    protected void logMethod(String method) {
+    protected static void logMethod(String method) {
         System.out.println(
             "\r\n==========================================================================" +
             "\n==============> Method:" + method +

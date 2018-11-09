@@ -14,7 +14,7 @@ public class FBPublishParser extends AbstractFormParser {
 
     public static FBPublishFormResponse parseForm(String content, FBPublishFormRequest request) {
         FBPublishFormResponse ret = new FBPublishFormResponse();
-        Element form = parseForm(activateForm(content), request, ret);
+        Element form = parseForm(activateHtml(content), request, ret);
         if (form != null) {
             ret.message = parseElement(form, request.messageQuery);
             ret.audience = parseElement(form, request.audienceQuery, null, request.audienceAttrQuery);
@@ -22,13 +22,5 @@ public class FBPublishParser extends AbstractFormParser {
         } else {
             return null;
         }
-    }
-
-    @NonNull
-    private static String activateForm(String content) {
-        // Uncomment form
-        return content
-                .replaceAll("<!-- <", "")
-                .replaceAll("> -->", "");
     }
 }

@@ -32,18 +32,8 @@ public class FBServiceHomePage extends AbstractFBService {
         return doGetConnected(URL_ROOT, "", loginFormResponse);
     }
 
-    public FBHomePageResponse getHomePage(ResponseHttp homePageResponse) {
+    public static FBHomePageResponse getHomePage(ResponseHttp homePageResponse) {
         logMethod("getHomePage");
         return FBHomePageParser.parseHomePage(homePageResponse.body, new FBHomePageRequest());
-    }
-
-    public ResponseHttp navigateToProfil(ResponseHttp loginFormResponse, ResponseHttp homePageResponse) throws NotConnectedException {
-        logMethod("navigateToProfil");
-        return navigateToProfil(loginFormResponse, getHomePage(homePageResponse));
-    }
-
-    public ResponseHttp navigateToProfil(ResponseHttp loginFormResponse, FBHomePageResponse homePageResponse) throws NotConnectedException {
-        logMethod("navigateToProfil");
-        return doGetConnected(URL_ROOT, homePageResponse.linkProfil, loginFormResponse);
     }
 }

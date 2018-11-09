@@ -1,5 +1,7 @@
 package com.justtennis.plugin.shared.parser;
 
+import android.support.annotation.NonNull;
+
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -15,5 +17,13 @@ public abstract class AbstractParser {
             return linkPalmares.attr("href");
         }
         return null;
+    }
+
+    @NonNull
+    protected static String activateHtml(String content) {
+        // Uncomment htlm
+        return content
+                .replaceAll("<!-- <", "<")
+                .replaceAll("> -->", ">");
     }
 }

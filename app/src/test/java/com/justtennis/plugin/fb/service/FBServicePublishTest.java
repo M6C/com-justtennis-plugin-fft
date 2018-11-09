@@ -38,20 +38,20 @@ public class FBServicePublishTest extends AbstractFBServiceTest {
         assertNotNull(publishFormResponse.audience);
     }
 
-//    @Test
-//    public void testSubmitForm() throws NotConnectedException {
-//        ResponseHttp form = doLogin();
-//
-//        ResponseHttp formRedirect = fbServiceHomePage.navigateToHomePage(form);
-//
-//        FBPublishFormResponse publishFormResponse = fbServicePublish.getForm(formRedirect);
-//        publishFormResponse.message.value = "https://www.youtube.com/watch?v=vyw7rK24F20";
-//
-//        ResponseHttp submitFormResponse = fbServicePublish.submitForm(form, publishFormResponse);
-//
-//        System.out.println("testSubmitForm body:"+submitFormResponse.body);
-//
-//        assertEquals(302, submitFormResponse.statusCode);
-//        assertEquals(15, submitFormResponse.header.size());
-//    }
+    @Test
+    public void testSubmitForm() throws NotConnectedException {
+        ResponseHttp form = doLogin();
+
+        ResponseHttp formRedirect = fbServiceHomePage.navigateToHomePage(form);
+
+        FBPublishFormResponse publishFormResponse = fbServicePublish.getForm(formRedirect);
+        publishFormResponse.message.value = "https://www.youtube.com/watch?v=vyw7rK24F20";
+
+        ResponseHttp submitFormResponse = fbServicePublish.submitForm(form, publishFormResponse);
+
+        System.out.println("testSubmitForm body:"+submitFormResponse.body);
+
+        assertEquals(302, submitFormResponse.statusCode);
+        assertEquals(15, submitFormResponse.header.size());
+    }
 }
