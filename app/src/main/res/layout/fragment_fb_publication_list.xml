@@ -5,6 +5,7 @@
 
     <data>
         <variable name="loading" type="boolean"/>
+        <variable name="loadingAudience" type="boolean"/>
         <variable name="empty" type="boolean"/>
     </data>
 
@@ -57,26 +58,53 @@
 
                 </LinearLayout>
 
-                <Button
-                    android:id="@+id/publication_button"
-                    style="@style/ButtonPublicationCreate"
+                <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/fb_field_margin"
-                    android:text="@string/text_fb_button_create"
-                    android:enabled="false" />
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center">
+
+                    <Button
+                        android:id="@+id/publication_button"
+                        style="@style/ButtonPublicationCreate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/text_fb_button_create"
+                        android:enabled="false" />
+
+                    <ProgressBar
+                        android:id="@+id/progressBarBtn"
+                        style="?android:attr/progressBarStyleHorizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:visibility="@{loadingAudience ? android.view.View.VISIBLE : android.view.View.GONE}"
+                        android:max="100"
+                        android:indeterminate="true"/>
+
+                </FrameLayout>
+                <!--<Button-->
+                    <!--android:id="@+id/publication_button"-->
+                    <!--style="@style/ButtonPublicationCreate"-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_margin="@dimen/fb_field_margin"-->
+                    <!--android:text="@string/text_fb_button_create"-->
+                    <!--android:enabled="false" />-->
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
+                android:visibility="@{!loading ? android.view.View.VISIBLE : android.view.View.GONE}"
                 android:orientation="vertical">
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/publication_list"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:visibility="@{!empty &amp;&amp; !loading ? android.view.View.VISIBLE : android.view.View.GONE}"
+                    android:visibility="@{!empty ? android.view.View.VISIBLE : android.view.View.GONE}"
                     app:layoutManager="android.support.v7.widget.LinearLayoutManager"
                     tools:listitem="@layout/fb_publication_list_content" />
 
@@ -87,32 +115,33 @@
                     android:gravity="center_vertical|center_horizontal"
                     android:text="@string/msg_no_publications_found"
                     android:textAlignment="center"
-                    android:visibility="@{empty &amp;&amp; !loading ? android.view.View.VISIBLE : android.view.View.GONE}"/>
+                    android:visibility="@{empty ? android.view.View.VISIBLE : android.view.View.GONE}"/>
             </LinearLayout>
-        </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:visibility="@{loading ? android.view.View.VISIBLE : android.view.View.GONE}"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/loading_tv"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/loading_publication"
-                android:textAlignment="center"/>
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:visibility="@{loading ? android.view.View.VISIBLE : android.view.View.GONE}"
+                android:orientation="vertical">
 
-            <ProgressBar
-                android:id="@+id/progressBar"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:max="100"
-                android:indeterminate="true" />
+                <TextView
+                    android:id="@+id/loading_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/loading_publication"
+                    android:textAlignment="center"/>
 
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:max="100"
+                    android:indeterminate="true" />
+
+            </LinearLayout>
         </LinearLayout>
 
     </android.support.design.widget.CoordinatorLayout>

@@ -3,5 +3,6 @@
     <color name="avatar_background_color">#a2b9e1</color>
     <color name="fb_create_form_background">#e9eef8</color>
     <color name="fb_create_form_button">#7c9cd4</color>
+    <color name="fb_create_form_progress">#0E4DE0</color>
     <color name="cardview_light_background">#FFFFFFFF</color>
 </resources>

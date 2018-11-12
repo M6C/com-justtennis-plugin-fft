@@ -9,12 +9,14 @@ public class FBProfilPublicationResponse {
     public List<TimeLineItem> timeLineList = new ArrayList<>();
 
     public static class TimeLineItem implements Serializable {
+        public String date;
         public String text;
 
         @Override
         public String toString() {
             return "TimeLineItem{" +
-                    "text='" + text + '\'' +
+                    "date='" + date + '\'' +
+                    ", text='" + text + '\'' +
                     '}';
         }
     }

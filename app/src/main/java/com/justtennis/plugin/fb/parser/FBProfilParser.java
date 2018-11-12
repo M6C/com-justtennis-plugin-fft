@@ -29,10 +29,11 @@ public class FBProfilParser extends AbstractParser {
                         mainFind = true;
                         for (Element e : timeline) {
                             FBProfilPublicationResponse.TimeLineItem item = new FBProfilPublicationResponse.TimeLineItem();
+                            item.date = getText(e, request.timelineItemDate);
                             item.text = getText(e, request.timelineItemMessage);
 
                             ret.timeLineList.add(item);
-                            System.out.println("\r\n==============> TimeLine item:" + item);
+                            System.out.println("==============> TimeLine item:" + item);
                         }
                         break;
                     }

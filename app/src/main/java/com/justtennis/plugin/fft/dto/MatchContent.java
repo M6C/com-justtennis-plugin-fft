@@ -20,7 +20,7 @@ public class MatchContent {
         List<MatchDto> ret = new ArrayList<>();
         int i=1;
         for(RankingMatchResponse.RankingItem item : list) {
-            ret.add(createDao(i++, item));
+            ret.add(createDto(i++, item));
         }
         return ret;
     }
@@ -29,7 +29,7 @@ public class MatchContent {
         List<MatchDto> ret = new ArrayList<>();
         int i=1;
         for(MillesimeMatchResponse.MatchItem item : list) {
-            ret.add(createDao(i++, item));
+            ret.add(createDto(i++, item));
         }
         return ret;
     }
@@ -62,11 +62,11 @@ public class MatchContent {
         return 0;
     }
 
-    private static MatchDto createDao(int position, RankingMatchResponse.RankingItem item) {
+    private static MatchDto createDto(int position, RankingMatchResponse.RankingItem item) {
         return new MatchDto(String.valueOf(position), item.date, item.name, item.vicDef, item.ranking, null, item.points, item.wo, null);
     }
 
-    private static MatchDto createDao(int position, MillesimeMatchResponse.MatchItem item) {
+    private static MatchDto createDto(int position, MillesimeMatchResponse.MatchItem item) {
         return new MatchDto(String.valueOf(position), item.date, item.name, item.vicDef, item.ranking, item.score, null, item.wo, item.linkPalmares);
     }
 

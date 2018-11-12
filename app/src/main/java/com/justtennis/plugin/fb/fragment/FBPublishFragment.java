@@ -2,6 +2,7 @@ package com.justtennis.plugin.fb.fragment;
 
 import android.content.Context;
 import android.databinding.DataBindingUtil;
+import android.graphics.PorterDuff;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -15,8 +16,11 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Toast;
 
 import com.justtennis.plugin.fb.adapter.PublicationListAdapter;
+import com.justtennis.plugin.fb.dto.PublicationContent;
 import com.justtennis.plugin.fb.dto.PublicationDto;
+import com.justtennis.plugin.fb.query.response.FBProfilPublicationResponse;
 import com.justtennis.plugin.fb.query.response.FBPublishFormResponse;
+import com.justtennis.plugin.fb.task.FBProfilPublicationTask;
 import com.justtennis.plugin.fb.task.FBPublishFormTask;
 import com.justtennis.plugin.fb.task.FBPublishTask;
 import com.justtennis.plugin.fft.R;
@@ -58,6 +62,7 @@ public class FBPublishFragment extends AppFragment {
         initializeFabValidate();
         initializePublicationList();
         initializePublicationForm();
+        initializeProfilPublication();
 
         return binding.getRoot();
     }
@@ -119,8 +124,6 @@ public class FBPublishFragment extends AppFragment {
     private void updPublicationButtonStat() {
         AutoCompleteTextView textView = binding.publicationMessage;
         boolean check = publishFormTask == null && textView.getText().length() > 0;
-//                int visibility = check ? View.VISIBLE : View.GONE;
-//                binding.publicationButton.setVisibility(visibility);
         binding.publicationButton.setEnabled(check);
     }
 
@@ -134,9 +137,17 @@ public class FBPublishFragment extends AppFragment {
     }
 
     private void initializePublicationForm(){
+        binding.progressBarBtn.getIndeterminateDrawable().setColorFilter(getResources()
+                .getColor(R.color.fb_create_form_progress), PorterDuff.Mode.SRC_IN);
         binding.publicationButton.setText(getString(R.string.text_fb_button_create, getString(R.string.fb_text_unknown)));
         final Context context = getContext();
         publishFormTask = new FBPublishFormTask(context) {
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                binding.setLoadingAudience(true);
+            }
+
             @Override
             protected void onPostExecute(FBPublishFormResponse publishFormResponse) {
                 FBPublishFragment.this.publishFormResponse = publishFormResponse;
@@ -146,17 +157,43 @@ public class FBPublishFragment extends AppFragment {
                 }
                 publishFormTask = null;
                 updPublicationButtonStat();
+                binding.setLoadingAudience(false);
             }
 
             @Override
             protected void onProgressUpdate(String... values) {
                 super.onProgressUpdate(values);
-                if (values != null && values.length > 0) {
-                    NotificationManager.onTaskProcessUpdate(context, values);
-                }
+                NotificationManager.onTaskProcessUpdate(context, values);
             }
         };
         publishFormTask.execute();
+    }
+
+    private void initializeProfilPublication(){
+        final Context context = getContext();
+        new FBProfilPublicationTask(context) {
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                binding.setLoading(true);
+            }
+
+            @Override
+            protected void onPostExecute(FBProfilPublicationResponse profilPublicationResponse) {
+                super.onPostExecute(profilPublicationResponse);
+                if (profilPublicationResponse != null && !profilPublicationResponse.timeLineList.isEmpty()) {
+                    listPublication.addAll(PublicationContent.toDto(profilPublicationResponse.timeLineList));
+                }
+                publicationListAdapter.notifyDataSetChanged();
+                binding.setLoading(false);
+            }
+
+            @Override
+            protected void onProgressUpdate(String... values) {
+                super.onProgressUpdate(values);
+                NotificationManager.onTaskProcessUpdate(context, values);
+            }
+        }.execute();
     }
 
     private void onClickFabPublish(View view) {
@@ -176,12 +213,10 @@ public class FBPublishFragment extends AppFragment {
             @Override
             protected void onProgressUpdate(Serializable... values) {
                 super.onProgressUpdate(values);
-                if (values != null && values.length > 0) {
-                    if (values instanceof String[]) {
-                        NotificationManager.onTaskProcessUpdate(context, (String[]) values);
-                    } else {
-                        publicationListAdapter.notifyDataSetChanged();
-                    }
+                if (values instanceof String[]) {
+                    NotificationManager.onTaskProcessUpdate(context, (String[]) values);
+                } else {
+                    publicationListAdapter.notifyDataSetChanged();
                 }
             }
         }.execute(dto);

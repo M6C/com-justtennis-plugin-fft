@@ -8,6 +8,11 @@ import org.jsoup.select.Elements;
 public abstract class AbstractParser {
 
     protected static String getText(Element e, String selectText) {
+        int iAttr = selectText.indexOf('#');
+        if (iAttr > 0) {
+            Elements select = e.select(selectText.substring(0, iAttr));
+            return (select == null) ? null : select.attr(selectText.substring(iAttr+1));
+        }
         return e.select(selectText).text();
     }
 
