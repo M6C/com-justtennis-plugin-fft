@@ -32,7 +32,7 @@ public class PublicationViewHolder extends RecyclerViewHolder<PublicationDto> {
         super.set(pub); // Mandatory
 
         mMessage.setText(pub.message);
-        mDate.setText(dateTimeInstance.format(pub.postDate));
+        mDate.setText(pub.postDate != null ? dateTimeInstance.format(pub.postDate) : "");
         mProgress.setVisibility(pub.statusPublication == STATUS_PUBLICATION.PENDING ? View.VISIBLE : View.GONE);
     }
 }
