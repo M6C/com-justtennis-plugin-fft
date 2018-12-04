@@ -51,7 +51,7 @@ public class FBServiceLogin extends AbstractFBService implements IServiceLogin {
         logMethod("submitFormLogin");
         ResponseHttp ret = null;
 
-        System.out.println("\r\n==============> Form Action:" + form.action);
+        System.out.println("\r\n==============> FB Form Login Action:" + form.action);
 
         Map<String, String> data = LoginFormResponseConverter.toDataMap(form);
 
@@ -72,17 +72,17 @@ public class FBServiceLogin extends AbstractFBService implements IServiceLogin {
         return ret;
     }
 
-    public ResponseHttp navigateToFormRedirect(ResponseHttp loginFormResponse) throws NotConnectedException {
-        logMethod("navigateToFormRedirect");
-        if (loginFormResponse.pathRedirect != null && !loginFormResponse.pathRedirect.isEmpty()) {
-            ResponseHttp responseHttp = doGetConnected(URL_ROOT, loginFormResponse.pathRedirect, loginFormResponse);
-            if (NetworkTool.getInstance().isOk(responseHttp.statusCode)) {
-                LoginSharedPref.setHomePage(context, responseHttp.pathRedirect);
-            } else {
-                LoginSharedPref.cleanSecurity(context);
-            }
-            return responseHttp;
-        }
-        return null;
-    }
+//    public ResponseHttp navigateToFormRedirect(ResponseHttp loginFormResponse) throws NotConnectedException {
+//        logMethod("navigateToFormRedirect");
+//        if (loginFormResponse.pathRedirect != null && !loginFormResponse.pathRedirect.isEmpty()) {
+//            ResponseHttp responseHttp = doGetConnected(URL_ROOT, loginFormResponse.pathRedirect, loginFormResponse);
+//            if (NetworkTool.getInstance().isOk(responseHttp.statusCode)) {
+//                LoginSharedPref.setHomePage(context, responseHttp.pathRedirect);
+//            } else {
+//                LoginSharedPref.cleanSecurity(context);
+//            }
+//            return responseHttp;
+//        }
+//        return null;
+//    }
 }

@@ -48,7 +48,7 @@ public class FFTServiceFindPlayer extends AbstractFFTService {
         logMethod("submitFormFindPlayer");
         ResponseHttp ret = null;
 
-        System.out.println("\n\n\n==============> Form Action:" + form.action);
+        System.out.println("\n\n\n==============> FFT Form Find Player Action:" + form.action);
 
         Map<String, String> data = FindPlayerFormResponseConverter.toDataMap(form);
         if (!StringUtil.isBlank(form.action)) {

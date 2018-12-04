@@ -34,7 +34,7 @@ public class FBServicePublish extends AbstractFBService {
         logMethod("submitForm");
         ResponseHttp ret = null;
 
-        System.out.println("\n\n\n==============> Form Action:" + form.action);
+        System.out.println("\n\n\n==============> FB Form Publish Action:" + form.action);
 
         Map<String, String> data = PublishFormResponseConverter.toDataMap(form);
         if (!StringUtil.isBlank(form.action)) {

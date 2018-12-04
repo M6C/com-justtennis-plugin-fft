@@ -35,8 +35,9 @@ public class FFTServiceFindPlayerTest extends AbstractFFTServiceTest {
         assertNotNull(findPlayerForm.genre.name);
 
         ResponseHttp submitForm = fftServiceFindPlayer.submitFormFindPlayer(form, findPlayerForm);
+        writeResourceFile(submitForm.body, "FFTServiceFindPlayerTest_testSubmitFormFindPlayer.html");
         assertNotNull(submitForm.body);
-        assertNotNull(submitForm.pathRedirect);
+//        assertNotNull(submitForm.pathRedirect);
 //        assertEquals(13, submitForm.header.size());
 
         FindPlayerResponse palmaresMillesimeMatch = fftServiceFindPlayer.getFindPlayer(submitForm);

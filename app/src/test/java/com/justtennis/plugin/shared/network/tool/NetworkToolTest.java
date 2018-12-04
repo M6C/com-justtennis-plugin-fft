@@ -2,8 +2,6 @@ package com.justtennis.plugin.shared.network.tool;
 
 import junit.framework.TestCase;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpStatus;
 import org.junit.Test;
 
 public class NetworkToolTest extends TestCase {
@@ -13,12 +11,12 @@ public class NetworkToolTest extends TestCase {
 
     private static final boolean useProxy = true;
 
-    @Test
-    public static void testShowCookies() {
-        HttpClient client = new HttpClient();
-        NetworkTool.getInstance().setDoLog(true);
-        NetworkTool.getInstance().showCookies(client, LOGON_SITE, LOGON_PORT);
-    }
+//    @Test
+//    public static void testShowCookies() {
+//        HttpClient client = new HttpClient();
+//        NetworkTool.getInstance().setDoLog(true);
+//        NetworkTool.getInstance().showCookies(client, LOGON_SITE, LOGON_PORT);
+//    }
 
     @Test
     public static void testIsRedirect() {

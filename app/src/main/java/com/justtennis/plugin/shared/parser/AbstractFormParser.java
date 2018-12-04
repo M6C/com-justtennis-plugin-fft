@@ -33,6 +33,8 @@ public abstract class AbstractFormParser extends AbstractParser {
             if (forms != null && !forms.isEmpty()) {
                 ret = forms.first();
                 response.action = ret.attr("action");
+                System.out.println("===========================>");
+                System.out.println("==============> Parsing Form");
                 System.out.println("==============> ret action:" + response.action);
 
                 if (request.hiddenQuery != null && !request.hiddenQuery.isEmpty()) {
@@ -53,6 +55,7 @@ public abstract class AbstractFormParser extends AbstractParser {
                 }
 
                 response.button = parseElement(ret, request.submitQuery);
+                System.out.println("===========================<");
             } else {
                 System.err.println("\r\n==============> form '"+request.formQuery+"' not found");
             }

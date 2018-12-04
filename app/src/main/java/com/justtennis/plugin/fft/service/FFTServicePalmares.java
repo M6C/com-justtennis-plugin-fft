@@ -52,8 +52,8 @@ public class FFTServicePalmares extends AbstractFFTService {
         ResponseHttp ret = null;
 
         System.out.println(
-            "\n\n\n==============> Form Action:" + form.action +
-            "\r\n==============> Form Method:" + form.method);
+            "\n\n\n==============> FFT Form Palmares Millesime Action:" + form.action +
+            "\r\n==============> FFT Form Method:" + form.method);
 
         form.select.value = form.millesimeSelected.value;
 

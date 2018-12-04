@@ -36,6 +36,7 @@ public class FBServiceProfilEncodingTest extends AbstractFBServiceTest {
         assertNotNull(homePageResponse.linkProfil);
 
         ResponseHttp profileHttpResponse = fbServiceProfil.navigateToProfil(form, homePageResponse);
+        writeResourceFile(profileHttpResponse.body, "FBServiceProfilEncodingTest_testGetProfilPublication_navigateToProfil.html");
         assertNotNull(profileHttpResponse.body);
         assertEquals(200, profileHttpResponse.statusCode);
 

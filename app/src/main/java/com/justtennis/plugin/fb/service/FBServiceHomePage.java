@@ -22,14 +22,14 @@ public class FBServiceHomePage extends AbstractFBService {
         return new FBServiceHomePage(context);
     }
 
-    public ResponseHttp navigateToPathRedirect(ResponseHttp loginFormResponse) throws NotConnectedException {
-        logMethod("navigateToPathRedirect");
-        return doPostConnected(URL_ROOT, loginFormResponse.pathRedirect, new HashMap<>(), loginFormResponse);
-    }
+//    public ResponseHttp navigateToPathRedirect(ResponseHttp loginFormResponse) throws NotConnectedException {
+//        logMethod("navigateToPathRedirect");
+//        return doPostConnected(URL_ROOT, loginFormResponse.pathRedirect, new HashMap<>(), loginFormResponse);
+//    }
 
     public ResponseHttp navigateToHomePage(ResponseHttp loginFormResponse) throws NotConnectedException {
         logMethod("navigateToHomePage");
-        return doGetConnected(URL_ROOT, "", loginFormResponse);
+        return loginFormResponse;//doGetConnected(URL_ROOT, "", loginFormResponse);
     }
 
     public static FBHomePageResponse getHomePage(ResponseHttp homePageResponse) {
