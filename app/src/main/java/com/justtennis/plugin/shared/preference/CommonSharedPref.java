@@ -33,7 +33,7 @@ class CommonSharedPref {
     public static boolean getBoolean(Context context, String method, String key) {
         if (context == null) {
             logMe(method + " context is null");
-            return (boolean) cacheNoContext.get(key);
+            return cacheNoContext.containsKey(key) && (boolean) cacheNoContext.get(key);
         } else {
             return SharedPrefUtils.getBooleanPreference(context, key, false);
         }
@@ -55,7 +55,7 @@ class CommonSharedPref {
     public static int getInteger(Context context, String method, String key, int defaultValue) {
         if (context == null) {
             logMe(method + " context is null");
-            return (int) cacheNoContext.get(key);
+            return cacheNoContext.containsKey(key) ? (int) cacheNoContext.get(key) : -1;
         } else {
             return SharedPrefUtils.getIntegerPreference(context, key, defaultValue);
         }

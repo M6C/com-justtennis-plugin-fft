@@ -1,7 +1,6 @@
 package com.justtennis.plugin.shared.network;
 
 import com.justtennis.plugin.shared.network.model.ResponseHttp;
-import com.justtennis.plugin.shared.network.tool.HttpStatus;
 import com.justtennis.plugin.shared.network.tool.NetworkTool;
 
 import java.io.IOException;
@@ -67,7 +66,7 @@ public class HttpGetProxy extends AbstractHttpProxy {
             Request request = requestBuilder.build();
             Response response = client.newCall(request).execute();
 
-            NetworkTool.getInstance().buildResponseHttp(ret, response);
+            NetworkTool.getInstance().buildResponseHttp(ret, response, request);
             NetworkTool.getInstance(doLog).showHeaders(request, response);
 
 //            if (ret.statusCode == HttpStatus.SC_OK) {

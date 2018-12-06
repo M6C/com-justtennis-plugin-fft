@@ -21,7 +21,6 @@ public class NetworkTool {
     //    private CookieSpec cookiespec = CookiePolicy.getDefaultSpec();
     private boolean doLog = false;
     private static final String cookie_empty = "reg_ext_ref=cookie_empty";
-//    private static final String cookie_empty = "reg_ext_ref=https%3A%2F%2Fwww.google.fr%2F; reg_fb_ref=https%3A%2F%2Ffr-fr.facebook.com%2F; reg_fb_gate=https%3A%2F%2Ffr-fr.facebook.com%2F";
 
     private NetworkTool() {}
 
@@ -179,9 +178,12 @@ public class NetworkTool {
         return strCookie.toString();
     }
 
-    public ResponseHttp buildResponseHttp(ResponseHttp respHttp, Response response) {
+    public ResponseHttp buildResponseHttp(ResponseHttp respHttp, Response response, Request request) {
         ResponseHttp ret = (respHttp != null) ? respHttp : new ResponseHttp();
-        addResponseHeader(ret, response);
+        if (!addResponseHeader(ret, response)) {
+            // Get cookie from request if no cookies find in response
+            addResponseHeaderCookie(ret, request);
+        }
         ret.statusCode = response.code();
 //        if (response.code() == 302) {
 //            ret.pathRedirect = response.request().url().toString();//.encodedQuery();
@@ -260,59 +262,90 @@ public class NetworkTool {
         return method;
     }
 
-    public void addResponseHeaderCookie(ResponseHttp ret, Response method) {
-        Headers headers = method.headers();
+    public boolean addResponseHeaderCookie(ResponseHttp respHttp, Response resp) {
+        boolean ret = false;
+        Headers headers = resp.headers();
         int size = headers.size();
-        System.out.println("NetworkTool - addResponseHeaderCookie ---------------->");
-        System.out.println("NetworkTool - addResponseHeaderCookie size:" + size);
+        String logTitle = "NetworkTool - addResponseHeaderCookie";
+        logMe(logTitle + " ---------------->");
+        logMe(logTitle + " size:" + size);
         for (int i=0 ; i<size ; i++) {
             ResponseElement head = new ResponseElement();
             head.name = headers.name(i);
             head.value = headers.value(i);
             if ("Set-Cookie".equals(head.name)) {
-                buildResponeElementCookie(ret, head.value);
+                buildResponeElementCookie(logTitle, respHttp, head.value);
+                ret = true;
             }
         }
-        System.out.println("NetworkTool - addResponseHeaderCookie ----------------<");
+        logMe(logTitle + " ----------------< return:" + ret);
+        return ret;
     }
 
-    private void addResponseHeader(ResponseHttp ret, Response method) {
-        Headers headers = method.headers();
+    public boolean addResponseHeaderCookie(ResponseHttp respHttp, Request request) {
+        boolean ret = false;
+        Headers headers = request.headers();
         int size = headers.size();
-        System.out.println("NetworkTool - addResponseHeader ---------------->");
-        System.out.println("NetworkTool - addResponseHeader size:" + size);
+        String logTitle = "NetworkTool - addResponseHeaderCookie from Request";
+        logMe(logTitle + "---------------->");
+        logMe(logTitle + " size:" + size);
+        for (int i=0 ; i<size ; i++) {
+            ResponseElement head = new ResponseElement();
+            head.name = headers.name(i);
+            head.value = headers.value(i);
+            if ("Cookie".equals(head.name)) {
+                String[] tab = head.value.split(";");
+                for(String part : tab) {
+                    buildResponeElementCookie(logTitle, respHttp, part);
+                }
+                ret = true;
+            }
+        }
+        logMe(logTitle + "----------------< return:" + ret);
+        return ret;
+    }
+
+    private boolean addResponseHeader(ResponseHttp respHttp, Response response) {
+        boolean ret = false;
+        Headers headers = response.headers();
+        int size = headers.size();
+        String logTitle = "NetworkTool - addResponseHeader from response";
+        logMe(logTitle + " ---------------->");
+        logMe(logTitle + " size:" + size);
         for (int i=0 ; i<size ; i++) {
             ResponseElement head = new ResponseElement();
             head.name = headers.name(i);
             head.value = headers.value(i);
             if ("Set-Cookie".equals(head.name)) {
-                buildResponeElementCookie(ret, head.value);
+                buildResponeElementCookie(logTitle, respHttp, head.value);
+                ret = true;
             } else {
-                ret.header.add(head);
-                logMe("NetworkTool - addResponseHeader name:" + head.name + " value:" + head.value);
+                respHttp.header.add(head);
+                logMe(logTitle + " name:" + head.name + " value:" + head.value);
             }
         }
-        System.out.println("NetworkTool - addResponseHeader ----------------<");
+        logMe(logTitle + " ----------------< return:" + ret);
+        return ret;
     }
 
-    private void buildResponeElementCookie(ResponseHttp ret, String val) {
+    private void buildResponeElementCookie(String logTitle, ResponseHttp ret, String val) {
         ResponseElement element = null;
-        String value = val.split(";", 2)[0];
+        String value = val.split(";", 2)[0].trim();
         if (value.indexOf("=")>=0) {
             String[] valTab = val.split("=", 2);
             boolean deleted = value.endsWith("=deleted");
             if (deleted) {
                 ret.headerCookie.remove(valTab[0]);
-                logMe("NetworkTool - buildResponeElementCookie Cookie name:" + valTab[0] + " deleted");
+                logMe(logTitle + " Cookie name:" + valTab[0] + " deleted");
             } else {
-                element = new ResponseElement(valTab[0], valTab[1]);
+                element = new ResponseElement(valTab[0].trim(), valTab[1].trim());
             }
         } else {
-            element = new ResponseElement(val, "");
+            element = new ResponseElement(val.trim(), "");
         }
         if (element != null) {
             ret.headerCookie.add(element);
-            logMe("NetworkTool - buildResponeElementCookie Cookie name:" + element.name + " value:" + element.value);
+            logMe(logTitle + " Element name:" + element.name + " value:" + element.value);
         }
     }
 

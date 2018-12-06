@@ -151,7 +151,7 @@ public class AbstractHttpProxy implements IProxy {
                     public Response intercept(@NonNull Chain chain) throws IOException {
                         Request request = chain.request();
                         HttpUrl url = request.url();
-                        System.out.println("url: " + url);
+                        System.out.println("==========> NetworkInterceptor - url: " + url);
                         if (responseRedirect != null) {
                             Request.Builder builder = request.newBuilder();
                             String cookie = NetworkTool.getInstance().buildCookie(responseRedirect);
@@ -163,9 +163,11 @@ public class AbstractHttpProxy implements IProxy {
                         int code = resp.code();
                         if (code == 302) {
                             System.err.println(MessageFormat.format("==========> NetworkInterceptor - code:{0}", code));
-                            NetworkTool.getInstance().addResponseHeaderCookie(respHttp, resp);
-                            responseRedirect = NetworkTool.getInstance().buildResponseHttp(null, resp);
-//                            System.err.println(MessageFormat.format("==========> NetworkInterceptor - redirect to:{0}", responseRedirect.pathRedirect));
+                            if (!NetworkTool.getInstance().addResponseHeaderCookie(respHttp, resp)) {
+                                // Get cookie from request if no cookies find in response
+                                NetworkTool.getInstance().addResponseHeaderCookie(respHttp, request);
+                            }
+                            responseRedirect = NetworkTool.getInstance().buildResponseHttp(null, resp, request);
                         }
                         return resp;
                     }
