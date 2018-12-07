@@ -27,7 +27,7 @@ public class FBServicePublish extends AbstractFBService {
 
     public FBPublishFormResponse getForm(ResponseHttp homePageResponse) {
         logMethod("getForm");
-        return FBPublishParser.parseForm(homePageResponse.body, new FBPublishFormRequest());
+        return FBPublishParser.getInstance().parseForm(homePageResponse.body, new FBPublishFormRequest());
     }
 
     public ResponseHttp submitForm(ResponseHttp loginFormResponse, FBPublishFormResponse form) throws NotConnectedException {

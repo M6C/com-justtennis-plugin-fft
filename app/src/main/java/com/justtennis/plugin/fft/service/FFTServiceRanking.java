@@ -32,7 +32,7 @@ public class FFTServiceRanking extends AbstractFFTService {
     public RankingListResponse getRankingList(ResponseHttp loginFormResponse) throws NotConnectedException {
         logMethod("getRankingList");
         ResponseHttp respRoot = doGetConnected(URL_ROOT, "/bloc_home/redirect/classement", loginFormResponse);
-        System.out.println("==============> connection Return:\r\n" + respRoot.body);
+//        System.out.println("==============> connection Return:\r\n" + respRoot.body);
 
         return RankingParser.parseRankingList(respRoot.body, new FFTRankingListRequest());
     }

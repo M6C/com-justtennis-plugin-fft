@@ -26,9 +26,7 @@ public class FBServiceHomePageTest extends AbstractFBServiceTest {
 
         assertNotNull(formRedirect);
         assertNotNull(formRedirect.body);
-//        assertNotNull(formRedirect.pathRedirect);
         assertEquals(200, formRedirect.statusCode);
-//        assertEquals(16, formRedirect.header.size());
 
         System.out.println("Test body:"+formRedirect.body);
     }
@@ -61,7 +59,7 @@ public class FBServiceHomePageTest extends AbstractFBServiceTest {
 
         writeResourceFile(formRedirect.body, "FBServiceHomePageTest_testGetHomePage.html");
 
-        FBHomePageResponse homePageResponse = fbServiceHomePage.getHomePage(formRedirect);
+        FBHomePageResponse homePageResponse = FBServiceHomePage.getHomePage(formRedirect);
         assertNotNull(homePageResponse.name);
         assertNotNull(homePageResponse.linkProfil);
     }

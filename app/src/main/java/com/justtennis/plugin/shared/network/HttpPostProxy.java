@@ -15,8 +15,6 @@ public class HttpPostProxy extends AbstractHttpProxy {
 
     private static final String TAG = HttpPostProxy.class.getName();
 
-    private boolean doRedirect = true;
-
     private HttpPostProxy() {super();}
 
     public static HttpPostProxy newInstance() {
@@ -67,38 +65,4 @@ public class HttpPostProxy extends AbstractHttpProxy {
         }
         return ret;
     }
-
-//    public HttpPostProxy setDoRedirect(boolean doRedirect) {
-//        this.doRedirect = doRedirect;
-//        return this;
-//    }
-
-//    private void doRedirect(String root, String cookie, ResponseHttp ret) {
-//        String pathRedirect = ret.getHeader("Location");
-//        System.out.println("Move to pathRedirect = " + pathRedirect);
-//        if (pathRedirect.toLowerCase().startsWith(root.toLowerCase())) {
-//            pathRedirect = pathRedirect.substring(root.length());
-//        }
-//
-//        String c = cookie;
-//        if (c == null) {
-//            // Recreate c if null
-//            c = NetworkTool.getInstance().buildCookie(ret);
-//        }
-//
-//        HttpGetProxy httpGetProxy = HttpGetProxy.newInstance();
-//        httpGetProxy
-//                .setProxyHost(proxyHost)
-//                .setProxyPort(proxyPort)
-//                .setProxyUser(proxyUser)
-//                .setProxyPw(proxyPw);
-//        ResponseHttp retGet = httpGetProxy
-//                .setDoRedirect(doRedirect)
-//                .setDoLog(false)
-//                .get(root, pathRedirect, c);
-//        logResponse(TAG, retGet, "\r\nResponse from pathRedirect = " + pathRedirect);
-//        if (NetworkTool.getInstance().isOk(retGet.statusCode)) {
-//            ret.body = retGet.body;
-//        }
-//    }
 }

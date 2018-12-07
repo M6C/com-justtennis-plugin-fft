@@ -7,8 +7,8 @@ import com.justtennis.plugin.shared.skeleton.IProxy;
 
 public abstract class AbstractFBServiceTest extends AbstractServiceTest {
 
-    private static final String LOGIN = "chauc69dan@gmail.com";
-    private static final String PASWD = "dan69chauc";
+    private static final String LOGIN = "LOGIN";
+    private static final String PASWD = "PASSWORD";
 
     private static final boolean useProxy = true;
 

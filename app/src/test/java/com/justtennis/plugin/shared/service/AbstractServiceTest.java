@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import com.justtennis.plugin.shared.query.response.LoginFormResponse;
 import com.justtennis.plugin.shared.network.model.ResponseHttp;
 import com.justtennis.plugin.shared.skeleton.IProxy;
+import com.justtennis.plugin.shared.tool.FileUtil;
 
 import junit.framework.TestCase;
 
@@ -49,13 +50,7 @@ public abstract class AbstractServiceTest extends TestCase {
 
     protected void writeResourceFile(@NonNull String text, String filename) {
         try {
-            URL resource = getClass().getClassLoader().getResource(".");
-            String expectedFilePath = resource.getFile();
-            File expected = new File(expectedFilePath, filename);
-            System.err.println("==========> writeResourceFile:" + expected.getAbsolutePath());
-            PrintWriter pw = new PrintWriter(expected);
-            pw.print(text);
-            pw.close();
+            FileUtil.writeResourceFile(getClass().getClassLoader(), text, filename);
         } catch (IOException e) {
             e.printStackTrace();
         }

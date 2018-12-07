@@ -50,8 +50,6 @@ public class HttpGetProxy extends AbstractHttpProxy {
 
         OkHttpClient.Builder clientBuilder = createClient(ret, cookie);
 
-        NetworkTool.getInstance(doLog).initCookies(clientBuilder, cookie);
-
         String s = buildUrl(root, path, data);
         logMe("HttpGetProxy - url: " + s);
 

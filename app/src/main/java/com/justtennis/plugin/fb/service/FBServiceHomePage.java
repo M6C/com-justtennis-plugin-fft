@@ -29,7 +29,7 @@ public class FBServiceHomePage extends AbstractFBService {
 
     public ResponseHttp navigateToHomePage(ResponseHttp loginFormResponse) throws NotConnectedException {
         logMethod("navigateToHomePage");
-        return loginFormResponse;//doGetConnected(URL_ROOT, "", loginFormResponse);
+        return doGetConnected(URL_ROOT, "", loginFormResponse);
     }
 
     public static FBHomePageResponse getHomePage(ResponseHttp homePageResponse) {

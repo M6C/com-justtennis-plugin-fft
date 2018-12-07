@@ -32,9 +32,8 @@ public class FFTServiceLoginTest extends AbstractFFTServiceTest {
         ResponseHttp form = doLogin();
 
         assertNotNull(form.body);
-//        assertNotNull(form.pathRedirect);
         assertEquals(form.statusCode, 200);
-//        assertEquals(form.header.size(), 16);
+        assertTrue(form.headerCookie.size() > 0);
     }
 
 // OkHttp Automatic redirect

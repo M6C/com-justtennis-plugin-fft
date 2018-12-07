@@ -174,8 +174,6 @@ public class AbstractHttpProxy implements IProxy {
                 })
                 ;
 
-        NetworkTool.getInstance().initCookies(clientBuilder, cookie);
-
         initalizeProxy(clientBuilder);
 
         return clientBuilder;

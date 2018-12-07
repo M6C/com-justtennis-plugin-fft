@@ -24,7 +24,7 @@ public class FBServicePublishTest extends AbstractFBServiceTest {
     public void testGetForm() throws NotConnectedException {
         ResponseHttp form = doLogin();
 
-        writeResourceFile(form.body, "testGetForm_login.html");
+        writeResourceFile(form.body, "FBServicePublishTest_testGetForm_login.html");
         ResponseHttp formRedirect = fbServiceHomePage.navigateToHomePage(form);
 
         assertNotNull(formRedirect);

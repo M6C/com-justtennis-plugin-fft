@@ -11,16 +11,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import okhttp3.Headers;
-import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
 public class NetworkTool {
 
     private static NetworkTool instance;
-    //    private CookieSpec cookiespec = CookiePolicy.getDefaultSpec();
     private boolean doLog = false;
-    private static final String cookie_empty = "reg_ext_ref=cookie_empty";
+    public static final String cookie_empty = "reg_ext_ref=cookie_empty";
 
     private NetworkTool() {}
 
@@ -34,89 +32,6 @@ public class NetworkTool {
     public static NetworkTool getInstance(boolean doLog) {
         return getInstance().setDoLog(doLog);
     }
-
-//    public void initCookies(OkHttpClient.Builder clientBuilder) {
-//        CookieHandler cookieHandler = new CookieManager(null, CookiePolicy.ACCEPT_ALL);
-//        ClearableCookieJar cookieJar = new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(context));
-//        clientBuilder.cookieJar(new CookieJar() {
-//
-//            private List<Cookie> cookies;
-//
-//            @Override
-//            public void saveFromResponse(HttpUrl url, List<Cookie> cookies) {
-//                this.cookies =  cookies;
-//            }
-//
-//            @Override
-//            public List<Cookie> loadForRequest(HttpUrl url) {
-//                if (cookies != null)
-//                    return cookies;
-//                return new ArrayList<Cookie>();
-//
-//            }
-//        });
-//
-//    }
-
-    public void initCookies(OkHttpClient.Builder client, String cookie) {
-//        HttpLoggingInterceptor logging1 = new HttpLoggingInterceptor();
-//        logging1.setLevel(HttpLoggingInterceptor.Level.BASIC);
-//        client.addInterceptor(logging1);
-//
-//        HttpLoggingInterceptor logging2 = new HttpLoggingInterceptor();
-//        logging2.setLevel(HttpLoggingInterceptor.Level.HEADERS);
-//        client.addInterceptor(logging2);
-
-//        client.cookieJar(new CookieJar() {
-//            @Override
-//            public void saveFromResponse(@NonNull HttpUrl url, @NonNull List<Cookie> cookies) {
-//            }
-//
-//            @Override
-//            public List<Cookie> loadForRequest(HttpUrl url) {
-//                final ArrayList<Cookie> oneCookie = new ArrayList<>(1);
-//                Cookie persistentCookie = createNonPersistentCookie(cookie);
-//                if (persistentCookie != null) {
-//                    oneCookie.add(persistentCookie);
-//                }
-//                return oneCookie;
-//            }
-//        });
-/*
-        client.addInterceptor(chain -> {
-            final Request original = chain.request();
-
-            Request.Builder builder = original.newBuilder();
-            if (cookie != null) {
-                builder.addHeader("Cookie", cookie);
-            }
-            final Request authorized = builder.build();
-
-            return chain.proceed(authorized);
-        });
-*/
-    }
-
-//    @Nullable
-//    private static Cookie createNonPersistentCookie(String cookie) {
-//        return (cookie == null) ? null : new Cookie.Builder()
-////                .domain("fr-fr.facebook.com")
-//                .domain("mon-espace-tennis.fft.fr")
-//                .path("/")
-//                .name("Cookie")
-//                .value(cookie)
-////                .httpOnly()
-//                .secure()
-//                .build();
-//    }
-//
-//    public void initCookies(Request.Builder method, ResponseHttp response) {
-//        if (method == null || response == null) {
-//            return;
-//        }
-//
-//        initCookies(method, buildCookie(response));
-//    }
 
     public void initCookies(Request.Builder method, String cookie) {
         logMe("NetworkTool - initCookies - Cookie Request.Builder ------------------>");
@@ -165,7 +80,7 @@ public class NetworkTool {
     public String buildCookie(Response response) {
         StringBuilder strCookie = new StringBuilder("");
         for(String name : response.headers().names()) {
-            if ("Set-Cookie".equals(name)) {
+            if ("Set-Cookie".equalsIgnoreCase(name)) {
                 String val = response.headers().get(name);
                 String value = val.split(";", 2)[0];
                 logMe(("NetworkTool - initCookies head:" + name + " value:" + value).trim());
@@ -185,9 +100,6 @@ public class NetworkTool {
             addResponseHeaderCookie(ret, request);
         }
         ret.statusCode = response.code();
-//        if (response.code() == 302) {
-//            ret.pathRedirect = response.request().url().toString();//.encodedQuery();
-//        }
         try {
             if (response.body() != null) {
                 ret.body = response.body().string();
@@ -198,21 +110,6 @@ public class NetworkTool {
         }
         return ret;
     }
-
-//    public void showCookies(HttpClient client, String logonSite, int logonPort) {
-//        logMe("");
-//        // See if we got any cookies
-//        Cookie[] initcookies = cookiespec.match(logonSite, logonPort, "/", true, client.getState().getCookies());
-//        logMe("NetworkTool - showCookies - Initial set of cookies:");
-//        if (initcookies.length == 0) {
-//            logMe("NetworkTool - showCookes - None");
-//        } else {
-//            for (int i = 0; i < initcookies.length; i++) {
-//                logMe("NetworkTool - showCookies - " + initcookies[i].toString());
-//            }
-//        }
-//        logMe("");
-//    }
 
     public void showHeaders(Request request, Response response) {
         showRequestHeaders(request);
@@ -253,11 +150,9 @@ public class NetworkTool {
         method.put("Accept-Language", "fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7");
         method.put("Cache-Control", "max-age=0");
         method.put("Content-Type", "application/x-www-form-urlencoded");
-//        method.put("Origin", "https://fr-fr.facebook.com");
-//        method.put("Referer", "https://fr-fr.facebook.com/");
         method.put("Upgrade-Insecure-Requests", "1");
         method.put("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36");
-//            method.setRequestHeader("Accept-Encoding", "gzip, deflate, br");
+//            method.put("Accept-Encoding", "gzip, deflate, br");
         method.put("Accept-Encoding", "html");
         return method;
     }
@@ -273,7 +168,7 @@ public class NetworkTool {
             ResponseElement head = new ResponseElement();
             head.name = headers.name(i);
             head.value = headers.value(i);
-            if ("Set-Cookie".equals(head.name)) {
+            if ("Set-Cookie".equalsIgnoreCase(head.name)) {
                 buildResponeElementCookie(logTitle, respHttp, head.value);
                 ret = true;
             }
@@ -293,7 +188,7 @@ public class NetworkTool {
             ResponseElement head = new ResponseElement();
             head.name = headers.name(i);
             head.value = headers.value(i);
-            if ("Cookie".equals(head.name)) {
+            if ("Cookie".equalsIgnoreCase(head.name) && !head.value.contains(cookie_empty)) {
                 String[] tab = head.value.split(";");
                 for(String part : tab) {
                     buildResponeElementCookie(logTitle, respHttp, part);
@@ -316,7 +211,7 @@ public class NetworkTool {
             ResponseElement head = new ResponseElement();
             head.name = headers.name(i);
             head.value = headers.value(i);
-            if ("Set-Cookie".equals(head.name)) {
+            if ("Set-Cookie".equalsIgnoreCase(head.name)) {
                 buildResponeElementCookie(logTitle, respHttp, head.value);
                 ret = true;
             } else {
@@ -331,8 +226,8 @@ public class NetworkTool {
     private void buildResponeElementCookie(String logTitle, ResponseHttp ret, String val) {
         ResponseElement element = null;
         String value = val.split(";", 2)[0].trim();
-        if (value.indexOf("=")>=0) {
-            String[] valTab = val.split("=", 2);
+        if (value.indexOf("=")>=0 && !value.contains(cookie_empty)) {
+            String[] valTab = value.split("=", 2);
             boolean deleted = value.endsWith("=deleted");
             if (deleted) {
                 ret.headerCookie.remove(valTab[0]);

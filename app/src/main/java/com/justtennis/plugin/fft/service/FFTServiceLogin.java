@@ -2,12 +2,12 @@ package com.justtennis.plugin.fft.service;
 
 import android.content.Context;
 
-import com.justtennis.plugin.fft.parser.FormParser;
 import com.justtennis.plugin.fft.query.request.FFTLoginFormRequest;
 import com.justtennis.plugin.shared.converter.LoginFormResponseConverter;
 import com.justtennis.plugin.shared.exception.NotConnectedException;
 import com.justtennis.plugin.shared.network.model.ResponseHttp;
 import com.justtennis.plugin.shared.network.tool.NetworkTool;
+import com.justtennis.plugin.shared.parser.FormLoginParser;
 import com.justtennis.plugin.shared.preference.LoginSharedPref;
 import com.justtennis.plugin.shared.query.response.LoginFormResponse;
 import com.justtennis.plugin.shared.service.IServiceLogin;
@@ -38,7 +38,7 @@ public class FFTServiceLogin extends AbstractFFTService implements IServiceLogin
 //        System.out.println("==============> connection Return:\r\n" + respRoot.body);
 
         if (!StringUtil.isBlank(respRoot.body)) {
-            ret = FormParser.parseFormLogin(respRoot.body, new FFTLoginFormRequest());
+            ret = FormLoginParser.getInstance().parseForm(respRoot.body, new FFTLoginFormRequest());
             ret.login.value = login;
             ret.password.value = password;
             System.out.println("==============> form element name:" + ret.login.name + " value:" + ret.login.value);
