@@ -1,4 +1,4 @@
-package com.justtennis.plugin.fft;
+package com.justtennis.plugin.common;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,7 +13,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.justtennis.plugin.fft.manager.ServiceManager;
+import com.justtennis.plugin.common.manager.ServiceManager;
+import com.justtennis.plugin.fft.R;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 

@@ -1,4 +1,4 @@
-package com.justtennis.plugin.fft.interfaces;
+package com.justtennis.plugin.shared.interfaces.interfaces;
 
 /**
  * This interface must be implemented by activities that contain this

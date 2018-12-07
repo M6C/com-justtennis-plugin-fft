@@ -1,10 +1,10 @@
-package com.justtennis.plugin.fft.task;
+package com.justtennis.plugin.common.task;
 
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.justtennis.plugin.fft.manager.ServiceManager;
+import com.justtennis.plugin.common.manager.ServiceManager;
 import com.justtennis.plugin.shared.network.model.ResponseHttp;
 import com.justtennis.plugin.shared.preference.LoginSharedPref;
 import com.justtennis.plugin.shared.query.response.LoginFormResponse;

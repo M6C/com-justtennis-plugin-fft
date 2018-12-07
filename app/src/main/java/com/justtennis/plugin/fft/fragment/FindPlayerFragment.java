@@ -20,17 +20,17 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.justtennis.plugin.shared.interfaces.interfaces.OnListFragmentInteractionListener;
+import com.justtennis.plugin.common.tool.FragmentTool;
+import com.justtennis.plugin.common.tool.ProgressTool;
 import com.justtennis.plugin.fft.R;
 import com.justtennis.plugin.fft.adapter.FindPlayerAdapter;
 import com.justtennis.plugin.fft.dto.MatchDto;
 import com.justtennis.plugin.fft.dto.PlayerContent;
 import com.justtennis.plugin.fft.dto.PlayerDto;
-import com.justtennis.plugin.fft.interfaces.OnListFragmentInteractionListener;
 import com.justtennis.plugin.fft.query.response.FindPlayerResponse;
 import com.justtennis.plugin.fft.service.AbstractFFTService;
 import com.justtennis.plugin.fft.task.FindPlayerTask;
-import com.justtennis.plugin.fft.tool.FragmentTool;
-import com.justtennis.plugin.fft.tool.ProgressTool;
 import com.justtennis.plugin.shared.manager.NotificationManager;
 
 import java.util.ArrayList;

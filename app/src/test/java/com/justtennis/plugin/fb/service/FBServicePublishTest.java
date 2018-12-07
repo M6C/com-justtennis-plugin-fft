@@ -47,6 +47,7 @@ public class FBServicePublishTest extends AbstractFBServiceTest {
 
         FBPublishFormResponse publishFormResponse = fbServicePublish.getForm(formRedirect);
 //        publishFormResponse.message.value = "https://www.youtube.com/watch?v=vyw7rK24F20";
+//        publishFormResponse.message.value = "... 😘😘😘😘😘😘😘";
         publishFormResponse.message.value = "tête";
 
         ResponseHttp submitFormResponse = fbServicePublish.submitForm(form, publishFormResponse);
