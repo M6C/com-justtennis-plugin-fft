@@ -4,8 +4,12 @@ import com.justtennis.plugin.fb.query.response.FBPublishFormResponse;
 import com.justtennis.plugin.shared.exception.NotConnectedException;
 import com.justtennis.plugin.shared.network.model.ResponseHttp;
 import com.justtennis.plugin.shared.skeleton.IProxy;
+import com.justtennis.plugin.yt.manager.YoutubeManager;
 
 import org.junit.Test;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class FBServicePublishTest extends AbstractFBServiceTest {
 
@@ -25,7 +29,7 @@ public class FBServicePublishTest extends AbstractFBServiceTest {
         ResponseHttp form = doLogin();
 
         writeResourceFile(form.body, "FBServicePublishTest_testGetForm_login.html");
-        ResponseHttp formRedirect = fbServiceHomePage.navigateToHomePage(form);
+        ResponseHttp formRedirect = form;//fbServiceHomePage.navigateToHomePage(form);
 
         assertNotNull(formRedirect);
         assertNotNull(formRedirect.body);
@@ -43,20 +47,44 @@ public class FBServicePublishTest extends AbstractFBServiceTest {
     public void testSubmitForm() throws NotConnectedException {
         ResponseHttp form = doLogin();
 
-        ResponseHttp formRedirect = fbServiceHomePage.navigateToHomePage(form);
+        ResponseHttp formRedirect = form;//fbServiceHomePage.navigateToHomePage(form);
 
         FBPublishFormResponse publishFormResponse = fbServicePublish.getForm(formRedirect);
-//        publishFormResponse.message.value = "https://www.youtube.com/watch?v=vyw7rK24F20";
-//        publishFormResponse.message.value = "... 😘😘😘😘😘😘😘";
-        publishFormResponse.message.value = "tête";
+        publishFormResponse.message.value = "tête... 😘😘😘😘😘😘😘";
 
         ResponseHttp submitFormResponse = fbServicePublish.submitForm(form, publishFormResponse);
 
-        System.out.println("testSubmitForm body:"+submitFormResponse.body);
+        assertNotNull(submitFormResponse);
 
         writeResourceFile(submitFormResponse.body, "FBServicePublishTest_testSubmitForm.html");
 
         assertEquals(200, submitFormResponse.statusCode);
-//        assertEquals(16, submitFormResponse.header.size());
+    }
+
+    @Test
+    public void testSubmitYoutubeForm() throws NotConnectedException {
+        ResponseHttp form = doLogin();
+
+        ResponseHttp formRedirect = form;//fbServiceHomePage.navigateToHomePage(form);
+
+        FBPublishFormResponse publishFormResponse = fbServicePublish.getForm(formRedirect);
+        publishFormResponse.message.value = "tête";
+
+        String urlId = "mKG8BR292oo";
+        String[] url = new String[]{
+                "https://www.youtube.com/watch?v="+urlId+"&fbclid=IwAR3bgfViD0sj9x8HqNH5A1m3HBx_WoCr6LJ6142JfQFDifKATmztQAJgG1A",
+                "https://www.youtu.be/"+urlId};
+        for(String u : url) {
+            String youtubeId = YoutubeManager.getInstance().getIdFromUrl(u);
+            System.out.println("youtubeId:" + youtubeId);
+            Map<String, String> data = YoutubeManager.getInstance().getData(youtubeId, "A Video from " + publishFormResponse.message.value);
+            ResponseHttp submitFormResponse = fbServicePublish.submitForm(form, publishFormResponse, data);
+
+            assertNotNull(submitFormResponse);
+
+            writeResourceFile(submitFormResponse.body, "FBServicePublishTest_testSubmitForm.html");
+
+            assertEquals(200, submitFormResponse.statusCode);
+        }
     }
 }

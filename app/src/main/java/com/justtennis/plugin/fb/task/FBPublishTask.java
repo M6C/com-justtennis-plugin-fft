@@ -11,9 +11,11 @@ import com.justtennis.plugin.fb.service.FBServiceHomePage;
 import com.justtennis.plugin.fb.service.FBServicePublish;
 import com.justtennis.plugin.shared.exception.NotConnectedException;
 import com.justtennis.plugin.shared.network.model.ResponseHttp;
+import com.justtennis.plugin.yt.manager.YoutubeManager;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Map;
 
 public abstract class FBPublishTask extends AsyncTask<PublicationDto, Serializable, Boolean> {
 
@@ -75,7 +77,13 @@ public abstract class FBPublishTask extends AsyncTask<PublicationDto, Serializab
         this.publishProgress("Successfull - Parsing Publish Form so Submitting Form");
         publishFormResponse.message.value = d.message;
 
-        ResponseHttp submitFormResponse = fbServicePublish.submitForm(form, publishFormResponse);
+        ResponseHttp submitFormResponse;
+        Map<String, String> data = null;
+        String id = YoutubeManager.getInstance().getIdFromUrl(d.message);
+        if (id != null) {
+            data = YoutubeManager.getInstance().getData(id, d.message);
+        }
+        submitFormResponse = fbServicePublish.submitForm(form, publishFormResponse, data);
 
         System.out.println("testSubmitForm body:" + submitFormResponse.body);
 

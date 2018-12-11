@@ -31,12 +31,19 @@ public class FBServicePublish extends AbstractFBService {
     }
 
     public ResponseHttp submitForm(ResponseHttp loginFormResponse, FBPublishFormResponse form) throws NotConnectedException {
+        return submitForm(loginFormResponse, form);
+    }
+
+    public ResponseHttp submitForm(ResponseHttp loginFormResponse, FBPublishFormResponse form, Map<String, String> extraData) throws NotConnectedException {
         logMethod("submitForm");
         ResponseHttp ret = null;
 
         System.out.println("\n\n\n==============> FB Form Publish Action:" + form.action);
 
         Map<String, String> data = PublishFormResponseConverter.toDataMap(form);
+        if (extraData != null && !extraData.isEmpty()) {
+            data.putAll(extraData);
+        }
         if (!StringUtil.isBlank(form.action)) {
             ret = doPostConnected(URL_ROOT, form.action, data, loginFormResponse);
         }
