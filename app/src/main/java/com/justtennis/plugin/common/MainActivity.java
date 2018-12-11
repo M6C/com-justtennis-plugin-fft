@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             // Something to do
         }
         ServiceManager.getInstance().initializeNavigation(navigationView);
-        ServiceManager.getInstance().initializeFragment(this);
+        ServiceManager.getInstance().initializeFragment(this, bundle);
     }
 
     @Override

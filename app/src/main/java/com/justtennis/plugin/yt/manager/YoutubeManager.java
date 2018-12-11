@@ -1,5 +1,7 @@
 package com.justtennis.plugin.yt.manager;
 
+import android.support.annotation.NonNull;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -7,6 +9,10 @@ import java.util.regex.Pattern;
 
 public class YoutubeManager {
 
+    private static final String[] regex = new String[]{
+            "(https?://)(www\\.youtube\\.com)(:\\d*)?(/watch)(\\?|(.*)&)((v)(=)(\\S{11}))(&\\S*)?",
+            "(https?://)(youtu\\.be)(:\\d*)?(/)?(\\S{11})(&\\S*)?"
+    };
     private boolean log;
 
     private YoutubeManager(boolean log) {
@@ -23,14 +29,18 @@ public class YoutubeManager {
 
     public String getIdFromUrl(String url) {
         String ret = null;
-//        String regex = "/(http(s?):\\/\\/www\\.youtube\\.com\\/watch\\?)(.*)((v)=(\\w{11}))(.*)/gi";
-        String[] regex = new String[]{
-            "(https?://)(www\\.youtube\\.com)(:\\d*)?(/watch)(\\?|(.*)&)((v)(=)(\\w{11}))(&.*)?",
-            "(https?://)(www\\.youtu.be)(:\\d*)?(/)?(\\w{11})(&.*)?"
-        };
         int[] groupIdx = new int[]{10, 5};
         for(int i=0 ; ret == null && i < regex.length ; i++) {
             ret = parseRegex(url, regex[i], groupIdx[i]);
+        }
+
+        return ret;
+    }
+
+    public String cleanUrl(@NonNull String url) {
+        String ret = url;
+        for (String aRegex : regex) {
+            ret = ret.replaceAll(aRegex, "");
         }
 
         return ret;

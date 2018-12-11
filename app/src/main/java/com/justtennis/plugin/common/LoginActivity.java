@@ -75,6 +75,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mProxyPassword;
     private Spinner mService;
 
+    private Bundle bundle;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,6 +112,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         initializeForm();
         initializeService();
+        bundle = (savedInstanceState != null) ? savedInstanceState : getIntent().getExtras();
+        if (bundle != null) {
+            // Something to do
+        }
 
         LoginSharedPref.cleanSecurity(context);
     }
@@ -358,6 +364,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 mPasswordView.requestFocus();
             } else {
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                if (bundle != null) {
+                    intent.putExtras(bundle);
+                }
                 startActivity(intent);
                 finish();
             }

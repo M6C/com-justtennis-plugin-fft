@@ -1,6 +1,7 @@
 package com.justtennis.plugin.fb.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.PorterDuff;
 import android.os.Build;
@@ -15,6 +16,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.Toast;
 
+import com.justtennis.plugin.common.tool.FragmentTool;
 import com.justtennis.plugin.fb.adapter.PublicationListAdapter;
 import com.justtennis.plugin.fb.dto.PublicationContent;
 import com.justtennis.plugin.fb.dto.PublicationDto;
@@ -25,7 +27,6 @@ import com.justtennis.plugin.fb.task.FBPublishFormTask;
 import com.justtennis.plugin.fb.task.FBPublishTask;
 import com.justtennis.plugin.fft.R;
 import com.justtennis.plugin.fft.databinding.FragmentFbPublicationListBinding;
-import com.justtennis.plugin.common.tool.FragmentTool;
 import com.justtennis.plugin.shared.fragment.AppFragment;
 import com.justtennis.plugin.shared.manager.NotificationManager;
 
@@ -88,9 +89,11 @@ public class FBPublishFragment extends AppFragment {
 
     private void initializePublicationMessage() {
         AutoCompleteTextView textView = binding.publicationMessage;
-        textView.setOnFocusChangeListener((v, hasFocus) -> {
-            updPublicationMessageDesign(textView, hasFocus);
-        });
+        Bundle bundle = getArguments();
+        if(bundle != null) {
+            textView.setText(bundle.getString(Intent.EXTRA_TEXT));
+        }
+        textView.setOnFocusChangeListener((v, hasFocus) -> updPublicationMessageDesign(textView, hasFocus));
         textView.addTextChangedListener(new TextWatcher() {
 
             @Override

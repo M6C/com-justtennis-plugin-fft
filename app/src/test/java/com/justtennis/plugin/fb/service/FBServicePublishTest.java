@@ -8,7 +8,6 @@ import com.justtennis.plugin.yt.manager.YoutubeManager;
 
 import org.junit.Test;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class FBServicePublishTest extends AbstractFBServiceTest {
@@ -70,14 +69,17 @@ public class FBServicePublishTest extends AbstractFBServiceTest {
         FBPublishFormResponse publishFormResponse = fbServicePublish.getForm(formRedirect);
         publishFormResponse.message.value = "tête";
 
+        YoutubeManager youtubeManager = YoutubeManager.getInstance();
+
         String urlId = "mKG8BR292oo";
         String[] url = new String[]{
                 "https://www.youtube.com/watch?v="+urlId+"&fbclid=IwAR3bgfViD0sj9x8HqNH5A1m3HBx_WoCr6LJ6142JfQFDifKATmztQAJgG1A",
-                "https://www.youtu.be/"+urlId};
+                "https://youtu.be/"+urlId};
         for(String u : url) {
-            String youtubeId = YoutubeManager.getInstance().getIdFromUrl(u);
+            String youtubeId = youtubeManager.getIdFromUrl(u);
             System.out.println("youtubeId:" + youtubeId);
-            Map<String, String> data = YoutubeManager.getInstance().getData(youtubeId, "A Video from " + publishFormResponse.message.value);
+            Map<String, String> data = youtubeManager.getData(youtubeId, "A Video from " + publishFormResponse.message.value);
+            publishFormResponse.message.value = youtubeManager.cleanUrl(String.format("%s %s", publishFormResponse.message.value, u));
             ResponseHttp submitFormResponse = fbServicePublish.submitForm(form, publishFormResponse, data);
 
             assertNotNull(submitFormResponse);

@@ -75,17 +75,18 @@ public abstract class FBPublishTask extends AsyncTask<PublicationDto, Serializab
 
     private void publish(ResponseHttp form, PublicationDto d, FBPublishFormResponse publishFormResponse) throws NotConnectedException {
         this.publishProgress("Successfull - Parsing Publish Form so Submitting Form");
-        publishFormResponse.message.value = d.message;
-
         ResponseHttp submitFormResponse;
-        Map<String, String> data = null;
-        String id = YoutubeManager.getInstance().getIdFromUrl(d.message);
-        if (id != null) {
-            data = YoutubeManager.getInstance().getData(id, d.message);
-        }
-        submitFormResponse = fbServicePublish.submitForm(form, publishFormResponse, data);
 
-        System.out.println("testSubmitForm body:" + submitFormResponse.body);
+        String message = d.message;
+        Map<String, String> data = null;
+        YoutubeManager youtubeManager = YoutubeManager.getInstance();
+        String id = youtubeManager.getIdFromUrl(message);
+        if (id != null) {
+            message = youtubeManager.cleanUrl(message);
+            data = youtubeManager.getData(id, message);
+        }
+        publishFormResponse.message.value = message;
+        submitFormResponse = fbServicePublish.submitForm(form, publishFormResponse, data);
 
         if (submitFormResponse.statusCode == 302) {
             d.publishDate = new Date();

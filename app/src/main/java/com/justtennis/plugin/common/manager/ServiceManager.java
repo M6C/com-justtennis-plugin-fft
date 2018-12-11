@@ -3,8 +3,10 @@ package com.justtennis.plugin.common.manager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -95,14 +97,23 @@ public class ServiceManager {
 	}
 
 	public void initializeFragment(FragmentActivity activity) {
+		initializeFragment(activity, null);
+	}
+
+	public void initializeFragment(FragmentActivity activity, Bundle extra) {
+		Fragment fragment;
 		switch (service) {
 			case FB:
-				FragmentTool.replaceFragment(activity, FBPublishFragment.newInstance());
+				fragment = FBPublishFragment.newInstance();
 				break;
 			case FFT:
 			default:
-				FragmentTool.replaceFragment(activity, MillesimeMatchFragment.newInstance());
+				fragment = MillesimeMatchFragment.newInstance();
 		}
+		if (extra != null) {
+			fragment.setArguments(extra);
+		}
+		FragmentTool.replaceFragment(activity, fragment);
 	}
 
 	public void initializeNavigation(NavigationView navigationView) {
