@@ -32,10 +32,10 @@ public class FFTServiceFindPlayer extends AbstractFFTService {
         logMethod("getFindPlayerForm");
         FindPlayerFormResponse ret = null;
 
-        System.out.println("==============> connection Return:\r\n" + findPlayerResponseHttp.body);
+//        System.out.println("==============> connection Return:\r\n" + findPlayerResponseHttp.body);
 
         if (!StringUtil.isBlank(findPlayerResponseHttp.body)) {
-            ret = FormParser.parseFormFindPlayer(findPlayerResponseHttp.body, new FFTFindPlayerFormRequest());
+            ret = FormParser.getInstance().parseForm(findPlayerResponseHttp.body, new FFTFindPlayerFormRequest());
             ret.genre.value = genre.value;
             ret.firstname.value = fistname;
             ret.lastname.value = lastname;
@@ -48,7 +48,7 @@ public class FFTServiceFindPlayer extends AbstractFFTService {
         logMethod("submitFormFindPlayer");
         ResponseHttp ret = null;
 
-        System.out.println("\n\n\n==============> Form Action:" + form.action);
+        System.out.println("\n\n\n==============> FFT Form Find Player Action:" + form.action);
 
         Map<String, String> data = FindPlayerFormResponseConverter.toDataMap(form);
         if (!StringUtil.isBlank(form.action)) {

@@ -1,4 +1,4 @@
-package com.justtennis.plugin.fft.tool;
+package com.justtennis.plugin.common.tool;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;

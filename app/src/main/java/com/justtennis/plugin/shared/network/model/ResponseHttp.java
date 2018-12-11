@@ -7,13 +7,8 @@ public class ResponseHttp {
 
     public int statusCode;
     public List<ResponseElement> header = new ArrayList<>();
-    public String pathRedirect;
+    public List<ResponseElement> headerCookie = new ArrayList<>();
     public String body;
-//    public String action;
-//    public Map<String, String> input = new HashMap<>();
-//    public ResponseElement login = new ResponseElement();
-//    public ResponseElement password = new ResponseElement();
-//    public ResponseElement button = new ResponseElement();
 
 
     public String getHeader(String name) {
@@ -30,7 +25,6 @@ public class ResponseHttp {
         return "ResponseHttp{" +
                 "statusCode=" + statusCode +
                 ", header=" + header +
-                ", pathRedirect='" + pathRedirect + '\'' +
                 ", body='" + body + '\'' +
                 '}';
     }

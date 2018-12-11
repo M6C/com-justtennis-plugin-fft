@@ -32,21 +32,21 @@ public class FFTServiceLoginTest extends AbstractFFTServiceTest {
         ResponseHttp form = doLogin();
 
         assertNotNull(form.body);
-        assertNotNull(form.pathRedirect);
-        assertEquals(form.statusCode, 302);
-        assertEquals(form.header.size(), 16);
+        assertEquals(form.statusCode, 200);
+        assertTrue(form.headerCookie.size() > 0);
     }
 
-    @Test
-    public void testNavigateToFormRedirect() throws NotConnectedException {
-        ResponseHttp form = doLogin();
-
-        ResponseHttp formRedirect = fftServiceLogin.navigateToFormRedirect(form);
-
-        assertNotNull(formRedirect);
-        assertNotNull(formRedirect.body);
-        assertNotNull(formRedirect.pathRedirect);
-        assertEquals(formRedirect.statusCode, 200);
-        assertEquals(formRedirect.header.size(), 0);
-    }
+// OkHttp Automatic redirect
+//    @Test
+//    public void testNavigateToFormRedirect() throws NotConnectedException {
+//        ResponseHttp form = doLogin();
+//
+//        ResponseHttp formRedirect = fftServiceLogin.navigateToFormRedirect(form);
+//
+//        assertNotNull(formRedirect);
+//        assertNotNull(formRedirect.body);
+//        assertNotNull(formRedirect.pathRedirect);
+//        assertEquals(formRedirect.statusCode, 200);
+//        assertEquals(formRedirect.header.size(), 0);
+//    }
 }

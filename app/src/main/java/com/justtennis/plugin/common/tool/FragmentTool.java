@@ -1,4 +1,4 @@
-package com.justtennis.plugin.fft.tool;
+package com.justtennis.plugin.common.tool;
 
 import android.app.Activity;
 import android.support.annotation.DrawableRes;

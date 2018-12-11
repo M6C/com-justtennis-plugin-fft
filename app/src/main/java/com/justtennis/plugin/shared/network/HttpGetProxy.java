@@ -1,22 +1,14 @@
 package com.justtennis.plugin.shared.network;
 
-import com.justtennis.plugin.shared.StreamTool;
 import com.justtennis.plugin.shared.network.model.ResponseHttp;
 import com.justtennis.plugin.shared.network.tool.NetworkTool;
 
-import org.apache.commons.httpclient.Credentials;
-import org.apache.commons.httpclient.HostConfiguration;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.HttpStatus;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
-import org.apache.commons.httpclient.auth.AuthScope;
-import org.apache.commons.httpclient.methods.GetMethod;
-
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.Map;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class HttpGetProxy extends AbstractHttpProxy {
 
@@ -55,74 +47,41 @@ public class HttpGetProxy extends AbstractHttpProxy {
 
     public ResponseHttp get(String root, String path, Map<String, String> data, String cookie) {
         ResponseHttp ret = new ResponseHttp();
-        HttpClient client = new HttpClient();
 
-        String s = buildUrl(root, path);
-        StringBuilder url = new StringBuilder(s);
-        if (data != null && data.size() > 0) {
-            try {
-                boolean first = true;
-                for(String key : data.keySet()) {
-                    if (first) {
-                        first = false;
-                        url.append("?");
-                    } else {
-                        url.append("&");
-                    }
-                    url.append(key).append("=").append(URLEncoder.encode(data.get(key), "UTF-8"));
-                }
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-        }
-        s = url.toString();
+        OkHttpClient.Builder clientBuilder = createClient(ret, cookie);
 
+        String s = buildUrl(root, path, data);
         logMe("HttpGetProxy - url: " + s);
-        HttpMethod method = new GetMethod(s);
 
-        NetworkTool.getInstance(doLog).initCookies(method, cookie);
+        Request.Builder requestBuilder = new Request.Builder()
+                .url(s)
+                .get();
 
-        if (proxyHost != null && proxyPort > 0) {
-            HostConfiguration config = client.getHostConfiguration();
-            config.setProxy(proxyHost, proxyPort);
-        }
-
-        if (proxyHost != null && proxyPort > 0 && proxyUser != null && proxyPw != null) {
-            Credentials credentials = new UsernamePasswordCredentials(proxyUser, proxyPw);
-            AuthScope authScope = new AuthScope(proxyHost, proxyPort);
-            client.getState().setProxyCredentials(authScope, credentials);
-        }
+        NetworkTool.getInstance(doLog).initCookies(requestBuilder, cookie);
 
         try {
-            client.executeMethod(method);
+            OkHttpClient client = clientBuilder.build();
+            Request request = requestBuilder.build();
+            Response response = client.newCall(request).execute();
 
-            NetworkTool.getInstance(doLog).showheaders(method);
+            NetworkTool.getInstance().buildResponseHttp(ret, response, request);
+            NetworkTool.getInstance(doLog).showHeaders(request, response);
 
-            addResponseHeader(ret, method);
-            ret.statusCode = method.getStatusCode();
-            ret.pathRedirect = method.getPath();
-
-            if (ret.statusCode == HttpStatus.SC_OK) {
-                ret.body = StreamTool.readStream(method.getResponseBodyAsStream());
-            } else {
-                while (doRedirect && NetworkTool.getInstance(doLog).isRedirect(ret.statusCode)) {
-                    method.releaseConnection();
-                    method = null;
-                    logMe("Move to pathRedirect = " + root + ret.pathRedirect);
-                    ret = get(root, ret.pathRedirect, cookie);
-                }
-            }
+//            if (ret.statusCode == HttpStatus.SC_OK) {
+//            } else {
+//                while (doRedirect && NetworkTool.getInstance(doLog).isRedirect(ret.statusCode)) {
+//                    logMe("Move to pathRedirect = " + root + ret.pathRedirect);
+//                    ret = get(root, ret.pathRedirect, cookie);
+//                }
+//            }
             logResponse(TAG, ret);
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            if (method != null) {
-                method.releaseConnection();
-            }
         }
 
         return ret;
     }
+
     public HttpGetProxy setDoRedirect(boolean doRedirect) {
         this.doRedirect = doRedirect;
         return this;

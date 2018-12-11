@@ -21,13 +21,17 @@ public class FFTServiceRankingTest extends AbstractFFTServiceTest {
     @Test
     public void testNavigateToRanking() throws NotConnectedException {
         ResponseHttp form = doLogin();
+        writeResourceFile(form.body, "FFTServiceRankingTest_testNavigateToRanking_login.html");
+        assertTrue(form.headerCookie.size() > 0);
 
         ResponseHttp ranking = fftServiceRanking.navigateToRanking(form);
+        writeResourceFile(ranking.body, "FFTServiceRankingTest_testNavigateToRanking_ranking.html");
 
         assertNotNull(ranking);
         assertNotNull(ranking.body);
-        assertNotNull(ranking.pathRedirect);
-        assertEquals(ranking.header.size(), 0);
+        assertEquals(200, ranking.statusCode);
+//        assertNotNull(ranking.pathRedirect);
+//        assertEquals(ranking.header.size(), 0);
     }
 
     @Test

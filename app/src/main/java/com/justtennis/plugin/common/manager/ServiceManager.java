@@ -1,4 +1,4 @@
-package com.justtennis.plugin.fft.manager;
+package com.justtennis.plugin.common.manager;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,15 +11,15 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.justtennis.plugin.common.LoginActivity;
+import com.justtennis.plugin.common.tool.FragmentTool;
 import com.justtennis.plugin.fb.fragment.FBPublishFragment;
 import com.justtennis.plugin.fb.service.FBServiceLogin;
-import com.justtennis.plugin.fft.LoginActivity;
 import com.justtennis.plugin.fft.R;
 import com.justtennis.plugin.fft.fragment.FindPlayerFragment;
 import com.justtennis.plugin.fft.fragment.MillesimeMatchFragment;
 import com.justtennis.plugin.fft.fragment.RankingMatchFragment;
 import com.justtennis.plugin.fft.service.FFTServiceLogin;
-import com.justtennis.plugin.fft.tool.FragmentTool;
 import com.justtennis.plugin.shared.preference.LoginSharedPref;
 import com.justtennis.plugin.shared.service.IServiceLogin;
 

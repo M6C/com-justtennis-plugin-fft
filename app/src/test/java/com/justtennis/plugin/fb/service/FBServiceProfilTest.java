@@ -56,6 +56,7 @@ public class FBServiceProfilTest extends AbstractFBServiceTest {
         assertNotNull(homePageResponse.linkProfil);
 
         ResponseHttp profileHttpResponse = fbServiceProfil.navigateToProfil(form, homePageResponse);
+        writeResourceFile(profileHttpResponse.body, "FBServiceProfilTest_testGetProfilPublication_navigateToProfil.html");
         assertNotNull(profileHttpResponse.body);
         assertEquals(200, profileHttpResponse.statusCode);
 

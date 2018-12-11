@@ -1,10 +1,8 @@
 package com.justtennis.plugin.shared.parser;
 
 import com.justtennis.plugin.shared.query.request.AbstractFormRequest;
-import com.justtennis.plugin.shared.query.request.LoginFormRequest;
 import com.justtennis.plugin.shared.query.response.AbstractFormResponse;
 import com.justtennis.plugin.shared.query.response.FormElement;
-import com.justtennis.plugin.shared.query.response.LoginFormResponse;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -13,26 +11,17 @@ import org.jsoup.select.Elements;
 
 public abstract class AbstractFormParser extends AbstractParser {
 
-    public static LoginFormResponse parseFormLogin(String content, LoginFormRequest request) {
-        LoginFormResponse ret = new LoginFormResponse();
-        Element form = parseForm(content, request, ret);
-        if (form != null) {
-            ret.login = parseElement(form, request.loginQuery);
-            ret.password = parseElement(form, request.passwordQuery);
-            return ret;
-        } else {
-            return null;
-        }
-    }
+    protected abstract void parseFormExtra(AbstractFormRequest request, AbstractFormResponse response, Element form);
 
-    protected static Element parseForm(String content, AbstractFormRequest request, AbstractFormResponse response) {
-        Element ret = null;
+    protected AbstractFormResponse parseForm(String content, AbstractFormRequest request, AbstractFormResponse response) {
         Document doc = Jsoup.parse(content);
         if (doc != null) {
             Elements forms = doc.select(request.formQuery);
             if (forms != null && !forms.isEmpty()) {
-                ret = forms.first();
+                Element ret = forms.first();
                 response.action = ret.attr("action");
+                System.out.println("===========================>");
+                System.out.println("==============> Parsing Form");
                 System.out.println("==============> ret action:" + response.action);
 
                 if (request.hiddenQuery != null && !request.hiddenQuery.isEmpty()) {
@@ -53,11 +42,14 @@ public abstract class AbstractFormParser extends AbstractParser {
                 }
 
                 response.button = parseElement(ret, request.submitQuery);
+
+                parseFormExtra(request, response, ret);
             } else {
                 System.err.println("\r\n==============> form '"+request.formQuery+"' not found");
             }
         }
-        return ret;
+        System.out.println("===========================<");
+        return response;
     }
 
     protected static FormElement parseElement(Element form, String query) {

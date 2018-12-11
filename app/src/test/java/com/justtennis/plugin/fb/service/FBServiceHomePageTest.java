@@ -22,40 +22,44 @@ public class FBServiceHomePageTest extends AbstractFBServiceTest {
 
         ResponseHttp formRedirect = fbServiceHomePage.navigateToHomePage(form);
 
+        writeResourceFile(formRedirect.body, "FBServiceHomePageTest_navigateToHomePage.html");
+
         assertNotNull(formRedirect);
         assertNotNull(formRedirect.body);
-        assertNotNull(formRedirect.pathRedirect);
         assertEquals(200, formRedirect.statusCode);
-        assertEquals(16, formRedirect.header.size());
 
         System.out.println("Test body:"+formRedirect.body);
     }
 
-    @Test
-    public void testNavigateToPathRedirect() throws NotConnectedException {
-        ResponseHttp form = doLogin();
-
-        ResponseHttp formRedirect = fbServiceHomePage.navigateToPathRedirect(form);
-
-        assertNotNull(formRedirect);
-        assertNotNull(formRedirect.body);
-        assertNotNull(formRedirect.pathRedirect);
-        assertEquals(200, formRedirect.statusCode);
-        assertEquals(16, formRedirect.header.size());
-
-        System.out.println("testNavigateToPathRedirect body:"+formRedirect.body);
-    }
+//    @Test
+//    public void testNavigateToPathRedirect() throws NotConnectedException {
+//        ResponseHttp form = doLogin();
+//
+//        ResponseHttp formRedirect = fbServiceHomePage.navigateToPathRedirect(form);
+//
+//        writeResourceFile(formRedirect.body, "testGetHomePage_navigateToPathRedirect.html");
+//
+//        assertNotNull(formRedirect);
+//        assertNotNull(formRedirect.body);
+//        assertEquals(200, formRedirect.statusCode);
+////        assertEquals(16, formRedirect.header.size());
+//
+//        System.out.println("testNavigateToPathRedirect body:"+formRedirect.body);
+//    }
 
     @Test
     public void testGetHomePage() throws NotConnectedException {
         ResponseHttp form = doLogin();
 
         ResponseHttp formRedirect = fbServiceHomePage.navigateToHomePage(form);
+//        ResponseHttp formRedirect = responseHttpFromResourceFile("testGetHomePage_navigateToHomePage.html");
 
         assertNotNull(formRedirect);
         assertNotNull(formRedirect.body);
 
-        FBHomePageResponse homePageResponse = fbServiceHomePage.getHomePage(formRedirect);
+        writeResourceFile(formRedirect.body, "FBServiceHomePageTest_testGetHomePage.html");
+
+        FBHomePageResponse homePageResponse = FBServiceHomePage.getHomePage(formRedirect);
         assertNotNull(homePageResponse.name);
         assertNotNull(homePageResponse.linkProfil);
     }

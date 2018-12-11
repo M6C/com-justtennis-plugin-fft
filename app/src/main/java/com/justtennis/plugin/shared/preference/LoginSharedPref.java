@@ -2,6 +2,8 @@ package com.justtennis.plugin.shared.preference;
 
 import android.content.Context;
 
+import com.justtennis.plugin.shared.network.tool.NetworkTool;
+
 public class LoginSharedPref {
 
     private static final String SHARED_PREF_COOKIE = "SHARED_PREF_COOKIE";
@@ -17,7 +19,11 @@ public class LoginSharedPref {
     }
 
     public static void setCookie(Context context, String cookie) {
-        CommonSharedPref.setString(context, cookie, "setCookie", SHARED_PREF_COOKIE);
+        if (cookie != null && !cookie.contains(NetworkTool.cookie_empty)) {
+            CommonSharedPref.setString(context, cookie, "setCookie", SHARED_PREF_COOKIE);
+        } else {
+            int i=0;
+        }
     }
 
     public static String getLogin(Context context) {

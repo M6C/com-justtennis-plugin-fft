@@ -10,6 +10,12 @@ import com.justtennis.plugin.fb.service.FBServiceHomePage;
 import com.justtennis.plugin.fb.service.FBServiceProfil;
 import com.justtennis.plugin.shared.exception.NotConnectedException;
 import com.justtennis.plugin.shared.network.model.ResponseHttp;
+import com.justtennis.plugin.shared.tool.FileUtil;
+
+import java.io.BufferedInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.StringReader;
 
 public abstract class FBProfilPublicationTask extends AsyncTask<Void, String, FBProfilPublicationResponse> {
 

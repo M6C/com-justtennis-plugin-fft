@@ -2,12 +2,12 @@ package com.justtennis.plugin.fft.service;
 
 import android.content.Context;
 
-import com.justtennis.plugin.fft.parser.FormParser;
 import com.justtennis.plugin.fft.query.request.FFTLoginFormRequest;
 import com.justtennis.plugin.shared.converter.LoginFormResponseConverter;
 import com.justtennis.plugin.shared.exception.NotConnectedException;
 import com.justtennis.plugin.shared.network.model.ResponseHttp;
 import com.justtennis.plugin.shared.network.tool.NetworkTool;
+import com.justtennis.plugin.shared.parser.FormLoginParser;
 import com.justtennis.plugin.shared.preference.LoginSharedPref;
 import com.justtennis.plugin.shared.query.response.LoginFormResponse;
 import com.justtennis.plugin.shared.service.IServiceLogin;
@@ -35,12 +35,14 @@ public class FFTServiceLogin extends AbstractFFTService implements IServiceLogin
         System.out.println("\r\n" + URL_ROOT);
 
         ResponseHttp respRoot = doGet(URL_ROOT);
-        System.out.println("==============> connection Return:\r\n" + respRoot.body);
+//        System.out.println("==============> connection Return:\r\n" + respRoot.body);
 
         if (!StringUtil.isBlank(respRoot.body)) {
-            ret = FormParser.parseFormLogin(respRoot.body, new FFTLoginFormRequest());
+            ret = FormLoginParser.getInstance().parseForm(respRoot.body, new FFTLoginFormRequest());
             ret.login.value = login;
             ret.password.value = password;
+            System.out.println("==============> form element name:" + ret.login.name + " value:" + ret.login.value);
+            System.out.println("==============> form element name:" + ret.password.name + " value:" + ret.password.value);
         }
 
         return ret;
@@ -52,7 +54,7 @@ public class FFTServiceLogin extends AbstractFFTService implements IServiceLogin
         ResponseHttp ret = null;
 
         System.out.println("");
-        System.out.println("==============> Form Action:" + form.action);
+        System.out.println("==============> FFT Form Login Action:" + form.action);
 
         Map<String, String> data = LoginFormResponseConverter.toDataMap(form);
         if (!StringUtil.isBlank(form.action)) {
@@ -74,16 +76,17 @@ public class FFTServiceLogin extends AbstractFFTService implements IServiceLogin
 
     public ResponseHttp navigateToFormRedirect(ResponseHttp loginFormResponse) throws NotConnectedException {
         logMethod("navigateToFormRedirect");
-        if (loginFormResponse.pathRedirect != null && !loginFormResponse.pathRedirect.isEmpty()) {
-            ResponseHttp responseHttp = doGetConnected(URL_ROOT, loginFormResponse.pathRedirect, loginFormResponse);
-            if (NetworkTool.getInstance().isOk(responseHttp.statusCode)) {
-                LoginSharedPref.setHomePage(context, responseHttp.pathRedirect);
-            } else {
-                LoginSharedPref.cleanSecurity(context);
-            }
-            return responseHttp;
-        }
-        return null;
+        return loginFormResponse;
+//        if (loginFormResponse.pathRedirect != null && !loginFormResponse.pathRedirect.isEmpty()) {
+//            ResponseHttp responseHttp = doGetConnected(URL_ROOT, loginFormResponse.pathRedirect, loginFormResponse);
+//            if (NetworkTool.getInstance().isOk(responseHttp.statusCode)) {
+//                LoginSharedPref.setHomePage(context, responseHttp.pathRedirect);
+//            } else {
+//                LoginSharedPref.cleanSecurity(context);
+//            }
+//            return responseHttp;
+//        }
+//        return null;
     }
 
     public ResponseHttp navigateToHomePage(ResponseHttp loginFormResponse) throws NotConnectedException {

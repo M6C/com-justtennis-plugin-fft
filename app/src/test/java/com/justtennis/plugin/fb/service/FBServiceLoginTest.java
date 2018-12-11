@@ -1,8 +1,8 @@
 package com.justtennis.plugin.fb.service;
 
-import com.justtennis.plugin.shared.query.response.LoginFormResponse;
-import com.justtennis.plugin.shared.exception.NotConnectedException;
 import com.justtennis.plugin.shared.network.model.ResponseHttp;
+import com.justtennis.plugin.shared.network.tool.NetworkTool;
+import com.justtennis.plugin.shared.query.response.LoginFormResponse;
 import com.justtennis.plugin.shared.skeleton.IProxy;
 
 import org.junit.Test;
@@ -30,22 +30,33 @@ public class FBServiceLoginTest extends AbstractFBServiceTest {
     @Test
     public void testSubmitFormLogin() {
         ResponseHttp form = doLogin();
+        assertEquals(form.statusCode, 200);
+
+        String cookie = NetworkTool.getInstance().buildCookie(form);
+        System.err.println("==========> Cookie:" + cookie);
+        assertNotNull(cookie);
+        assertFalse(cookie.isEmpty());
 
         assertNotNull(form.body);
-        assertEquals(302, form.statusCode);
-        assertEquals(15, form.header.size());
+        assertFalse(form.body.isEmpty());
+        System.err.println("==========> Body Length:" + form.body.length());
+        writeResourceFile(form.body, "FBServiceLoginTest_testSubmitFormLogin.html");
     }
 
-    @Test
-    public void testNavigateToFormRedirect() throws NotConnectedException {
-        ResponseHttp form = doLogin();
-
-        ResponseHttp formRedirect = serviceLogin.navigateToFormRedirect(form);
-
-        assertNotNull(formRedirect);
-        assertNotNull(formRedirect.body);
-        assertNotNull(formRedirect.pathRedirect);
-        assertEquals(formRedirect.statusCode, 200);
-        assertEquals(formRedirect.header.size(), 0);
-    }
+// OkHttp Automatic redirect
+//    @Test
+//    public void testNavigateToFormRedirect() throws NotConnectedException {
+//        ResponseHttp form = doLogin();
+//
+//        ResponseHttp formRedirect = serviceLogin.navigateToFormRedirect(form);
+//
+//        assertNotNull(formRedirect);
+//        assertNotNull(formRedirect.body);
+//        assertFalse(formRedirect.body.isEmpty());
+//        System.err.println("==========> Body Length:" + formRedirect.body.length());
+//        writeResourceFile(formRedirect.body, "test2.html");
+//        assertNotNull(formRedirect.pathRedirect);
+//        assertEquals(formRedirect.statusCode, 200);
+//        assertEquals(formRedirect.header.size(), 0);
+//    }
 }

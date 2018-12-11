@@ -1,8 +1,8 @@
-package com.justtennis.plugin.fft.task;
+package com.justtennis.plugin.common.task;
 
 import android.content.Context;
 
-import com.justtennis.plugin.fft.manager.ServiceManager;
+import com.justtennis.plugin.common.manager.ServiceManager;
 import com.justtennis.plugin.shared.service.IServiceLogin;
 
 public class UserLoginServiceTask extends UserLoginTask {

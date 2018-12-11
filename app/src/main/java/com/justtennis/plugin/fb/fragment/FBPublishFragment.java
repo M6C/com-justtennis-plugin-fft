@@ -25,7 +25,7 @@ import com.justtennis.plugin.fb.task.FBPublishFormTask;
 import com.justtennis.plugin.fb.task.FBPublishTask;
 import com.justtennis.plugin.fft.R;
 import com.justtennis.plugin.fft.databinding.FragmentFbPublicationListBinding;
-import com.justtennis.plugin.fft.tool.FragmentTool;
+import com.justtennis.plugin.common.tool.FragmentTool;
 import com.justtennis.plugin.shared.fragment.AppFragment;
 import com.justtennis.plugin.shared.manager.NotificationManager;
 

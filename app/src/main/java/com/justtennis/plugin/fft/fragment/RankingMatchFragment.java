@@ -21,14 +21,14 @@ import com.justtennis.plugin.fft.R;
 import com.justtennis.plugin.fft.adapter.MatchAdapter;
 import com.justtennis.plugin.fft.dto.MatchContent;
 import com.justtennis.plugin.fft.dto.MatchDto;
-import com.justtennis.plugin.fft.interfaces.OnListFragmentInteractionListener;
+import com.justtennis.plugin.shared.interfaces.interfaces.OnListFragmentInteractionListener;
 import com.justtennis.plugin.fft.model.User;
 import com.justtennis.plugin.fft.query.response.MillesimeMatchResponse;
 import com.justtennis.plugin.fft.query.response.RankingMatchResponse;
 import com.justtennis.plugin.fft.resolver.UserResolver;
 import com.justtennis.plugin.fft.task.RankingMatchTask;
-import com.justtennis.plugin.fft.tool.FragmentTool;
-import com.justtennis.plugin.fft.tool.ProgressTool;
+import com.justtennis.plugin.common.tool.FragmentTool;
+import com.justtennis.plugin.common.tool.ProgressTool;
 import com.justtennis.plugin.shared.manager.NotificationManager;
 
 import java.util.ArrayList;

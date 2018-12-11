@@ -73,8 +73,7 @@ public abstract class AbstractService implements IProxy {
     }
 
     protected ResponseHttp doPost(String root, String path, Map<String, String> data) {
-        String cookie = "reg_ext_ref=https%3A%2F%2Fwww.google.fr%2F; reg_fb_ref=https%3A%2F%2Ffr-fr.facebook.com%2F; reg_fb_gate=https%3A%2F%2Ffr-fr.facebook.com%2F";
-        return newHttpPostProxy().post(root, path, data, cookie);
+        return newHttpPostProxy().post(root, path, data, (String)null);
     }
 
     protected ResponseHttp doGetConnected(String root, String path, ResponseHttp http) throws NotConnectedException {
