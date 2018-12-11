@@ -14,7 +14,7 @@ public class YoutubeManagerTest {
                 "https://www.youtube.com/watch?v="+urlId+"&fbclid=IwAR3bgfViD0sj9x8HqNH5A1m3HBx_WoCr6LJ6142JfQFDifKATmztQAJgG1A",
                 "https://youtu.be/"+urlId};
         for(String u : url) {
-            String youtubeId = YoutubeManager.getInstance(true).getIdFromUrl(u);
+            String youtubeId = YoutubeManager.getInstance().log(true).getIdFromUrl(u);
 
             assertNotNull(u, youtubeId);
             assertEquals(u, urlId, youtubeId);
@@ -35,6 +35,6 @@ public class YoutubeManagerTest {
         }
         message.append(messageF);
 
-        assertEquals(messageD + messageF, YoutubeManager.getInstance(true).cleanUrl(message.toString()));
+        assertEquals(messageD + messageF, YoutubeManager.getInstance().log(true).cleanUrl(message.toString()));
     }
 }

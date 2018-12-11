@@ -29,11 +29,13 @@ import com.justtennis.plugin.fft.R;
 import com.justtennis.plugin.fft.databinding.FragmentFbPublicationListBinding;
 import com.justtennis.plugin.shared.fragment.AppFragment;
 import com.justtennis.plugin.shared.manager.NotificationManager;
+import com.justtennis.plugin.yt.manager.YoutubeManager;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class FBPublishFragment extends AppFragment {
@@ -46,6 +48,8 @@ public class FBPublishFragment extends AppFragment {
     private FBPublishFormTask publishFormTask;
     private FBPublishFormResponse publishFormResponse;
     private int maxLine;
+    private static String id;
+    private String subject;
 
     public static Fragment newInstance() {
         return new FBPublishFragment();
@@ -90,8 +94,13 @@ public class FBPublishFragment extends AppFragment {
     private void initializePublicationMessage() {
         AutoCompleteTextView textView = binding.publicationMessage;
         Bundle bundle = getArguments();
-        if(bundle != null) {
-            textView.setText(bundle.getString(Intent.EXTRA_TEXT));
+        if(bundle != null && bundle.containsKey(Intent.EXTRA_TEXT)) {
+            String text = bundle.getString(Intent.EXTRA_TEXT);
+            if (text != null && !text.isEmpty()) {
+                textView.setText(text);
+                id = YoutubeManager.getInstance().getIdFromUrl(text);
+                subject = bundle.getString(Intent.EXTRA_SUBJECT);
+            }
         }
         textView.setOnFocusChangeListener((v, hasFocus) -> updPublicationMessageDesign(textView, hasFocus));
         textView.addTextChangedListener(new TextWatcher() {
@@ -204,7 +213,7 @@ public class FBPublishFragment extends AppFragment {
         final Context context = getContext();
 
         PublicationDto dto = createDto(message);
-        listPublication.add(dto);
+        listPublication.add(0, dto);
 
         new FBPublishTask(context, this.publishFormResponse) {
             @Override
@@ -221,6 +230,16 @@ public class FBPublishFragment extends AppFragment {
                 } else {
                     publicationListAdapter.notifyDataSetChanged();
                 }
+            }
+
+            @Override
+            protected Map<String, String> getData(YoutubeManager youtubeManager, String id) {
+                if (id.equals(FBPublishFragment.id)) {
+                    if (subject != null && !subject.isEmpty()) {
+                        return youtubeManager.getData(id, subject);
+                    }
+                }
+                return super.getData(youtubeManager, id);
             }
         }.execute(dto);
         clear();

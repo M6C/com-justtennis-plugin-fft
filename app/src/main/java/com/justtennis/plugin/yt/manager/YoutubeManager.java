@@ -13,18 +13,19 @@ public class YoutubeManager {
             "(https?://)(www\\.youtube\\.com)(:\\d*)?(/watch)(\\?|(.*)&)((v)(=)(\\S{11}))(&\\S*)?",
             "(https?://)(youtu\\.be)(:\\d*)?(/)?(\\S{11})(&\\S*)?"
     };
-    private boolean log;
-
-    private YoutubeManager(boolean log) {
-        this.log = log;
-    }
+    private static YoutubeManager instance;
+    private boolean log = false;
 
     public static YoutubeManager getInstance() {
-        return getInstance(false);
+        if (instance == null) {
+            instance = new YoutubeManager();
+        }
+        return instance;
     }
 
-    public static YoutubeManager getInstance(boolean log) {
-        return new YoutubeManager(log);
+    public YoutubeManager log(boolean log) {
+        this.log = log;
+        return instance;
     }
 
     public String getIdFromUrl(String url) {

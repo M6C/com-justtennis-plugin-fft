@@ -23,7 +23,8 @@ public abstract class FBPublishTask extends AsyncTask<PublicationDto, Serializab
 
     private final FBServiceHomePage fbServiceHomePage;
     private final FBServicePublish fbServicePublish;
-    private FBPublishFormResponse publishFormResponse;
+    protected FBPublishFormResponse publishFormResponse;
+    protected Map<String, String> data = null;
 
     protected FBPublishTask(Context context, FBPublishFormResponse publishFormResponse) {
         fbServiceHomePage = newFBServiceHomePage(context);
@@ -55,7 +56,7 @@ public abstract class FBPublishTask extends AsyncTask<PublicationDto, Serializab
                     d.statusPublication = STATUS_PUBLICATION.PENDING;
                     this.publishProgress(d);
                     if (publishFormResponse != null && publishFormResponse.message != null) {
-                        this.publish(form, d, publishFormResponse);
+                        this.publish(form, d);
                         cntPublished++;
                     } else {
                         d.statusPublication = STATUS_PUBLICATION.FAILED;
@@ -73,19 +74,26 @@ public abstract class FBPublishTask extends AsyncTask<PublicationDto, Serializab
         return cntPublished == dto.length;
     }
 
-    private void publish(ResponseHttp form, PublicationDto d, FBPublishFormResponse publishFormResponse) throws NotConnectedException {
-        this.publishProgress("Successfull - Parsing Publish Form so Submitting Form");
-        ResponseHttp submitFormResponse;
-
+    protected void beforePublish(PublicationDto d) {
         String message = d.message;
-        Map<String, String> data = null;
         YoutubeManager youtubeManager = YoutubeManager.getInstance();
         String id = youtubeManager.getIdFromUrl(message);
         if (id != null) {
             message = youtubeManager.cleanUrl(message);
-            data = youtubeManager.getData(id, message);
+            data = getData(youtubeManager, id);
         }
         publishFormResponse.message.value = message;
+    }
+
+    protected Map<String, String> getData(YoutubeManager youtubeManager, String id) {
+        return youtubeManager.getData(id, "");
+    }
+
+    private void publish(ResponseHttp form, PublicationDto d) throws NotConnectedException {
+        this.publishProgress("Successfull - Parsing Publish Form so Submitting Form");
+        ResponseHttp submitFormResponse;
+
+        beforePublish(d);
         submitFormResponse = fbServicePublish.submitForm(form, publishFormResponse, data);
 
         if (submitFormResponse.statusCode == 302) {
