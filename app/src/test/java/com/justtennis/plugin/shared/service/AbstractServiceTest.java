@@ -2,7 +2,6 @@ package com.justtennis.plugin.shared.service;
 
 import android.support.annotation.NonNull;
 
-import com.justtennis.plugin.shared.query.response.LoginFormResponse;
 import com.justtennis.plugin.shared.network.model.ResponseHttp;
 import com.justtennis.plugin.shared.skeleton.IProxy;
 import com.justtennis.plugin.shared.tool.FileUtil;
@@ -14,30 +13,22 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.net.URL;
+
+import okhttp3.Authenticator;
+import okhttp3.Credentials;
+import okhttp3.OkHttpClient;
 
 public abstract class AbstractServiceTest extends TestCase {
 
-    protected static final String PROXY_USER = "pckh146";
-    protected static final String PROXY_PW = "k5F+n7S!";
-    protected static final String PROXY_HOST = "proxy-internet.net-courrier.extra.laposte.fr";
-    protected static final int PROXY_PORT = 8080;
+    private static final String PROXY_USER = "pckh146";
+    private static final String PROXY_PW = "k5F+n7S!";
+    private static final String PROXY_HOST = "proxy-internet.net-courrier.extra.laposte.fr";
+    private static final int PROXY_PORT = 8080;
 
     private static final boolean useProxy = true;
-
-    protected abstract String getPaswd();
-    protected abstract String getLogin();
-
-
-    protected abstract LoginFormResponse getLoginForm();
-    protected abstract ResponseHttp doLogin();
-    protected abstract void initializeFFTService();
-
-    protected void testLogin(LoginFormResponse response) {
-        assertEquals(getLogin(), response.login.value);
-        assertEquals(getPaswd(), response.password.value);
-    }
 
     protected void initializeProxy(IProxy instance) {
         if (useProxy && instance != null) {
@@ -45,6 +36,20 @@ public abstract class AbstractServiceTest extends TestCase {
                     .setProxyPort(PROXY_PORT)
                     .setProxyUser(PROXY_USER)
                     .setProxyPw(PROXY_PW);
+        }
+    }
+
+    public static void initializeProxy(OkHttpClient.Builder clientBuilder) {
+        if (useProxy) {
+            clientBuilder.proxy(new Proxy(Proxy.Type.HTTP, new InetSocketAddress(PROXY_HOST, PROXY_PORT)));
+
+            Authenticator proxyAuthenticator = (route, response) -> {
+                String credential = Credentials.basic(PROXY_USER, PROXY_PW);
+                return response.request().newBuilder()
+                        .header("Proxy-Authorization", credential)
+                        .build();
+            };
+            clientBuilder.proxyAuthenticator(proxyAuthenticator);
         }
     }
 
@@ -56,7 +61,7 @@ public abstract class AbstractServiceTest extends TestCase {
         }
     }
 
-    protected String readResourceFile(String filename) {
+    private String readResourceFile(String filename) {
         StringBuffer ret = new StringBuffer();
         BufferedReader br = null;
         try {

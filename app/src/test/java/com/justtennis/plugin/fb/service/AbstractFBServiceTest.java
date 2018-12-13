@@ -2,17 +2,15 @@ package com.justtennis.plugin.fb.service;
 
 import com.justtennis.plugin.shared.network.model.ResponseHttp;
 import com.justtennis.plugin.shared.query.response.LoginFormResponse;
-import com.justtennis.plugin.shared.service.AbstractServiceTest;
+import com.justtennis.plugin.shared.service.AbstractLoginServiceTest;
 import com.justtennis.plugin.shared.skeleton.IProxy;
 
-public abstract class AbstractFBServiceTest extends AbstractServiceTest {
+public abstract class AbstractFBServiceTest extends AbstractLoginServiceTest {
 
     private static final String LOGIN = "LOGIN";
     private static final String PASWD = "PASSWORD";
 
-    private static final boolean useProxy = true;
-
-    protected static FBServiceLogin serviceLogin;
+    private static FBServiceLogin serviceLogin;
 
     protected abstract IProxy initializeService();
 

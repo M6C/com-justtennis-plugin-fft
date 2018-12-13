@@ -1,4 +1,4 @@
-package com.justtennis.plugin.yt.manager;
+package com.justtennis.plugin.fb.manager;
 
 import android.support.annotation.NonNull;
 
@@ -7,23 +7,26 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class YoutubeManager {
+public class SharingYoutubeManager {
 
     private static final String[] regex = new String[]{
             "(https?://)(www\\.youtube\\.com)(:\\d*)?(/watch)(\\?|(.*)&)((v)(=)(\\S{11}))(&\\S*)?",
             "(https?://)(youtu\\.be)(:\\d*)?(/)?(\\S{11})(&\\S*)?"
     };
-    private static YoutubeManager instance;
+    private static SharingYoutubeManager instance;
     private boolean log = false;
 
-    public static YoutubeManager getInstance() {
+    private SharingYoutubeManager() {
+    }
+
+    public static SharingYoutubeManager getInstance() {
         if (instance == null) {
-            instance = new YoutubeManager();
+            instance = new SharingYoutubeManager();
         }
         return instance;
     }
 
-    public YoutubeManager log(boolean log) {
+    public SharingYoutubeManager log(boolean log) {
         this.log = log;
         return instance;
     }

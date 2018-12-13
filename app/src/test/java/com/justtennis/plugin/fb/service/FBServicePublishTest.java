@@ -1,54 +1,44 @@
 package com.justtennis.plugin.fb.service;
 
+import com.justtennis.plugin.fb.manager.SharingYoutubeManager;
 import com.justtennis.plugin.fb.query.response.FBPublishFormResponse;
 import com.justtennis.plugin.shared.exception.NotConnectedException;
 import com.justtennis.plugin.shared.network.model.ResponseHttp;
 import com.justtennis.plugin.shared.skeleton.IProxy;
-import com.justtennis.plugin.yt.manager.YoutubeManager;
-
-import org.junit.Test;
 
 import java.util.Map;
 
 public class FBServicePublishTest extends AbstractFBServiceTest {
 
-    private FBServiceHomePage fbServiceHomePage;
     private FBServicePublish fbServicePublish;
 
     @Override
     protected IProxy initializeService() {
-        fbServiceHomePage = FBServiceHomePage.newInstance(null);
-        initializeProxy(fbServiceHomePage);
         fbServicePublish = FBServicePublish.newInstance(null);
         return fbServicePublish;
     }
 
-    @Test
-    public void testGetForm() throws NotConnectedException {
+    public void testGetForm() {
         ResponseHttp form = doLogin();
 
         writeResourceFile(form.body, "FBServicePublishTest_testGetForm_login.html");
-        ResponseHttp formRedirect = form;//fbServiceHomePage.navigateToHomePage(form);
 
-        assertNotNull(formRedirect);
-        assertNotNull(formRedirect.body);
+        assertNotNull(form);
+        assertNotNull(form.body);
 
-        System.out.println("testGetForm body:"+formRedirect.body);
+        System.out.println("testGetForm body:"+ form.body);
 
-        FBPublishFormResponse publishFormResponse = fbServicePublish.getForm(formRedirect);
+        FBPublishFormResponse publishFormResponse = fbServicePublish.getForm(form);
         assertNotNull(publishFormResponse);
         assertNotNull(publishFormResponse.message);
         assertNotNull(publishFormResponse.message.name);
         assertNotNull(publishFormResponse.audience);
     }
 
-    @Test
     public void testSubmitForm() throws NotConnectedException {
         ResponseHttp form = doLogin();
 
-        ResponseHttp formRedirect = form;//fbServiceHomePage.navigateToHomePage(form);
-
-        FBPublishFormResponse publishFormResponse = fbServicePublish.getForm(formRedirect);
+        FBPublishFormResponse publishFormResponse = fbServicePublish.getForm(form);
         publishFormResponse.message.value = "tête... 😘😘😘😘😘😘😘";
 
         ResponseHttp submitFormResponse = fbServicePublish.submitForm(form, publishFormResponse);
@@ -60,16 +50,13 @@ public class FBServicePublishTest extends AbstractFBServiceTest {
         assertEquals(200, submitFormResponse.statusCode);
     }
 
-    @Test
     public void testSubmitYoutubeForm() throws NotConnectedException {
         ResponseHttp form = doLogin();
 
-        ResponseHttp formRedirect = form;//fbServiceHomePage.navigateToHomePage(form);
-
-        FBPublishFormResponse publishFormResponse = fbServicePublish.getForm(formRedirect);
+        FBPublishFormResponse publishFormResponse = fbServicePublish.getForm(form);
         publishFormResponse.message.value = "tête";
 
-        YoutubeManager youtubeManager = YoutubeManager.getInstance();
+        SharingYoutubeManager youtubeManager = SharingYoutubeManager.getInstance();
 
         String urlId = "mKG8BR292oo";
         String[] url = new String[]{

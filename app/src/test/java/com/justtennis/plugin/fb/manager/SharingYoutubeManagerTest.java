@@ -1,28 +1,23 @@
-package com.justtennis.plugin.yt.manager;
+package com.justtennis.plugin.fb.manager;
 
-import org.junit.Test;
+import com.justtennis.plugin.shared.service.AbstractServiceTest;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+public class SharingYoutubeManagerTest extends AbstractServiceTest {
 
-public class YoutubeManagerTest {
-
-    @Test
-    public void getIdFromUrl() {
+    public void testGetIdFromUrl() {
         String urlId = "TQjf8_S6Sho";
         String[] url = new String[]{
                 "https://www.youtube.com/watch?v="+urlId+"&fbclid=IwAR3bgfViD0sj9x8HqNH5A1m3HBx_WoCr6LJ6142JfQFDifKATmztQAJgG1A",
                 "https://youtu.be/"+urlId};
         for(String u : url) {
-            String youtubeId = YoutubeManager.getInstance().log(true).getIdFromUrl(u);
+            String youtubeId = SharingYoutubeManager.getInstance().log(true).getIdFromUrl(u);
 
             assertNotNull(u, youtubeId);
             assertEquals(u, urlId, youtubeId);
         }
     }
 
-    @Test
-    public void cleanUrl() {
+    public void testCleanUrl() {
         String urlId = "TQjf8_S6Sho";
         String[] url = new String[]{
                 "https://www.youtube.com/watch?v="+urlId+"&fbclid=IwAR3bgfViD0sj9x8HqNH5A1m3HBx_WoCr6LJ6142JfQFDifKATmztQAJgG1A",
@@ -35,6 +30,6 @@ public class YoutubeManagerTest {
         }
         message.append(messageF);
 
-        assertEquals(messageD + messageF, YoutubeManager.getInstance().log(true).cleanUrl(message.toString()));
+        assertEquals(messageD + messageF, SharingYoutubeManager.getInstance().log(true).cleanUrl(message.toString()));
     }
 }

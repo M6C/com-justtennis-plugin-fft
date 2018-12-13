@@ -5,8 +5,6 @@ import com.justtennis.plugin.shared.network.tool.NetworkTool;
 import com.justtennis.plugin.shared.query.response.LoginFormResponse;
 import com.justtennis.plugin.shared.skeleton.IProxy;
 
-import org.junit.Test;
-
 public class FBServiceLoginTest extends AbstractFBServiceTest {
 
     @Override
@@ -14,7 +12,6 @@ public class FBServiceLoginTest extends AbstractFBServiceTest {
         return null;
     }
 
-    @Test
     public void testGetLoginForm() {
 
         LoginFormResponse response = getLoginForm();
@@ -27,7 +24,6 @@ public class FBServiceLoginTest extends AbstractFBServiceTest {
         assertEquals(12, response.input.size());
     }
 
-    @Test
     public void testSubmitFormLogin() {
         ResponseHttp form = doLogin();
         assertEquals(form.statusCode, 200);

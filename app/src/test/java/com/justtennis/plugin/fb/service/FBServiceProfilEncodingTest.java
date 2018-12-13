@@ -6,8 +6,6 @@ import com.justtennis.plugin.shared.exception.NotConnectedException;
 import com.justtennis.plugin.shared.network.model.ResponseHttp;
 import com.justtennis.plugin.shared.skeleton.IProxy;
 
-import org.junit.Test;
-
 import java.io.UnsupportedEncodingException;
 
 public class FBServiceProfilEncodingTest extends AbstractFBServiceTest {
@@ -23,7 +21,6 @@ public class FBServiceProfilEncodingTest extends AbstractFBServiceTest {
         return fbServiceProfil;
     }
 
-    @Test
     public void testGetProfilPublication() throws NotConnectedException {
         ResponseHttp form = doLogin();
 
@@ -115,7 +112,7 @@ public class FBServiceProfilEncodingTest extends AbstractFBServiceTest {
      * @param ch  the character to convert
      * @return the escaped unicode string
      */
-    public static String unicodeEscaped(char ch) {
+    private static String unicodeEscaped(char ch) {
 //        if (ch < 0x10) {
 //            return "\\u000" + Integer.toHexString(ch);
 //        } else if (ch < 0x100) {

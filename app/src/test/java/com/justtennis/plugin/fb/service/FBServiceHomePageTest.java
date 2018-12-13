@@ -5,8 +5,6 @@ import com.justtennis.plugin.shared.exception.NotConnectedException;
 import com.justtennis.plugin.shared.network.model.ResponseHttp;
 import com.justtennis.plugin.shared.skeleton.IProxy;
 
-import org.junit.Test;
-
 public class FBServiceHomePageTest extends AbstractFBServiceTest {
 
     private FBServiceHomePage fbServiceHomePage;
@@ -16,7 +14,6 @@ public class FBServiceHomePageTest extends AbstractFBServiceTest {
         return fbServiceHomePage;
     }
 
-    @Test
     public void testNavigateToHomePage() throws NotConnectedException {
         ResponseHttp form = doLogin();
 
@@ -47,7 +44,6 @@ public class FBServiceHomePageTest extends AbstractFBServiceTest {
 //        System.out.println("testNavigateToPathRedirect body:"+formRedirect.body);
 //    }
 
-    @Test
     public void testGetHomePage() throws NotConnectedException {
         ResponseHttp form = doLogin();
 

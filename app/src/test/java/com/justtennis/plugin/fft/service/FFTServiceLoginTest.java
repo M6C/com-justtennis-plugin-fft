@@ -1,6 +1,5 @@
 package com.justtennis.plugin.fft.service;
 
-import com.justtennis.plugin.shared.exception.NotConnectedException;
 import com.justtennis.plugin.shared.network.model.ResponseHttp;
 import com.justtennis.plugin.shared.query.response.LoginFormResponse;
 import com.justtennis.plugin.shared.skeleton.IProxy;

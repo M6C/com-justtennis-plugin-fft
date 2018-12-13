@@ -6,8 +6,6 @@ import com.justtennis.plugin.shared.exception.NotConnectedException;
 import com.justtennis.plugin.shared.network.model.ResponseHttp;
 import com.justtennis.plugin.shared.skeleton.IProxy;
 
-import org.junit.Test;
-
 public class FBServiceProfilTest extends AbstractFBServiceTest {
 
     private FBServiceHomePage fbServiceHomePage;
@@ -43,7 +41,6 @@ public class FBServiceProfilTest extends AbstractFBServiceTest {
 //        System.out.println("Test body:"+homePageHttpResponse.body);
 //    }
 
-    @Test
     public void testGetProfilPublication() throws NotConnectedException {
         ResponseHttp form = doLogin();
 

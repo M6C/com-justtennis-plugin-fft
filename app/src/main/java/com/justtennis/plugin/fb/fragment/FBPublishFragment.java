@@ -20,6 +20,7 @@ import com.justtennis.plugin.common.tool.FragmentTool;
 import com.justtennis.plugin.fb.adapter.PublicationListAdapter;
 import com.justtennis.plugin.fb.dto.PublicationContent;
 import com.justtennis.plugin.fb.dto.PublicationDto;
+import com.justtennis.plugin.fb.manager.SharingYoutubeManager;
 import com.justtennis.plugin.fb.query.response.FBProfilPublicationResponse;
 import com.justtennis.plugin.fb.query.response.FBPublishFormResponse;
 import com.justtennis.plugin.fb.task.FBProfilPublicationTask;
@@ -29,7 +30,6 @@ import com.justtennis.plugin.fft.R;
 import com.justtennis.plugin.fft.databinding.FragmentFbPublicationListBinding;
 import com.justtennis.plugin.shared.fragment.AppFragment;
 import com.justtennis.plugin.shared.manager.NotificationManager;
-import com.justtennis.plugin.yt.manager.YoutubeManager;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -98,7 +98,7 @@ public class FBPublishFragment extends AppFragment {
             String text = bundle.getString(Intent.EXTRA_TEXT);
             if (text != null && !text.isEmpty()) {
                 textView.setText(text);
-                id = YoutubeManager.getInstance().getIdFromUrl(text);
+                id = SharingYoutubeManager.getInstance().getIdFromUrl(text);
                 subject = bundle.getString(Intent.EXTRA_SUBJECT);
             }
         }
@@ -233,7 +233,7 @@ public class FBPublishFragment extends AppFragment {
             }
 
             @Override
-            protected Map<String, String> getData(YoutubeManager youtubeManager, String id) {
+            protected Map<String, String> getData(SharingYoutubeManager youtubeManager, String id) {
                 if (id.equals(FBPublishFragment.id)) {
                     if (subject != null && !subject.isEmpty()) {
                         return youtubeManager.getData(id, subject);
