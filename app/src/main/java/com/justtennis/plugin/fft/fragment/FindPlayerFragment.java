@@ -20,6 +20,7 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.justtennis.plugin.fft.model.enums.EnumPlayer;
 import com.justtennis.plugin.shared.interfaces.interfaces.OnListFragmentInteractionListener;
 import com.justtennis.plugin.common.tool.FragmentTool;
 import com.justtennis.plugin.common.tool.ProgressTool;
@@ -29,7 +30,6 @@ import com.justtennis.plugin.fft.dto.MatchDto;
 import com.justtennis.plugin.fft.dto.PlayerContent;
 import com.justtennis.plugin.fft.dto.PlayerDto;
 import com.justtennis.plugin.fft.query.response.FindPlayerResponse;
-import com.justtennis.plugin.fft.service.AbstractFFTService;
 import com.justtennis.plugin.fft.task.FindPlayerTask;
 import com.justtennis.plugin.shared.manager.NotificationManager;
 
@@ -135,7 +135,7 @@ public class FindPlayerFragment extends Fragment implements OnListFragmentIntera
         assert context != null;
 
         List<String> listValue = new ArrayList<>();
-        for(AbstractFFTService.PLAYER_GENRE playerGenre : AbstractFFTService.PLAYER_GENRE.values()) {
+        for(EnumPlayer.GENRE playerGenre : EnumPlayer.GENRE.values()) {
             listValue.add(playerGenre.label);
         }
 
@@ -165,7 +165,7 @@ public class FindPlayerFragment extends Fragment implements OnListFragmentIntera
     }
 
     private void findPlayer() {
-        AbstractFFTService.PLAYER_GENRE genre = AbstractFFTService.PLAYER_GENRE.findByLabel(spGenre.getSelectedItem().toString());
+        EnumPlayer.GENRE genre = EnumPlayer.GENRE.findByLabel(spGenre.getSelectedItem().toString());
         mFindPlayerTask = new MyFindPlayerTask(getContext(), genre, etFirstname.getText().toString(), etLastname.getText().toString());
         mFindPlayerTask.execute((Void) null);
     }
@@ -212,7 +212,7 @@ public class FindPlayerFragment extends Fragment implements OnListFragmentIntera
 
         private Context context;
 
-        MyFindPlayerTask(Context context, AbstractFFTService.PLAYER_GENRE genre, String firstname, String lastname) {
+        MyFindPlayerTask(Context context, EnumPlayer.GENRE genre, String firstname, String lastname) {
             super(context, genre, firstname, lastname);
             this.context = context;
         }

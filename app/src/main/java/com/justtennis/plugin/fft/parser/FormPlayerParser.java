@@ -8,15 +8,15 @@ import com.justtennis.plugin.shared.query.response.AbstractFormResponse;
 
 import org.jsoup.nodes.Element;
 
-public class FormParser extends AbstractFormParser {
+public class FormPlayerParser extends AbstractFormParser {
 
-    private FormParser() {}
+    private FormPlayerParser() {}
 
-    private static FormParser instance;
+    private static FormPlayerParser instance;
 
-    public static FormParser getInstance() {
+    public static FormPlayerParser getInstance() {
         if (instance == null) {
-            instance = new FormParser();
+            instance = new FormPlayerParser();
         }
         return instance;
     }

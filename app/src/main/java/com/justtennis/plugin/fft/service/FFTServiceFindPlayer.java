@@ -3,8 +3,9 @@ package com.justtennis.plugin.fft.service;
 import android.content.Context;
 
 import com.justtennis.plugin.fft.converter.FindPlayerFormResponseConverter;
+import com.justtennis.plugin.fft.model.enums.EnumPlayer;
 import com.justtennis.plugin.fft.parser.FindPlayerParser;
-import com.justtennis.plugin.fft.parser.FormParser;
+import com.justtennis.plugin.fft.parser.FormPlayerParser;
 import com.justtennis.plugin.fft.query.request.FFTFindPlayerFormRequest;
 import com.justtennis.plugin.fft.query.request.FFTFindPlayerRequest;
 import com.justtennis.plugin.fft.query.response.FindPlayerFormResponse;
@@ -28,14 +29,14 @@ public class FFTServiceFindPlayer extends AbstractFFTService {
         return new FFTServiceFindPlayer(context);
     }
 
-    public FindPlayerFormResponse getFindPlayerForm(ResponseHttp findPlayerResponseHttp, PLAYER_GENRE genre, String fistname, String lastname) {
-        logMethod("getFindPlayerForm");
+    public FindPlayerFormResponse getFindForm(ResponseHttp findPlayerResponseHttp, EnumPlayer.GENRE genre, String fistname, String lastname) {
+        logMethod("getFindForm");
         FindPlayerFormResponse ret = null;
 
 //        System.out.println("==============> connection Return:\r\n" + findPlayerResponseHttp.body);
 
         if (!StringUtil.isBlank(findPlayerResponseHttp.body)) {
-            ret = FormParser.getInstance().parseForm(findPlayerResponseHttp.body, new FFTFindPlayerFormRequest());
+            ret = FormPlayerParser.getInstance().parseForm(findPlayerResponseHttp.body, new FFTFindPlayerFormRequest());
             ret.genre.value = genre.value;
             ret.firstname.value = fistname;
             ret.lastname.value = lastname;
@@ -45,7 +46,7 @@ public class FFTServiceFindPlayer extends AbstractFFTService {
     }
 
     public ResponseHttp submitFormFindPlayer(ResponseHttp loginFormResponse, FindPlayerFormResponse form) throws NotConnectedException {
-        logMethod("submitFormFindPlayer");
+        logMethod("submitFindForm");
         ResponseHttp ret = null;
 
         System.out.println("\n\n\n==============> FFT Form Find Player Action:" + form.action);
@@ -59,13 +60,13 @@ public class FFTServiceFindPlayer extends AbstractFFTService {
     }
 
     public FindPlayerResponse getFindPlayer(ResponseHttp findPlayerResponseHttp) {
-        logMethod("getFindPlayer");
+        logMethod("getFindCompetition");
         System.out.println("==============> body:" + findPlayerResponseHttp.body);
         return FindPlayerParser.parseFindPlayer(findPlayerResponseHttp.body, new FFTFindPlayerRequest());
     }
 
     public ResponseHttp navigateToFindPlayer(ResponseHttp loginFormResponse) throws NotConnectedException {
-        logMethod("navigateToFindPlayer");
+        logMethod("navigateToFindCompetition");
         return doGetConnected(URL_ROOT, "/recherche-joueur", loginFormResponse);
     }
 }

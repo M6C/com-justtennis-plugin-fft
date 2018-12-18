@@ -21,36 +21,6 @@ public abstract class AbstractFFTService extends AbstractService {
     private static final int    LOGON_PORT = 80;
     private static final String LOGON_METHOD = "https";
 
-    public enum PLAYER_GENRE {
-        MAN("H", "Man"),
-        WOMAN("F", "Woman");
-
-        public String value;
-        public String label;
-        PLAYER_GENRE(String value, String label) {
-            this.value = value;
-            this.label = label;
-        }
-
-        public static PLAYER_GENRE findByValue(String value) {
-            for(PLAYER_GENRE playerGenre : PLAYER_GENRE.values()) {
-                if (value.equalsIgnoreCase(playerGenre.value)) {
-                    return playerGenre;
-                }
-            }
-            return PLAYER_GENRE.MAN;
-        }
-
-        public static PLAYER_GENRE findByLabel(String label) {
-            for(PLAYER_GENRE playerGenre : PLAYER_GENRE.values()) {
-                if (label.equalsIgnoreCase(playerGenre.label)) {
-                    return playerGenre;
-                }
-            }
-            return PLAYER_GENRE.MAN;
-        }
-    }
-
     AbstractFFTService(Context context) {
         super(context);
     }

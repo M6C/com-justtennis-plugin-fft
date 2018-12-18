@@ -4,11 +4,11 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.justtennis.plugin.fft.model.enums.EnumPlayer;
 import com.justtennis.plugin.shared.exception.NotConnectedException;
 import com.justtennis.plugin.shared.network.model.ResponseHttp;
 import com.justtennis.plugin.fft.query.response.FindPlayerFormResponse;
 import com.justtennis.plugin.fft.query.response.FindPlayerResponse;
-import com.justtennis.plugin.fft.service.AbstractFFTService;
 import com.justtennis.plugin.fft.service.FFTServiceFindPlayer;
 
 import java.util.ArrayList;
@@ -23,11 +23,11 @@ public abstract class FindPlayerTask extends AsyncTask<Void, String, List<FindPl
     private static final String TAG = FindPlayerTask.class.getName();
 
     private FFTServiceFindPlayer fftServiceFindPlayer;
-    private final AbstractFFTService.PLAYER_GENRE genre;
+    private final EnumPlayer.GENRE genre;
     private final String firstname;
     private final String lastname;
 
-    protected FindPlayerTask(Context context, AbstractFFTService.PLAYER_GENRE genre, String firstname, String lastname) {
+    protected FindPlayerTask(Context context, EnumPlayer.GENRE genre, String firstname, String lastname) {
         fftServiceFindPlayer = newFFTServiceFindPlayer(context);
         this.genre = genre;
         this.firstname = firstname;
@@ -42,7 +42,7 @@ public abstract class FindPlayerTask extends AsyncTask<Void, String, List<FindPl
             this.publishProgress("Info - Navigate to Find Player");
             ResponseHttp findPlayer = fftServiceFindPlayer.navigateToFindPlayer(null);
             this.publishProgress("Info - Navigate to Parsing Player Form");
-            findPlayerFormResponse = fftServiceFindPlayer.getFindPlayerForm(findPlayer, genre,firstname, lastname);
+            findPlayerFormResponse = fftServiceFindPlayer.getFindForm(findPlayer, genre,firstname, lastname);
 
             if (findPlayerFormResponse.action != null) {
                 this.publishProgress("Successfull - Navigate to Find Player so Submitting Form");

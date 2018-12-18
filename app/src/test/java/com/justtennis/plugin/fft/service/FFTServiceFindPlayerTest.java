@@ -1,5 +1,6 @@
 package com.justtennis.plugin.fft.service;
 
+import com.justtennis.plugin.fft.model.enums.EnumPlayer;
 import com.justtennis.plugin.shared.exception.NotConnectedException;
 import com.justtennis.plugin.shared.network.model.ResponseHttp;
 import com.justtennis.plugin.fft.query.response.FindPlayerFormResponse;
@@ -26,7 +27,7 @@ public class FFTServiceFindPlayerTest extends AbstractFFTServiceTest {
 
         ResponseHttp findPlayer = fftServiceFindPlayer.navigateToFindPlayer(form);
 
-        FindPlayerFormResponse findPlayerForm = fftServiceFindPlayer.getFindPlayerForm(findPlayer, FFTServiceLogin.PLAYER_GENRE.WOMAN,"Leonie", "ROCA");
+        FindPlayerFormResponse findPlayerForm = fftServiceFindPlayer.getFindForm(findPlayer, EnumPlayer.GENRE.WOMAN,"Leonie", "ROCA");
 
         assertNotNull(findPlayerForm);
         assertNotNull(findPlayerForm.action);
