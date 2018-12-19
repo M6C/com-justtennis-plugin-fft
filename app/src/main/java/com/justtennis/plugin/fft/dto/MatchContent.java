@@ -1,18 +1,15 @@
 package com.justtennis.plugin.fft.dto;
 
+import com.justtennis.plugin.fft.common.FFTConfiguration;
 import com.justtennis.plugin.fft.query.response.MillesimeMatchResponse;
 import com.justtennis.plugin.fft.query.response.RankingMatchResponse;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
 public class MatchContent {
-
-    public static SimpleDateFormat sdfFFT = new SimpleDateFormat("dd/MM/yyyy", Locale.FRANCE);
 
     private MatchContent() {}
 
@@ -55,7 +52,7 @@ public class MatchContent {
 
     private static int compareFFTDate(String date1, String date2) {
         try {
-            return sdfFFT.parse(date1).compareTo(sdfFFT.parse(date2));
+            return FFTConfiguration.sdfFFT.parse(date1).compareTo(FFTConfiguration.sdfFFT.parse(date2));
         } catch (ParseException e) {
             logMe(e);
         }

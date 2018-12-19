@@ -2,15 +2,11 @@ package com.justtennis.plugin.fft.dto;
 
 import com.justtennis.plugin.fft.query.response.FindPlayerResponse;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
 public class PlayerContent {
-
-    public static SimpleDateFormat sdfFFT = new SimpleDateFormat("dd/MM/yyyy", Locale.FRANCE);
 
     private PlayerContent() {}
 

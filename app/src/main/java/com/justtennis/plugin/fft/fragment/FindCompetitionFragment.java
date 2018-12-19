@@ -15,59 +15,68 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.justtennis.plugin.fft.model.enums.EnumPlayer;
-import com.justtennis.plugin.shared.interfaces.interfaces.OnListFragmentInteractionListener;
+import com.cameleon.common.android.factory.FactoryDialog;
+import com.justtennis.plugin.common.ApplicationConfig;
 import com.justtennis.plugin.common.tool.FragmentTool;
 import com.justtennis.plugin.common.tool.ProgressTool;
 import com.justtennis.plugin.fft.R;
-import com.justtennis.plugin.fft.adapter.FindPlayerAdapter;
-import com.justtennis.plugin.fft.dto.MatchDto;
-import com.justtennis.plugin.fft.dto.PlayerContent;
-import com.justtennis.plugin.fft.dto.PlayerDto;
-import com.justtennis.plugin.fft.query.response.FindPlayerResponse;
-import com.justtennis.plugin.fft.task.FindPlayerTask;
+import com.justtennis.plugin.fft.adapter.FindCompetitionAdapter;
+import com.justtennis.plugin.fft.common.FFTConfiguration;
+import com.justtennis.plugin.fft.dto.CompetitionContent;
+import com.justtennis.plugin.fft.dto.CompetitionDto;
+import com.justtennis.plugin.fft.model.enums.EnumCompetition;
+import com.justtennis.plugin.fft.query.response.FindCompetitionResponse;
+import com.justtennis.plugin.fft.task.FindCompetitionTask;
+import com.justtennis.plugin.shared.interfaces.interfaces.OnListFragmentInteractionListener;
 import com.justtennis.plugin.shared.manager.NotificationManager;
 
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Objects;
 
-public class FindPlayerFragment extends Fragment implements OnListFragmentInteractionListener {
+public class FindCompetitionFragment extends Fragment implements OnListFragmentInteractionListener {
 
-    private static final String TAG = FindPlayerFragment.class.getName();
+    private static final String TAG = FindCompetitionFragment.class.getName();
 
     private static final String ARG_COLUMN_COUNT = "column-count";
 
     private int mColumnCount = 1;
-    private List<FindPlayerResponse.PlayerItem> listPlayer = new ArrayList<>();
-    private List<PlayerDto> listPlayerDto = new ArrayList<>();
+    private List<FindCompetitionResponse.CompetitionItem> list = new ArrayList<>();
+    private List<CompetitionDto> listDto = new ArrayList<>();
     private View llMatch;
-    private Spinner spGenre;
-    private FindPlayerAdapter adpPlayer;
-    private MyFindPlayerTask mFindPlayerTask;
-    private ProgressBar pgPlayer;
+    private Spinner spType;
+    private FindCompetitionAdapter adp;
+    private MyFindTask mFindTask;
+    private ProgressBar progress;
     private TextView tvMessage;
     private View llMessage;
     private View llContent;
     private FragmentActivity activity;
-    private EditText etFirstname;
-    private EditText etLastname;
+    private EditText etCity;
+    private EditText etName;
+    private EditText etDateStart;
+    private EditText etDateEnd;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public FindPlayerFragment() {
+    public FindCompetitionFragment() {
         // Nothing to do
     }
 
-    public static FindPlayerFragment newInstance() {
-        FindPlayerFragment fragment = new FindPlayerFragment();
+    public static FindCompetitionFragment newInstance() {
+        FindCompetitionFragment fragment = new FindCompetitionFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, 1);
         fragment.setArguments(args);
@@ -85,10 +94,12 @@ public class FindPlayerFragment extends Fragment implements OnListFragmentIntera
         View view = inflater.inflate(R.layout.fragment_find_player, container, false);
 
         llMatch = view.findViewById(R.id.list);
-        spGenre = view.findViewById(R.id.sp_type);
-        etFirstname = view.findViewById(R.id.et_city);
-        etLastname = view.findViewById(R.id.et_name);
-        pgPlayer = view.findViewById(R.id.progress_match);
+        spType = view.findViewById(R.id.sp_type);
+        etCity = view.findViewById(R.id.et_city);
+        etName = view.findViewById(R.id.et_name);
+        etDateStart = view.findViewById(R.id.et_date_start);
+        etDateEnd = view.findViewById(R.id.et_date_end);
+        progress = view.findViewById(R.id.progress_match);
         tvMessage = view.findViewById(R.id.tv_message);
         llMessage = view.findViewById(R.id.llMessage);
         llContent = view.findViewById(R.id.llContent);
@@ -102,6 +113,9 @@ public class FindPlayerFragment extends Fragment implements OnListFragmentIntera
         initializeMatch();
         initializeFabValidate();
 
+        etDateStart.setOnClickListener(this::onClickDate);
+        etDateEnd.setOnClickListener(this::onClickDate);
+
         return view;
     }
 
@@ -113,19 +127,19 @@ public class FindPlayerFragment extends Fragment implements OnListFragmentIntera
 
     @Override
     public void onListFragmentInteraction(Object item) {
-        PlayerDto player = (PlayerDto) item;
-        if (player.linkPalmares != null && !player.linkPalmares.isEmpty()) {
-            String firstname = (player.firstname.length() > 1) ? player.firstname.substring(0, 1).toUpperCase() + player.firstname.substring(1).toLowerCase() : player.firstname.toLowerCase();
-            String name = player.lastname.toUpperCase() + " " + firstname;
-            MatchDto matchDto = new MatchDto(null,null, name,null,player.ranking,null,null,null,player.linkPalmares);
-            FragmentTool.replaceFragment(activity, MillesimeMatchFragment.newInstance(matchDto, null));
+        CompetitionDto dto = (CompetitionDto) item;
+        if (dto.linkTournament != null && !dto.linkTournament.isEmpty()) {
+//            String firstname = (dto.firstname.length() > 1) ? dto.firstname.substring(0, 1).toUpperCase() + dto.firstname.substring(1).toLowerCase() : dto.firstname.toLowerCase();
+//            String name = dto.lastname.toUpperCase() + " " + firstname;
+//            MatchDto matchDto = new MatchDto(null,null, name,null,dto.ranking,null,null,null,dto.linkPalmares);
+//            FragmentTool.replaceFragment(activity, MillesimeMatchFragment.newInstance(matchDto, null));
         }
     }
 
     @Override
     public void onDestroyView() {
-        if (mFindPlayerTask != null) {
-            mFindPlayerTask.cancel(true);
+        if (mFindTask != null) {
+            mFindTask.cancel(true);
         }
         super.onDestroyView();
     }
@@ -135,18 +149,17 @@ public class FindPlayerFragment extends Fragment implements OnListFragmentIntera
         assert context != null;
 
         List<String> listValue = new ArrayList<>();
-        for(EnumPlayer.GENRE playerGenre : EnumPlayer.GENRE.values()) {
-            listValue.add(playerGenre.label);
+        for(EnumCompetition.TYPE item : EnumCompetition.TYPE.values()) {
+            listValue.add(item.label);
         }
 
-        ArrayAdapter<String> adpGenre = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, listValue);
-        spGenre.setAdapter(adpGenre);
+        spType.setAdapter(new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, listValue));
     }
 
     private void initializeMatch() {
         Context context = getContext();
         assert context != null;
-        listPlayerDto.clear();
+        listDto.clear();
         // Set the adapter
         if (llMatch instanceof RecyclerView) {
             RecyclerView recyclerView = (RecyclerView) llMatch;
@@ -155,23 +168,48 @@ public class FindPlayerFragment extends Fragment implements OnListFragmentIntera
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            adpPlayer = new FindPlayerAdapter(context, listPlayerDto, this);
-            recyclerView.setAdapter(adpPlayer);
+            adp = new FindCompetitionAdapter(context, listDto, this);
+            recyclerView.setAdapter(adp);
         }
 
-        if (mFindPlayerTask != null) {
-            mFindPlayerTask.cancel(true);
+        if (mFindTask != null) {
+            mFindTask.cancel(true);
         }
     }
+    private void onClickDate(View view) {
+        FactoryDialog.getInstance().buildDatePickerDialog(activity, (dialog, view2, which) -> {
+            DatePicker datePicker = (DatePicker)view2;
 
-    private void findPlayer() {
-        EnumPlayer.GENRE genre = EnumPlayer.GENRE.findByLabel(spGenre.getSelectedItem().toString());
-        mFindPlayerTask = new MyFindPlayerTask(getContext(), genre, etFirstname.getText().toString(), etLastname.getText().toString());
-        mFindPlayerTask.execute((Void) null);
+            Calendar calendar = GregorianCalendar.getInstance(ApplicationConfig.getLocal());
+            calendar.set(datePicker.getYear(), datePicker.getMonth(), datePicker.getDayOfMonth());
+
+            ((EditText)view).setText(FFTConfiguration.sdfFFT.format(calendar.getTime()));
+        }, -1, new Date()).show();
+    }
+
+    private void find() {
+        EnumCompetition.TYPE genre = EnumCompetition.TYPE.findByLabel(spType.getSelectedItem().toString());
+        Date dateStart = getDate(etDateStart);
+        Date dateEnd = getDate(etDateEnd);
+
+        mFindTask = new MyFindTask(getContext(), genre, etCity.getText().toString(), dateStart, dateEnd);
+        mFindTask.execute((Void) null);
+    }
+
+    private Date getDate(EditText date) {
+        String s = date.getText().toString();
+        if (!s.isEmpty()) {
+            try {
+                return FFTConfiguration.sdfFFT.parse(s);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
 
     private void showProgressMatch(final boolean show) {
-        ProgressTool.showProgress(getContext(), llMatch, pgPlayer, show);
+        ProgressTool.showProgress(getContext(), llMatch, progress, show);
     }
 
     private void showMessage(@StringRes int id) {
@@ -192,7 +230,7 @@ public class FindPlayerFragment extends Fragment implements OnListFragmentIntera
 
     private void initializeFabValidate() {
         FragmentTool.initializeFabDrawable(Objects.requireNonNull(getActivity()), FragmentTool.INIT_FAB_IMAGE.VALIDATE);
-        FragmentTool.onClickFab(getActivity(), this::onClickFindPlayer);
+        FragmentTool.onClickFab(getActivity(), this::onClickFab);
     }
 
     private void initializeFabHideMessage() {
@@ -203,17 +241,17 @@ public class FindPlayerFragment extends Fragment implements OnListFragmentIntera
         });
     }
 
-    private void onClickFindPlayer(View view) {
-        findPlayer();
+    private void onClickFab(View view) {
+        find();
     }
 
     @SuppressLint("StaticFieldLeak")
-    private class MyFindPlayerTask extends FindPlayerTask {
+    private class MyFindTask extends FindCompetitionTask {
 
         private Context context;
 
-        MyFindPlayerTask(Context context, EnumPlayer.GENRE genre, String firstname, String lastname) {
-            super(context, genre, firstname, lastname);
+        MyFindTask(Context context, EnumCompetition.TYPE type, String city, Date dateStart, Date dateEnd) {
+            super(context, type, city, dateStart, dateEnd);
             this.context = context;
         }
 
@@ -222,20 +260,20 @@ public class FindPlayerFragment extends Fragment implements OnListFragmentIntera
             super.onPreExecute();
             hideMessage();
             showProgressMatch(true);
-            listPlayer.clear();
-            listPlayerDto.clear();
-            adpPlayer.notifyDataSetChanged();
+            list.clear();
+            listDto.clear();
+            adp.notifyDataSetChanged();
         }
 
         @Override
-        protected void onPostExecute(List<FindPlayerResponse.PlayerItem> players) {
-            super.onPostExecute(players);
+        protected void onPostExecute(List<FindCompetitionResponse.CompetitionItem> item) {
+            super.onPostExecute(item);
             showProgressMatch(false);
-            listPlayer.addAll(players);
-            listPlayerDto.addAll(PlayerContent.toDto(players));
-            PlayerContent.sortDefault(listPlayerDto);
-            adpPlayer.notifyDataSetChanged();
-            if (listPlayerDto.isEmpty()) {
+            list.addAll(item);
+            listDto.addAll(CompetitionContent.toDto(item));
+            CompetitionContent.sortDefault(listDto);
+            adp.notifyDataSetChanged();
+            if (listDto.isEmpty()) {
 //                initializeFabHideMessage();
                 showMessage(R.string.msg_no_player_found);
             } else {
@@ -255,7 +293,7 @@ public class FindPlayerFragment extends Fragment implements OnListFragmentIntera
             logMe("MyFindTask cancelled.");
             showProgressMatch(false);
             initializeFabValidate();
-            mFindPlayerTask = null;
+            mFindTask = null;
         }
     }
 

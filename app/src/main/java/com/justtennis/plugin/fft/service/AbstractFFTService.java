@@ -3,6 +3,7 @@ package com.justtennis.plugin.fft.service;
 import android.content.Context;
 import android.util.Log;
 
+import com.justtennis.plugin.fft.common.FFTConfiguration;
 import com.justtennis.plugin.fft.dto.MatchContent;
 import com.justtennis.plugin.fft.manager.InviteManager;
 import com.justtennis.plugin.shared.network.HttpPostProxy;
@@ -37,7 +38,7 @@ public abstract class AbstractFFTService extends AbstractService {
     public static Date getDateFromFFT(String date) {
         Date ret = new Date();
         try {
-            ret = MatchContent.sdfFFT.parse(date);
+            ret = FFTConfiguration.sdfFFT.parse(date);
         } catch (ParseException e) {
             Log.e(TAG, MessageFormat.format("Formatting match.ret:{0}", date), e);
         }

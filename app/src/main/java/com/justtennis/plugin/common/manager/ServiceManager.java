@@ -18,6 +18,7 @@ import com.justtennis.plugin.common.tool.FragmentTool;
 import com.justtennis.plugin.fb.fragment.FBPublishFragment;
 import com.justtennis.plugin.fb.service.FBServiceLogin;
 import com.justtennis.plugin.fft.R;
+import com.justtennis.plugin.fft.fragment.FindCompetitionFragment;
 import com.justtennis.plugin.fft.fragment.FindPlayerFragment;
 import com.justtennis.plugin.fft.fragment.MillesimeMatchFragment;
 import com.justtennis.plugin.fft.fragment.RankingMatchFragment;
@@ -174,8 +175,8 @@ public class ServiceManager {
 			FragmentTool.replaceFragment(activity, RankingMatchFragment.newInstance());
 		} else if (isMenuItem(id, menu, R.id.nav_slideshow)) {
 			FragmentTool.replaceFragment(activity, FindPlayerFragment.newInstance());
-//        } else if (id == R.id.nav_manage) {
-//
+        } else if (id == R.id.nav_manage) {
+			FragmentTool.replaceFragment(activity, FindCompetitionFragment.newInstance());
 		} else if (id == R.id.nav_fft) {
 			String url = "https://mon-espace-tennis.fft.fr";
 			Intent i = new Intent(Intent.ACTION_VIEW);

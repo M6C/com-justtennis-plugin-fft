@@ -1,17 +1,14 @@
 package com.justtennis.plugin.fb.dto;
 
+import com.justtennis.plugin.fb.common.FBConfiguration;
 import com.justtennis.plugin.fb.query.response.FBProfilPublicationResponse;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 public class PublicationContent {
-
-    private static SimpleDateFormat sdfFBTimeLine = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.FRANCE);
 
     private PublicationContent() {}
 
@@ -31,7 +28,7 @@ public class PublicationContent {
     private static Date getDate(FBProfilPublicationResponse.TimeLineItem item) {
         if (item.date != null) {
             try {
-                return sdfFBTimeLine.parse(item.date);
+                return FBConfiguration.sdfFBTimeLine.parse(item.date);
             } catch (ParseException e) {
                 logMe(e);
             }
