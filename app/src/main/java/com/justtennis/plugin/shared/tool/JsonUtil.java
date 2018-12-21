@@ -1,8 +1,5 @@
 package com.justtennis.plugin.shared.tool;
 
-import android.support.annotation.NonNull;
-
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -12,10 +9,26 @@ public class JsonUtil {
     private static final String REGEX_ATTRIBUT_VALUE = "(?:\"%s\":\")(.*?)(?:\")";
     private static final String REGEX_UNICODE = "(\\\\u[0-9a-zA-Z]{4})";
 
+    private static JsonUtil instance;
+
+    private boolean doLogBody = false;
+
     private JsonUtil() {
     }
 
-    public static String extratAttributValue(String json, String attribut) {
+    public static JsonUtil getInstance() {
+        if (instance == null) {
+            instance = new JsonUtil();
+        }
+        return instance;
+    }
+
+    public JsonUtil setDoLogBody(boolean log) {
+        doLogBody = log;
+        return instance;
+    }
+
+    public String extratAttributValue(String json, String attribut) {
         StringBuilder ret = new StringBuilder();
         if (json != null && !json.isEmpty()) {
             String format = String.format(REGEX_ATTRIBUT_VALUE, attribut);
@@ -29,11 +42,11 @@ public class JsonUtil {
                 ret.append(str);
             }
         }
-        System.out.println(String.format("JsonUtil_extratAttributValue_%s.json:%s", attribut, ret.toString()));
+        System.out.println(String.format("JsonUtil_extratAttributValue_%s.json body:%s", attribut, (doLogBody ? ret.toString() : "Disabled - doLogBody=false - length:" + ret.length())));
         return ret.toString();
     }
 
-    private static String replaceUnicode(String str) {
+    private String replaceUnicode(String str) {
         Map<Integer, String> mapUnicode = new HashMap<>();
         Pattern pattern = Pattern.compile(REGEX_UNICODE);
         Matcher matcher = pattern.matcher(str);
@@ -51,7 +64,7 @@ public class JsonUtil {
         return str;
     }
 
-    private static Integer charFromUnicode(String unicode) {
+    private Integer charFromUnicode(String unicode) {
         String s = unicode.substring(2).replaceFirst("^0*", "");
 //        byte b = Byte.parseByte(s, 8);
 //        return Byte.toString(b);

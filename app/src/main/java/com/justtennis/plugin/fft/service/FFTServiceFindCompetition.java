@@ -57,6 +57,10 @@ public class FFTServiceFindCompetition extends AbstractFFTService {
             ret.city.value = city;
             ret.dateStart.value = FFTConfiguration.sdfFFT.format(dateStart);
             ret.dateEnd.value = FFTConfiguration.sdfFFT.format(dateEnd);
+            System.out.println("==============> new form element name:" + ret.type.name + " value:" + ret.type.value);
+            System.out.println("==============> new form element name:" + ret.city.name + " value:" + ret.city.value);
+            System.out.println("==============> new form element name:" + ret.dateStart.name + " value:" + ret.dateStart.value);
+            System.out.println("==============> new form element name:" + ret.dateEnd.name + " value:" + ret.dateEnd.value);
         }
 
         return ret;
@@ -78,7 +82,7 @@ public class FFTServiceFindCompetition extends AbstractFFTService {
 
     public FindCompetitionResponse getFindCompetition(ResponseHttp findCompetitionResponseHttp) {
         logMethod("getFindCompetition");
-        System.out.println("==============> body:" + findCompetitionResponseHttp.body);
+//        System.out.println("==============> body:" + findCompetitionResponseHttp.body);
         return FindCompetitionParser.parseFindCompetition(findCompetitionResponseHttp.body, new FFTFindCompetitionAjaxRequest());
     }
 

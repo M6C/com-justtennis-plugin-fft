@@ -39,7 +39,7 @@ public class FindPlayerParser extends AbstractParser {
                         item.linkPalmares = getLink(e, request.linkPalmares);
 
                         ret.playerList.add(item);
-                        System.out.println("\r\n==============> Player:" + item);
+                        logItem("Player", item);
                     }
                 } else {
                     System.err.println("\r\n==============> table body '"+request.tableBodyContent +"' not found");

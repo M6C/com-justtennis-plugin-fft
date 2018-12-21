@@ -91,7 +91,7 @@ public class FindCompetitionFragment extends Fragment implements OnListFragmentI
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_find_player, container, false);
+        View view = inflater.inflate(R.layout.fragment_find_competition, container, false);
 
         llMatch = view.findViewById(R.id.list);
         spType = view.findViewById(R.id.sp_type);
@@ -192,7 +192,7 @@ public class FindCompetitionFragment extends Fragment implements OnListFragmentI
         Date dateStart = getDate(etDateStart);
         Date dateEnd = getDate(etDateEnd);
 
-        mFindTask = new MyFindTask(getContext(), genre, etCity.getText().toString(), dateStart, dateEnd);
+        mFindTask = new MyFindTask(getContext(), genre, etCity.getText().toString(), etName.getText().toString(), dateStart, dateEnd);
         mFindTask.execute((Void) null);
     }
 
@@ -249,10 +249,12 @@ public class FindCompetitionFragment extends Fragment implements OnListFragmentI
     private class MyFindTask extends FindCompetitionTask {
 
         private Context context;
+        private String name;
 
-        MyFindTask(Context context, EnumCompetition.TYPE type, String city, Date dateStart, Date dateEnd) {
+        MyFindTask(Context context, EnumCompetition.TYPE type, String city, String name, Date dateStart, Date dateEnd) {
             super(context, type, city, dateStart, dateEnd);
             this.context = context;
+            this.name = name;
         }
 
         @Override
@@ -270,7 +272,17 @@ public class FindCompetitionFragment extends Fragment implements OnListFragmentI
             super.onPostExecute(item);
             showProgressMatch(false);
             list.addAll(item);
-            listDto.addAll(CompetitionContent.toDto(item));
+            if (name.isEmpty()) {
+                listDto.addAll(CompetitionContent.toDto(item));
+            } else {
+                // List filter
+                String s = name.toLowerCase();
+                for(FindCompetitionResponse.CompetitionItem i : item) {
+                    if (i.toString().toLowerCase().contains(s)) {
+                        listDto.add(CompetitionContent.toDto(i));
+                    }
+                }
+            }
             CompetitionContent.sortDefault(listDto);
             adp.notifyDataSetChanged();
             if (listDto.isEmpty()) {

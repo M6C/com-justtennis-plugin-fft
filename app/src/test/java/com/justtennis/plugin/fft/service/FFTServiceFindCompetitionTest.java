@@ -1,5 +1,6 @@
 package com.justtennis.plugin.fft.service;
 
+import com.justtennis.plugin.fft.common.FFTConfiguration;
 import com.justtennis.plugin.fft.model.enums.EnumCompetition;
 import com.justtennis.plugin.fft.query.response.FindCompetitionFormResponse;
 import com.justtennis.plugin.fft.query.response.FindCompetitionResponse;
@@ -9,7 +10,10 @@ import com.justtennis.plugin.shared.skeleton.IProxy;
 
 import org.junit.Test;
 
-import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class FFTServiceFindCompetitionTest extends AbstractFFTServiceTest {
 
@@ -22,13 +26,15 @@ public class FFTServiceFindCompetitionTest extends AbstractFFTServiceTest {
     }
 
     @Test
-    public void testSubmitFormFindCompetition() throws NotConnectedException, IOException {
+    public void testSubmitFormFindCompetition() throws NotConnectedException, ParseException {
         ResponseHttp form = doLogin();
 
         ResponseHttp findCompetition = fftServiceFindCompetition.navigateToFindCompetition(form);
 
+        Date dateStart = FFTConfiguration.sdfFFT.parse("01/01/2019");
+        Date dateEnd = FFTConfiguration.sdfFFT.parse("31/01/2019");
         for (EnumCompetition.TYPE type : EnumCompetition.TYPE.values()) {
-            FindCompetitionFormResponse findCompetitionForm = fftServiceFindCompetition.getFindForm(findCompetition, type, "");
+            FindCompetitionFormResponse findCompetitionForm = fftServiceFindCompetition.getFindForm(findCompetition, type, "Montpellier", dateStart, dateEnd);
 
             assertNotNull(findCompetitionForm);
             assertNotNull(findCompetitionForm.action);
@@ -52,7 +58,14 @@ public class FFTServiceFindCompetitionTest extends AbstractFFTServiceTest {
                 assertNotNull(item.dateEnd);
                 assertNotNull(item.club);
                 assertNotNull(item.linkTournament);
+
+                assertTrue(item.toString(), checkDate(dateStart, dateEnd, item));
             }
         }
+    }
+
+    private boolean checkDate(Date dateStart, Date dateEnd, FindCompetitionResponse.CompetitionItem item) throws ParseException {
+        return  (FFTConfiguration.sdfAjaxS.parse(item.dateStart).before(dateEnd) || FFTConfiguration.sdfAjaxS.parse(item.dateStart).equals(dateEnd)) &&
+                (FFTConfiguration.sdfAjaxE.parse(item.dateEnd).after(dateStart) || FFTConfiguration.sdfAjaxE.parse(item.dateEnd).equals(dateStart));
     }
 }

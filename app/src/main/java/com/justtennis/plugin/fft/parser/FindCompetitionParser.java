@@ -18,6 +18,7 @@ public class FindCompetitionParser extends AbstractParser {
     public static FindCompetitionResponse parseFindCompetition(String content, FFTFindCompetitionRequest request) {
         FindCompetitionResponse ret = null;
         Document doc = Jsoup.parse(content);
+        int cnt = 0;
         if (doc != null) {
             Elements divs = doc.select(request.divMain);
             if (divs != null && !divs.isEmpty()) {
@@ -38,7 +39,8 @@ public class FindCompetitionParser extends AbstractParser {
                             item.linkTournament = getLink(e, request.linkTournament);
 
                             ret.competitionList.add(item);
-                            System.out.println("\r\n==============> Competition:" + item);
+                            logItem("Competition", item);
+                            cnt++;
                         }
                     } else {
                         System.err.println("\r\n==============> table body '" + request.tableBodyContent + "' not found");
@@ -48,12 +50,13 @@ public class FindCompetitionParser extends AbstractParser {
                 System.err.println("\r\n==============> div '"+request.divMain +"' not found");
             }
         }
+        System.out.println("\r\n==============> parseFindCompetition Competition nb:" + cnt);
         return ret;
     }
 
     public static FindCompetitionResponse parseFindCompetition(String content, FFTFindCompetitionAjaxRequest request) {
         FindCompetitionResponse ret = null;
-        String body = JsonUtil.extratAttributValue(content, "custom_bubble");
+        String body = JsonUtil.getInstance().extratAttributValue(content, "custom_bubble");
         if (body.isEmpty()) {
             return ret;
         }

@@ -13,6 +13,8 @@ public class FindCompetitionFormResponseConverter {
         Map<String, String> data = new HashMap<>();
         data.put(form.type.name, form.type.value);
         data.put(form.city.name, form.city.value);
+        data.put(form.dateStart.name, form.dateStart.value);
+        data.put(form.dateEnd.name, form.dateEnd.value);
         data.putAll(form.input);
         return data;
     }

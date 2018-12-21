@@ -7,6 +7,8 @@ import org.jsoup.select.Elements;
 
 public abstract class AbstractParser {
 
+    private static boolean doLogItem = false;
+
     protected static String getText(Element e, String selectText) {
         int iAttr = selectText.indexOf('#');
         if (iAttr > 0) {
@@ -30,5 +32,11 @@ public abstract class AbstractParser {
         return content
                 .replaceAll("<!-- <", "<")
                 .replaceAll("> -->", ">");
+    }
+
+    protected static void logItem(String title, Object item) {
+        if (doLogItem) {
+            System.out.println("\r\n==============> "+title+":" + item);
+        }
     }
 }

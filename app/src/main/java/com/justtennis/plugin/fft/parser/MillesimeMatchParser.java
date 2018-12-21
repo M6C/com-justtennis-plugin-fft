@@ -39,7 +39,7 @@ public class MillesimeMatchParser extends AbstractParser {
                         item.linkPalmares = getLink(e, request.linkPalmares);
 
                         ret.matchList.add(item);
-                        System.out.println("\r\n==============> Match:" + item);
+                        logItem("Match", item);
                     }
                 } else {
                     System.err.println("\r\n==============> table body '"+request.tableBodyContent +"' not found");

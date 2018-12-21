@@ -10,6 +10,10 @@ public class CompetitionContent {
 
     private CompetitionContent() {}
 
+    public static CompetitionDto toDto(FindCompetitionResponse.CompetitionItem item) {
+        return createDao(item);
+    }
+
     public static List<CompetitionDto> toDto(List<FindCompetitionResponse.CompetitionItem> list) {
         List<CompetitionDto> ret = new ArrayList<>();
         for(FindCompetitionResponse.CompetitionItem item : list) {

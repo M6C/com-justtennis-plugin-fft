@@ -85,9 +85,9 @@ public class FindPlayerFragment extends Fragment implements OnListFragmentIntera
         View view = inflater.inflate(R.layout.fragment_find_player, container, false);
 
         llMatch = view.findViewById(R.id.list);
-        spGenre = view.findViewById(R.id.sp_type);
-        etFirstname = view.findViewById(R.id.et_city);
-        etLastname = view.findViewById(R.id.et_name);
+        spGenre = view.findViewById(R.id.sp_genre);
+        etFirstname = view.findViewById(R.id.et_firstname);
+        etLastname = view.findViewById(R.id.et_lastname);
         pgPlayer = view.findViewById(R.id.progress_match);
         tvMessage = view.findViewById(R.id.tv_message);
         llMessage = view.findViewById(R.id.llMessage);
@@ -252,7 +252,7 @@ public class FindPlayerFragment extends Fragment implements OnListFragmentIntera
         @Override
         protected void onCancelled() {
             super.onCancelled();
-            logMe("MyFindTask cancelled.");
+            logMe("MyFindPlayerTask cancelled.");
             showProgressMatch(false);
             initializeFabValidate();
             mFindPlayerTask = null;

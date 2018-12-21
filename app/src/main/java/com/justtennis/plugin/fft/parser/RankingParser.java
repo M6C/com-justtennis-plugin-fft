@@ -32,7 +32,7 @@ public class RankingParser extends AbstractParser {
                         item.origin = getText(e, request.origin);
                         item.id = getText(e, request.id);
                         ret.rankingList.add(item);
-                        System.out.println("\r\n==============> Ranking:" + item);
+                        logItem("Ranking", item);
                     }
                 } else {
                     System.err.println("\r\n==============> table body '"+request.tableBodyContent +"' not found");
@@ -67,7 +67,7 @@ public class RankingParser extends AbstractParser {
                         item.date = getText(e, request.date);
 
                         ret.rankingList.add(item);
-                        System.out.println("\r\n==============> Ranking:" + item);
+                        logItem("Ranking", item);
                     }
                 } else {
                     System.err.println("\r\n==============> table body '"+request.tableBodyContent +"' not found");

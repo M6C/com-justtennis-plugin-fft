@@ -18,7 +18,7 @@
             android:gravity="center">
 
             <Spinner
-                android:id="@+id/sp_genre"
+                android:id="@+id/sp_type"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
@@ -28,26 +28,51 @@
                 android:weightSum="1">
 
                 <EditText
-                    android:id="@+id/et_firstname"
+                    android:id="@+id/et_city"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight=".5"
-                    android:inputType="textAutoComplete|textPersonName|textCapWords"
+                    android:inputType="textAutoComplete|textCapWords"
                     android:lines="1"
                     android:maxLines="1"
-                    android:hint="@string/view_hint_firstname"/>
+                    android:hint="@string/view_hint_city"/>
 
                 <EditText
-                    android:id="@+id/et_lastname"
+                    android:id="@+id/et_name"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight=".5"
-                    android:inputType="textAutoComplete|textPersonName|textCapCharacters"
+                    android:inputType="textAutoComplete|textCapWords"
                     android:lines="1"
                     android:maxLines="1"
-                    android:hint="@string/view_hint_lastname"/>
+                    android:hint="@string/view_hint_name"/>
 
             </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+
+            <EditText
+                android:id="@+id/et_date_start"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".5"
+                android:inputType="date"
+                android:focusable="false"
+                android:hint="@string/view_hint_date_start"/>
+
+            <EditText
+                android:id="@+id/et_date_end"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".5"
+                android:inputType="date"
+                android:focusable="false"
+                android:hint="@string/view_hint_date_end"/>
+
         </LinearLayout>
 
         <LinearLayout
