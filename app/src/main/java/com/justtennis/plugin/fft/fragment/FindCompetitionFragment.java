@@ -296,7 +296,7 @@ public class FindCompetitionFragment extends Fragment implements OnListFragmentI
         @Override
         protected void onProgressUpdate(String... values) {
             super.onProgressUpdate(values);
-            NotificationManager.onTaskProcessUpdate(context, values);
+            NotificationManager.onTaskProcessUpdate(getActivity(), values);
         }
 
         @Override

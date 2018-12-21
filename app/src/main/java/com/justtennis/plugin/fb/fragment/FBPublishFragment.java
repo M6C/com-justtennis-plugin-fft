@@ -175,7 +175,7 @@ public class FBPublishFragment extends AppFragment {
             @Override
             protected void onProgressUpdate(String... values) {
                 super.onProgressUpdate(values);
-                NotificationManager.onTaskProcessUpdate(context, values);
+                NotificationManager.onTaskProcessUpdate(getActivity(), values);
             }
         };
         publishFormTask.execute();
@@ -203,7 +203,7 @@ public class FBPublishFragment extends AppFragment {
             @Override
             protected void onProgressUpdate(String... values) {
                 super.onProgressUpdate(values);
-                NotificationManager.onTaskProcessUpdate(context, values);
+                NotificationManager.onTaskProcessUpdate(getActivity(), values);
             }
         }.execute();
     }
@@ -228,7 +228,7 @@ public class FBPublishFragment extends AppFragment {
             protected void onProgressUpdate(Serializable... values) {
                 super.onProgressUpdate(values);
                 if (values instanceof String[]) {
-                    NotificationManager.onTaskProcessUpdate(context, (String[]) values);
+                    NotificationManager.onTaskProcessUpdate(getActivity(), (String[]) values);
                 } else {
                     publicationListAdapter.notifyDataSetChanged();
                 }

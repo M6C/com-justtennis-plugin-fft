@@ -223,7 +223,7 @@ public class RankingMatchFragment extends Fragment implements OnListFragmentInte
         @Override
         protected void onProgressUpdate(String... values) {
             super.onProgressUpdate(values);
-            NotificationManager.onTaskProcessUpdate(context, values);
+            NotificationManager.onTaskProcessUpdate(getActivity(), values);
         }
 
         @Override

@@ -246,7 +246,7 @@ public class FindPlayerFragment extends Fragment implements OnListFragmentIntera
         @Override
         protected void onProgressUpdate(String... values) {
             super.onProgressUpdate(values);
-            NotificationManager.onTaskProcessUpdate(context, values);
+            NotificationManager.onTaskProcessUpdate(getActivity(), values);
         }
 
         @Override

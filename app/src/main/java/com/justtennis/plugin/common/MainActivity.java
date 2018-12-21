@@ -1,7 +1,9 @@
 package com.justtennis.plugin.common;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
@@ -19,6 +21,7 @@ import com.justtennis.plugin.fft.R;
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private NavigationView navigationView;
+    private CoordinatorLayout coordinatorLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +29,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        coordinatorLayout = findViewById(R.id.coordinatorLayout);
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
@@ -84,6 +89,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         return ServiceManager.getInstance().onNavigationItemSelected(this, navigationView, item);
+    }
+
+    public void showMessage(String message) {
+        String textLow = message.toLowerCase();
+        boolean error = textLow.startsWith("failed") || textLow.startsWith("error");
+
+        int duration = error ? Snackbar.LENGTH_LONG : Snackbar.LENGTH_SHORT;
+        int color = error ? Color.RED : Color.WHITE;
+
+        Snackbar.make(coordinatorLayout, message, duration)
+                .setActionTextColor(color)
+                .show();
     }
 
     private boolean isMenuItem(int id, Menu menu, int p) {

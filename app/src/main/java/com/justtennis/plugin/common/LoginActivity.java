@@ -375,7 +375,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         @Override
         protected void onProgressUpdate(String... values) {
             super.onProgressUpdate(values);
-            NotificationManager.onTaskProcessUpdate(context, values);
+            NotificationManager.onTaskProcessUpdate(LoginActivity.this, values);
         }
 
         @Override

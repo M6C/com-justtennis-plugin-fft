@@ -360,7 +360,7 @@ public class MillesimeMatchFragment extends Fragment implements OnListFragmentIn
         @Override
         protected void onProgressUpdate(String... values) {
             super.onProgressUpdate(values);
-            NotificationManager.onTaskProcessUpdate(context, values);
+            NotificationManager.onTaskProcessUpdate(getActivity(), values);
         }
 
         @Override
@@ -413,7 +413,7 @@ public class MillesimeMatchFragment extends Fragment implements OnListFragmentIn
         @Override
         protected void onProgressUpdate(String... values) {
             super.onProgressUpdate(values);
-            NotificationManager.onTaskProcessUpdate(context, values);
+            NotificationManager.onTaskProcessUpdate(getActivity(), values);
         }
 
         @Override
