@@ -14,6 +14,7 @@ import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
@@ -286,6 +287,8 @@ public class MillesimeMatchFragment extends Fragment implements OnListFragmentIn
     }
 
     private void onClickFabCreate(View view) {
+        closeKeyboard();
+
         List<User> users = UserResolver.getInstance().queryAll(getContext());
         if (!users.isEmpty()) {
             MyCreateInviteTask myCreateInviteTask = new MyCreateInviteTask(getContext(), listMatch, listMatchDto, getMillesime());
@@ -295,6 +298,12 @@ public class MillesimeMatchFragment extends Fragment implements OnListFragmentIn
             showMessage(R.string.msg_no_user_found_in_main_application);
             initializeFabHideMessage(activity);
         }
+    }
+
+    private void closeKeyboard() {
+        InputMethodManager imm =  (InputMethodManager) Objects.requireNonNull(getContext()).getSystemService(Context.INPUT_METHOD_SERVICE);
+        assert imm != null;
+        imm.hideSoftInputFromWindow(llContent.getWindowToken(), 0);
     }
 
     private void onClickFabInformation(View view) {

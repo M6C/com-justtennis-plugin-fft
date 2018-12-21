@@ -14,6 +14,7 @@ import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -188,12 +189,20 @@ public class FindCompetitionFragment extends Fragment implements OnListFragmentI
     }
 
     private void find() {
+        closeKeyboard();
+
         EnumCompetition.TYPE genre = EnumCompetition.TYPE.findByLabel(spType.getSelectedItem().toString());
         Date dateStart = getDate(etDateStart);
         Date dateEnd = getDate(etDateEnd);
 
         mFindTask = new MyFindTask(getContext(), genre, etCity.getText().toString(), etName.getText().toString(), dateStart, dateEnd);
         mFindTask.execute((Void) null);
+    }
+
+    private void closeKeyboard() {
+        InputMethodManager imm =  (InputMethodManager) Objects.requireNonNull(getContext()).getSystemService(Context.INPUT_METHOD_SERVICE);
+        assert imm != null;
+        imm.hideSoftInputFromWindow(llContent.getWindowToken(), 0);
     }
 
     private Date getDate(EditText date) {

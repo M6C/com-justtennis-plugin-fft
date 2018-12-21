@@ -14,6 +14,7 @@ import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -165,9 +166,17 @@ public class FindPlayerFragment extends Fragment implements OnListFragmentIntera
     }
 
     private void findPlayer() {
+        closeKeyboard();
+
         EnumPlayer.GENRE genre = EnumPlayer.GENRE.findByLabel(spGenre.getSelectedItem().toString());
         mFindPlayerTask = new MyFindPlayerTask(getContext(), genre, etFirstname.getText().toString(), etLastname.getText().toString());
         mFindPlayerTask.execute((Void) null);
+    }
+
+    private void closeKeyboard() {
+        InputMethodManager imm =  (InputMethodManager) Objects.requireNonNull(getContext()).getSystemService(Context.INPUT_METHOD_SERVICE);
+        assert imm != null;
+        imm.hideSoftInputFromWindow(llContent.getWindowToken(), 0);
     }
 
     private void showProgressMatch(final boolean show) {
