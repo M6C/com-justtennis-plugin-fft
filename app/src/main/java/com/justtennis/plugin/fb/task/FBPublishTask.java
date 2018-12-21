@@ -6,9 +6,6 @@ import android.util.Log;
 
 import com.justtennis.plugin.fb.dto.PublicationDto;
 import com.justtennis.plugin.fb.enums.STATUS_PUBLICATION;
-import com.justtennis.plugin.fb.manager.SharingImageManager;
-import com.justtennis.plugin.fb.manager.SharingUrlManager;
-import com.justtennis.plugin.fb.manager.SharingYoutubeManager;
 import com.justtennis.plugin.fb.query.response.FBPublishFormResponse;
 import com.justtennis.plugin.fb.service.FBServiceHomePage;
 import com.justtennis.plugin.fb.service.FBServicePublish;
@@ -17,7 +14,6 @@ import com.justtennis.plugin.shared.network.model.ResponseHttp;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.Map;
 
 public abstract class FBPublishTask extends AsyncTask<PublicationDto, Serializable, Boolean> {
 
@@ -26,7 +22,6 @@ public abstract class FBPublishTask extends AsyncTask<PublicationDto, Serializab
     private final FBServiceHomePage fbServiceHomePage;
     private final FBServicePublish fbServicePublish;
     private FBPublishFormResponse publishFormResponse;
-    protected Map<String, String> data = null;
 
     protected FBPublishTask(Context context, FBPublishFormResponse publishFormResponse) {
         fbServiceHomePage = newFBServiceHomePage(context);
@@ -76,32 +71,12 @@ public abstract class FBPublishTask extends AsyncTask<PublicationDto, Serializab
         return cntPublished == dto.length;
     }
 
-    private void beforePublish(PublicationDto d) {
-        String message = d.message;
-        SharingUrlManager urlManager = SharingUrlManager.getInstance();
-        if (urlManager.check(message)) {
-            SharingYoutubeManager youtubeManager = SharingYoutubeManager.getInstance();
-            String id = youtubeManager.getIdFromUrl(message);
-            if (id != null) {
-                message = youtubeManager.cleanUrl(message);
-                data = getData(youtubeManager, id);
-            } else {
-                SharingImageManager imageManager = SharingImageManager.getInstance();
-            }
-            publishFormResponse.message.value = message;
-        }
-    }
-
-    protected Map<String, String> getData(SharingYoutubeManager youtubeManager, String id) {
-        return youtubeManager.getData(id, "");
-    }
-
     private void publish(ResponseHttp form, PublicationDto d) throws NotConnectedException {
         this.publishProgress("Successfull - Parsing Publish Form so Submitting Form");
         ResponseHttp submitFormResponse;
+        publishFormResponse.message.value = d.message;
 
-        beforePublish(d);
-        submitFormResponse = fbServicePublish.submitForm(form, publishFormResponse, data);
+        submitFormResponse = fbServicePublish.submitForm(form, publishFormResponse);
 
         if (submitFormResponse.statusCode == 302) {
             d.publishDate = new Date();

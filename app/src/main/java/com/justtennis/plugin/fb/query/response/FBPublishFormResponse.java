@@ -7,4 +7,7 @@ public class FBPublishFormResponse extends AbstractFormResponse {
 
     public FormElement message = new FormElement();
     public FormElement audience = new FormElement();
+
+    public String publishId;
+    public String publishTitle;
 }

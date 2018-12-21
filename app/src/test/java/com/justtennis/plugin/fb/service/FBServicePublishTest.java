@@ -53,9 +53,6 @@ public class FBServicePublishTest extends AbstractFBServiceTest {
     public void testSubmitYoutubeForm() throws NotConnectedException {
         ResponseHttp form = doLogin();
 
-        FBPublishFormResponse publishFormResponse = fbServicePublish.getForm(form);
-        publishFormResponse.message.value = "tête";
-
         SharingYoutubeManager youtubeManager = SharingYoutubeManager.getInstance();
 
         String urlId = "mKG8BR292oo";
@@ -63,11 +60,13 @@ public class FBServicePublishTest extends AbstractFBServiceTest {
                 "https://www.youtube.com/watch?v="+urlId+"&fbclid=IwAR3bgfViD0sj9x8HqNH5A1m3HBx_WoCr6LJ6142JfQFDifKATmztQAJgG1A",
                 "https://youtu.be/"+urlId};
         for(String u : url) {
-            String youtubeId = youtubeManager.getIdFromUrl(u);
-            System.out.println("youtubeId:" + youtubeId);
-            Map<String, String> data = youtubeManager.getData(youtubeId, "A Video from " + publishFormResponse.message.value);
-            publishFormResponse.message.value = youtubeManager.cleanUrl(String.format("%s %s", publishFormResponse.message.value, u));
-            ResponseHttp submitFormResponse = fbServicePublish.submitForm(form, publishFormResponse, data);
+            FBPublishFormResponse publishFormResponse = fbServicePublish.getForm(form);
+            publishFormResponse.message.value = "tête";
+            publishFormResponse.publishId = youtubeManager.getIdFromUrl(u);
+            publishFormResponse.publishTitle = "A Video from " + publishFormResponse.message.value;
+            publishFormResponse.message.value = String.format("%s %s", publishFormResponse.message.value, u);
+            System.out.println("youtubeId:" + publishFormResponse.publishId);
+            ResponseHttp submitFormResponse = fbServicePublish.submitForm(form, publishFormResponse);
 
             assertNotNull(submitFormResponse);
 

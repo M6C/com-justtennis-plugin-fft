@@ -214,6 +214,8 @@ public class FBPublishFragment extends AppFragment {
 
         PublicationDto dto = createDto(message);
         listPublication.add(0, dto);
+        this.publishFormResponse.publishId = id;
+        this.publishFormResponse.publishTitle = subject;
 
         new FBPublishTask(context, this.publishFormResponse) {
             @Override
@@ -230,16 +232,6 @@ public class FBPublishFragment extends AppFragment {
                 } else {
                     publicationListAdapter.notifyDataSetChanged();
                 }
-            }
-
-            @Override
-            protected Map<String, String> getData(SharingYoutubeManager youtubeManager, String id) {
-                if (id.equals(FBPublishFragment.id)) {
-                    if (subject != null && !subject.isEmpty()) {
-                        return youtubeManager.getData(id, subject);
-                    }
-                }
-                return super.getData(youtubeManager, id);
             }
         }.execute(dto);
         clear();
