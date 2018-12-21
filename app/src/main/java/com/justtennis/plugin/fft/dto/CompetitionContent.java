@@ -1,7 +1,10 @@
 package com.justtennis.plugin.fft.dto;
 
+import com.justtennis.plugin.fft.common.FFTConfiguration;
 import com.justtennis.plugin.fft.query.response.FindCompetitionResponse;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,6 +30,20 @@ public class CompetitionContent {
     }
 
     private static CompetitionDto createDao(FindCompetitionResponse.CompetitionItem item) {
-        return new CompetitionDto(item.type, item.club, item.league, item.name, item.dateStart, item.dateEnd, item.linkTournament);
+        String dateStart = formatDate(item.dateStart, FFTConfiguration.sdfAjaxS);
+        String dateEnd = formatDate(item.dateEnd, FFTConfiguration.sdfAjaxE);
+        return new CompetitionDto(item.type, item.club, item.league, item.name, dateStart, dateEnd, item.linkTournament);
+    }
+
+    private static String formatDate(String date, SimpleDateFormat sdf) {
+        String ret = date;
+        if (date != null && !date.isEmpty()) {
+            try {
+                ret = FFTConfiguration.sdfFFT.format(sdf.parse(date));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        return ret;
     }
 }

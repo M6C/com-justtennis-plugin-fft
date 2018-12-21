@@ -4,7 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="?android:attr/selectableItemBackground"
+    android:focusable="true">
+    <!--android:clickable="true"-->
+    <!--android:focusableInTouchMode="true"-->
     <!--android:paddingStart="@dimen/fb_list_item_padding"-->
     <!--android:paddingTop="@dimen/fb_list_item_padding"-->
     <!--android:paddingEnd="@dimen/fb_list_item_padding"-->
