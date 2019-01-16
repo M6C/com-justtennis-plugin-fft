@@ -67,7 +67,6 @@ public class FBPublishFragment extends AppFragment {
         initializeFabValidate();
         initializePublicationList();
         initializePublicationForm();
-        initializeProfilPublication();
 
         return binding.getRoot();
     }
@@ -82,6 +81,10 @@ public class FBPublishFragment extends AppFragment {
             });
             publicationListAdapter.setList(listPublication);
             binding.publicationList.setAdapter(publicationListAdapter);
+
+            initializeProfilPublication();
+        } else {
+            binding.setLoading(false);
         }
     }
 
@@ -229,7 +232,7 @@ public class FBPublishFragment extends AppFragment {
                 super.onProgressUpdate(values);
                 if (values instanceof String[]) {
                     NotificationManager.onTaskProcessUpdate(getActivity(), (String[]) values);
-                } else {
+                } else if (publicationListAdapter != null){
                     publicationListAdapter.notifyDataSetChanged();
                 }
             }
