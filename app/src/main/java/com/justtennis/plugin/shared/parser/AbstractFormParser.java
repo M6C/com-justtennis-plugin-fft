@@ -41,7 +41,9 @@ public abstract class AbstractFormParser extends AbstractParser {
                     System.err.println("\r\n==============> ret hidden is empty.");
                 }
 
-                response.button = parseElement(ret, request.submitQuery);
+                if (request.submitQuery != null && !request.submitQuery.isEmpty()) {
+                    response.button = parseElement(ret, request.submitQuery);
+                }
 
                 parseFormExtra(request, response, ret);
             } else {
