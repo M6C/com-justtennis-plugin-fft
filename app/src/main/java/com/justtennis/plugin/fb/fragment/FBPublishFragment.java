@@ -29,13 +29,13 @@ import com.justtennis.plugin.fb.task.FBPublishTask;
 import com.justtennis.plugin.fft.R;
 import com.justtennis.plugin.fft.databinding.FragmentFbPublicationListBinding;
 import com.justtennis.plugin.shared.fragment.AppFragment;
+import com.justtennis.plugin.shared.interfaces.interfaces.OnListFragmentInteractionListener;
 import com.justtennis.plugin.shared.manager.NotificationManager;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 public class FBPublishFragment extends AppFragment {
@@ -43,6 +43,7 @@ public class FBPublishFragment extends AppFragment {
     private static final String TAG = FBPublishFragment.class.getName();
 
     private FragmentFbPublicationListBinding binding;
+    private AutoCompleteTextView textView;
     private PublicationListAdapter publicationListAdapter;
     private List<PublicationDto> listPublication = new ArrayList<>();
     private FBPublishFormTask publishFormTask;
@@ -59,6 +60,7 @@ public class FBPublishFragment extends AppFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_fb_publication_list, container, false);
+        textView = binding.publicationMessage;
         binding.setLoading(false);
         maxLine = binding.publicationMessage.getMaxLines();
 
@@ -72,20 +74,15 @@ public class FBPublishFragment extends AppFragment {
     }
 
     private void initializePublicationList() {
-        final AutoCompleteTextView textView = binding.publicationMessage;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            publicationListAdapter = new PublicationListAdapter(publicationDto -> {
-                textView.requestFocus();
-                textView.setText(publicationDto.message);
-                updPublicationMessageDesign(textView, true);
-            });
-            publicationListAdapter.setList(listPublication);
-            binding.publicationList.setAdapter(publicationListAdapter);
-
-            initializeProfilPublication();
+            publicationListAdapter = new PublicationListAdapter(this::updPublicationMessage);
         } else {
-            binding.setLoading(false);
+            publicationListAdapter = new PublicationListAdapter((OnListFragmentInteractionListener) item -> updPublicationMessage((PublicationDto)item));
         }
+        publicationListAdapter.setList(listPublication);
+        binding.publicationList.setAdapter(publicationListAdapter);
+
+        initializeProfilPublication();
     }
 
     private void clear() {
@@ -123,6 +120,12 @@ public class FBPublishFragment extends AppFragment {
                 // Nothing  here
             }
         });
+    }
+
+    private void updPublicationMessage(PublicationDto publicationDto) {
+        textView.requestFocus();
+        textView.setText(publicationDto.message);
+        FBPublishFragment.this.updPublicationMessageDesign(textView, true);
     }
 
     private void updPublicationMessageDesign(AutoCompleteTextView textView, boolean hasFocus) {

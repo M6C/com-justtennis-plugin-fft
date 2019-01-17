@@ -19,17 +19,20 @@ public class PublicationViewHolder extends RecyclerViewHolder<PublicationDto> {
     private final TextView mMessage;
     private final TextView mDate;
     private final ProgressBar mProgress;
+    private View mView;
 
     public PublicationViewHolder(View view) {
         super(view);
         mMessage= view.findViewById(R.id.publication_message);
         mDate = view.findViewById(R.id.publication_date);
         mProgress = view.findViewById(R.id.publication_progress);
+        this.mView = view;
     }
 
     @Override
     public void set(PublicationDto pub) {
         super.set(pub); // Mandatory
+        mView.setTag(pub);
 
         mMessage.setText(pub.message);
         mDate.setText(pub.postDate != null ? dateTimeInstance.format(pub.postDate) : "");
