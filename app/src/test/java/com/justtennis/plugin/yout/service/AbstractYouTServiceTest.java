@@ -13,12 +13,12 @@ abstract class AbstractYouTServiceTest extends AbstractLoginServiceTest {
 
     @Override
     protected ResponseHttp doLogin() {
-        initializeFFTService();
+        initializeLoginService();
         return youtServiceLogin.navigateToHomePage();
     }
 
     @Override
-    protected void initializeFFTService() {
+    protected void initializeLoginService() {
         youtServiceLogin = YoutServiceLogin.newInstance(null);
         initializeProxy(youtServiceLogin);
         initializeProxy(initializeService());

@@ -18,7 +18,7 @@ abstract class AbstractFFTServiceTest extends AbstractLoginServiceTest {
 
     @Override
     protected LoginFormResponse getLoginForm() {
-        initializeFFTService();
+        initializeLoginService();
         return fftServiceLogin.getLoginForm(LOGIN, PASWD);
     }
 
@@ -49,7 +49,7 @@ abstract class AbstractFFTServiceTest extends AbstractLoginServiceTest {
     }
 
     @Override
-    protected void initializeFFTService() {
+    protected void initializeLoginService() {
         fftServiceLogin = FFTServiceLogin.newInstance(null);
         initializeProxy(fftServiceLogin);
         initializeProxy(initializeService());

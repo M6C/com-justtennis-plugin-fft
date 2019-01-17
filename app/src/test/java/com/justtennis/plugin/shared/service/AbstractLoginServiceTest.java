@@ -11,7 +11,7 @@ public abstract class AbstractLoginServiceTest extends AbstractServiceTest {
 
     protected abstract LoginFormResponse getLoginForm();
     protected abstract ResponseHttp doLogin();
-    protected abstract void initializeFFTService();
+    protected abstract void initializeLoginService();
 
     protected void testLogin(LoginFormResponse response) {
         assertEquals(getLogin(), response.login.value);

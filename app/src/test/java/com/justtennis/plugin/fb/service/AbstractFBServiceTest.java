@@ -16,7 +16,7 @@ public abstract class AbstractFBServiceTest extends AbstractLoginServiceTest {
 
     @Override
     protected LoginFormResponse getLoginForm() {
-        initializeFFTService();
+        initializeLoginService();
         return serviceLogin.getLoginForm(LOGIN, PASWD);
     }
 
@@ -38,7 +38,7 @@ public abstract class AbstractFBServiceTest extends AbstractLoginServiceTest {
     }
 
     @Override
-    protected void initializeFFTService() {
+    protected void initializeLoginService() {
         serviceLogin = FBServiceLogin.newInstance(null);
         initializeProxy(serviceLogin);
         initializeProxy(initializeService());

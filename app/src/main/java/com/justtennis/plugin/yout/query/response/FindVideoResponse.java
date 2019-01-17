@@ -17,9 +17,7 @@ public class FindVideoResponse {
         public String length;
         public String publishedTime;
         public String url;
-        public List<String> videoThumbnails = new ArrayList<>();
-        public List<String> channelThumbnails = new ArrayList<>();
-        public List<String> playlistThumbnails = new ArrayList<>();
+        public List<String> thumbnails = new ArrayList<>();
 
         public VideoItem() {
         }
@@ -38,9 +36,7 @@ public class FindVideoResponse {
                     ", title='" + title + '\'' +
                     ", subTitle='" + subTitle + '\'' +
                     ", url='" + url + '\'' +
-                    ", videoThumbnails size=" + videoThumbnails.size() +
-                    ", channelThumbnails size=" + channelThumbnails.size() +
-                    ", playlistThumbnails size=" + playlistThumbnails.size() +
+                    ", thumbnails size=" + thumbnails.size() +
                     '}';
         }
     }

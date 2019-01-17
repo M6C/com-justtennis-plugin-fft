@@ -97,7 +97,7 @@ public class YouTServiceFindVideo extends AbstractYouTService {
         video.subTitle = parseJsonNodeToString(videoRenderer, new String[]{"shortViewCountText","simpleText"});
         video.length = parseJsonNodeToString(videoRenderer, new String[]{"lengthText","simpleText"});
         video.publishedTime = parseJsonNodeToString(videoRenderer, new String[]{"publishedTimeText","simpleText"});
-        parseJsonNodeToArray(videoRenderer, new String[]{"thumbnail", "thumbnails"}, video.videoThumbnails);
+        parseJsonNodeToArray(videoRenderer, new String[]{"thumbnail", "thumbnails"}, video.thumbnails);
     }
 
     private void parseChannel(FindVideoResponse.VideoItem video, JsonElement videoRenderer) {
@@ -109,7 +109,7 @@ public class YouTServiceFindVideo extends AbstractYouTService {
         video.title = parseJsonNodeToString(videoRenderer, new String[]{"title","simpleText"});
         video.subTitle = parseJsonNodeToString(videoRenderer, new String[]{"subscriberCountText","simpleText"});
         video.length = parseJsonNodeToString(videoRenderer, new String[]{"videoCountText","simpleText"});
-        parseJsonNodeToArray(videoRenderer, new String[]{"thumbnail", "thumbnails"}, video.channelThumbnails);
+        parseJsonNodeToArray(videoRenderer, new String[]{"thumbnail", "thumbnails"}, video.thumbnails);
     }
 
     private void parsePlaylist(FindVideoResponse.VideoItem video, JsonElement videoRenderer) {
@@ -120,7 +120,7 @@ public class YouTServiceFindVideo extends AbstractYouTService {
         video.url = parseJsonNodeToString(videoRenderer, new String[]{"navigationEndpoint","commandMetadata","webCommandMetadata","url"});
         video.title = parseJsonNodeToString(videoRenderer, new String[]{"title","simpleText"});
         video.length = parseJsonNodeToString(videoRenderer, new String[]{"videoCountText","simpleText"});
-        parseJsonNodeToArray(videoRenderer, new String[]{"thumbnail", "thumbnails"}, video.playlistThumbnails);
+        parseJsonNodeToArray(videoRenderer, new String[]{"thumbnail", "thumbnails"}, video.thumbnails);
     }
 
     private void parseJsonNodeToArray(JsonElement videoRenderer, Object[] pathNode, List<String> list) {
