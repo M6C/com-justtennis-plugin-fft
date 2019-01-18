@@ -3,6 +3,8 @@ package com.justtennis.plugin.yout.dto;
 import com.justtennis.plugin.yout.enums.MEDIA_TYPE;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Publication resource
@@ -17,6 +19,7 @@ public class VideoDto implements Serializable {
     public String length;
     public String publishedTime;
     public MEDIA_TYPE type;
+    public List<String> thumbnails = new ArrayList<>();
 
     public VideoDto(String id, String url, String title, String subTitle, String length, String publishedTime, MEDIA_TYPE type) {
         this.id = id;

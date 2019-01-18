@@ -27,7 +27,6 @@
             android:layout_gravity="center"
             android:contentDescription="@string/youtDefaultContentDescription"
             style="@style/ItemListPublicationAvatar"
-            app:srcCompat="@drawable/ic_default_user"
             tools:ignore="VectorDrawableCompat" />
 
 

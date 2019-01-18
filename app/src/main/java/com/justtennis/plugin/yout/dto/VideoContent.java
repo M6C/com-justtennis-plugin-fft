@@ -19,7 +19,9 @@ public class VideoContent {
     }
 
     private static VideoDto createDto(YoutFindVideoResponse.VideoItem item) {
-        return new VideoDto(item.getId(), item.url, item.title, item.subTitle, item.length, item.publishedTime, item.getType());
+        VideoDto dto = new VideoDto(item.getId(), item.url, item.title, item.subTitle, item.length, item.publishedTime, item.getType());
+        dto.thumbnails.addAll(item.thumbnails);
+        return dto;
     }
 
     private static void logMe(Exception e) {
