@@ -68,6 +68,7 @@ public class YoutFindVideoFragment extends AppFragment {
         }
         publicationListAdapter.setList(listDto);
         binding.publicationList.setAdapter(publicationListAdapter);
+        binding.publicationList.setNestedScrollingEnabled(false);
     }
 
     private void clear() {
