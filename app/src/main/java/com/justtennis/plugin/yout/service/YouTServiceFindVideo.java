@@ -1,7 +1,6 @@
 package com.justtennis.plugin.yout.service;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
@@ -12,17 +11,11 @@ import com.justtennis.plugin.shared.exception.NotConnectedException;
 import com.justtennis.plugin.shared.network.model.ResponseHttp;
 import com.justtennis.plugin.shared.query.response.FormElement;
 import com.justtennis.plugin.shared.service.AbstractService;
-import com.justtennis.plugin.shared.tool.FileUtil;
 import com.justtennis.plugin.yout.query.request.YouTFindVideoFormRequest;
 import com.justtennis.plugin.yout.query.response.YoutFindVideoResponse;
 
 import org.jsoup.helper.StringUtil;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;

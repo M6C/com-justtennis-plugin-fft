@@ -13,7 +13,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.justtennis.plugin.common.LoginActivity;
 import com.justtennis.plugin.common.fragment.LoginFragment;
 import com.justtennis.plugin.common.tool.FragmentTool;
 import com.justtennis.plugin.fb.fragment.FBPublishFragment;
@@ -24,7 +23,6 @@ import com.justtennis.plugin.fft.fragment.FindPlayerFragment;
 import com.justtennis.plugin.fft.fragment.MillesimeMatchFragment;
 import com.justtennis.plugin.fft.fragment.RankingMatchFragment;
 import com.justtennis.plugin.fft.service.FFTServiceLogin;
-import com.justtennis.plugin.shared.preference.LoginSharedPref;
 import com.justtennis.plugin.shared.service.IServiceLogin;
 import com.justtennis.plugin.yout.fragment.YoutFindVideoFragment;
 
@@ -121,7 +119,7 @@ public class ServiceManager {
 	}
 
 	public void initializeFragment(FragmentActivity activity, Bundle extra) {
-		Fragment fragment;
+		Fragment fragment = null;
 		switch (service) {
 			case FB:
 				fragment = FBPublishFragment.newInstance();
@@ -130,16 +128,24 @@ public class ServiceManager {
 				fragment = MillesimeMatchFragment.newInstance();
 				break;
 			case LOGIN:
-			default:
 				fragment = LoginFragment.newInstance();
+			default:
 		}
-		if (extra != null) {
-			fragment.setArguments(extra);
+		if (fragment != null) {
+			if (extra != null) {
+				fragment.setArguments(extra);
+			}
+			FragmentTool.replaceFragment(activity, fragment);
+
+			NavigationView navigationView = activity.findViewById(R.id.nav_view);
+			if (navigationView != null) {
+				initializeNavigation(navigationView);
+			}
 		}
-		FragmentTool.replaceFragment(activity, fragment);
 	}
 
 	public void initializeNavigation(NavigationView navigationView) {
+		clearNavigationMenu(navigationView);
 		switch (service) {
 			case FB:
 				navigationView.inflateMenu(R.menu.activity_fb_drawer);
@@ -150,10 +156,10 @@ public class ServiceManager {
 				navigationView.getMenu().getItem(0).setChecked(true);
 				break;
 			case LOGIN:
-			default:
 				navigationView.inflateMenu(R.menu.activity_login_drawer);
 				navigationView.getMenu().getItem(0).setChecked(true);
 				break;
+			default:
 		}
 	}
 
@@ -164,8 +170,9 @@ public class ServiceManager {
 			case FFT:
 				return onFFTNavigationItemSelected(activity, navigationView, item);
 			case LOGIN:
-			default:
 				return onLoginNavigationItemSelected(activity, navigationView, item);
+			default:
+				return false;
 		}
 	}
 
@@ -182,10 +189,8 @@ public class ServiceManager {
 			i.setData(Uri.parse(url));
 			activity.startActivity(i);
 		} else if (id == R.id.nav_fb_disconnect) {
-			Context context = activity.getApplicationContext();
-			LoginSharedPref.cleanSecurity(context);
-			activity.startActivity(new Intent(context, LoginActivity.class));
-			activity.finish();
+			ServiceManager.getInstance().setService(SERVICE.LOGIN);
+			ServiceManager.getInstance().initializeFragment(activity, new Bundle());
 		}
 
 		DrawerLayout drawer = activity.findViewById(R.id.drawer_layout);
@@ -212,10 +217,8 @@ public class ServiceManager {
 			i.setData(Uri.parse(url));
 			activity.startActivity(i);
 		} else if (id == R.id.nav_disconnect) {
-			Context context = activity.getApplicationContext();
-			LoginSharedPref.cleanSecurity(context);
-			activity.startActivity(new Intent(context, LoginActivity.class));
-			activity.finish();
+			ServiceManager.getInstance().setService(SERVICE.LOGIN);
+			ServiceManager.getInstance().initializeFragment(activity, new Bundle());
 		}
 
 		DrawerLayout drawer = activity.findViewById(R.id.drawer_layout);
@@ -228,13 +231,22 @@ public class ServiceManager {
 		int id = item.getItemId();
 		Menu menu = navigationView.getMenu();
 
-		if (isMenuItem(id, menu, R.id.nav_youtube)) {
+		if (isMenuItem(id, menu, R.id.nav_login)) {
+			FragmentTool.replaceFragment(activity, LoginFragment.newInstance());
+		} else if (isMenuItem(id, menu, R.id.nav_youtube)) {
 			FragmentTool.replaceFragment(activity, YoutFindVideoFragment.newInstance());
 		}
 
 		DrawerLayout drawer = activity.findViewById(R.id.drawer_layout);
 		drawer.closeDrawer(GravityCompat.START);
 		return true;
+	}
+
+	private void clearNavigationMenu(NavigationView navigationView) {
+		Menu menu = navigationView.getMenu();
+		for(int i = menu.size(); i>0 ; i--) {
+			menu.removeItem(menu.getItem(i-1).getItemId());
+		}
 	}
 
 	private boolean isMenuItem(int id, Menu menu, int p) {

@@ -130,7 +130,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         LoginSharedPref.cleanSecurity(context);
 
-        ServiceManager.getInstance().initializeNavigation(navigationView);
         ServiceManager.getInstance().initializeFragment(this, bundle);
     }
 
