@@ -42,37 +42,37 @@ public class YouTServiceFindVideoTest extends AbstractYouTServiceTest {
     public void testSubmitFindForm() throws NotConnectedException {
         ResponseHttp form = doLogin();
 
-            GenericFormResponse response = youTServiceFindVideo.getFindForm(form, "in flame");
+        GenericFormResponse response = youTServiceFindVideo.getFindForm(form, "in flame");
 
-            assertNotNull(response);
+        assertNotNull(response);
 
-            ResponseHttp submitForm = youTServiceFindVideo.submitFindForm(form, response);
-            writeResourceFile(submitForm.body, "YouTServiceFindVideoTest_testSubmitFindForm.html");
-            assertNotNull(submitForm.body);
+        ResponseHttp submitForm = youTServiceFindVideo.submitFindForm(form, response);
+        writeResourceFile(submitForm.body, "YouTServiceFindVideoTest_testSubmitFindForm.html");
+        assertNotNull(submitForm.body);
 
-            YoutFindVideoResponse findCompetitionResponse = youTServiceFindVideo.getFind(submitForm);
-            assertNotNull(findCompetitionResponse);
-            assertTrue("Video List must be not empty", findCompetitionResponse.videoList.size() > 0);
-            for (YoutFindVideoResponse.VideoItem item : findCompetitionResponse.videoList) {
-                if(item.videoId != null) {
-                    assertNotNull(item.url);
-                    assertNotNull(item.title);
-                    assertNotNull(item.subTitle);
-                    assertNotNull(item.length);
-                    assertNotNull(item.publishedTime);
-                } else if (item.channelId != null) {
-                    assertNotNull(item.url);
-                    assertNotNull(item.title);
-                    assertNotNull(item.subTitle);
-                    assertNotNull(item.length);
-                } else if (item.playlistId != null) {
-                    assertNotNull(item.url);
-                    assertNotNull(item.title);
-                    assertNotNull(item.subTitle);
-                } else {
-                    assertNotNull("One id must be not null", null);
-                }
-                assertTrue(item.thumbnails.size() > 0);
+        YoutFindVideoResponse findCompetitionResponse = youTServiceFindVideo.getFind(submitForm);
+        assertNotNull(findCompetitionResponse);
+        assertTrue("Video List must be not empty", findCompetitionResponse.videoList.size() > 0);
+        for (YoutFindVideoResponse.VideoItem item : findCompetitionResponse.videoList) {
+            if(item.videoId != null) {
+                assertNotNull(item.url);
+                assertNotNull(item.title);
+                assertNotNull(item.subTitle);
+                assertNotNull(item.length);
+                assertNotNull(item.publishedTime);
+            } else if (item.channelId != null) {
+                assertNotNull(item.url);
+                assertNotNull(item.title);
+                assertNotNull(item.subTitle);
+                assertNotNull(item.length);
+            } else if (item.playlistId != null) {
+                assertNotNull(item.url);
+                assertNotNull(item.title);
+                assertNotNull(item.subTitle);
+            } else {
+                assertNotNull("One id must be not null", null);
             }
+            assertTrue(item.thumbnails.size() > 0);
+        }
     }
 }

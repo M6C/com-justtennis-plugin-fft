@@ -1,0 +1,11 @@
+<resources>
+    <string name="youtDefaultContentDescription">YouTube Default Content Description</string>
+
+    <string name="drawer_yout_item_youtube">YouTube</string>
+
+    <string name="hint_yout_text_find_video">Watch something ?</string>
+    <string name="yout_loading_video">Searching…</string>
+    <string name="yout_msg_nothing_found">Nothing found</string>
+    <string name="yout_desc_publication_message">Publication Message</string>
+    <string name="yout_desc_publication_date">Publication Date</string>
+</resources>

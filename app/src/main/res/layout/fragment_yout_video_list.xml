@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable name="loading" type="boolean"/>
+        <variable name="empty" type="boolean"/>
+    </data>
+
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/cardview_light_background"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/fb_create_layout_margin"
+                android:paddingBottom="@dimen/fb_create_layout_margin"
+                android:background="@color/fb_create_form_background"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/fb_field_margin"
+                    android:orientation="horizontal">
+
+                <AutoCompleteTextView
+                    android:id="@+id/publication_message"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_gravity="center"
+                    android:hint="@string/hint_yout_text_find_video"
+                    android:minLines="1"
+                    android:maxLines="4"
+                    android:gravity="top"
+                    android:inputType="textMultiLine|textCapSentences"
+                    android:padding="5dp"
+                    android:background="@drawable/fb_message_background"/>
+
+                </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:visibility="@{!loading ? android.view.View.VISIBLE : android.view.View.GONE}"
+                android:orientation="vertical">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/publication_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="@{!empty ? android.view.View.VISIBLE : android.view.View.GONE}"
+                    android:fillViewport="true"
+                    app:layoutManager="android.support.v7.widget.LinearLayoutManager"
+                    tools:listitem="@layout/fb_publication_list_content" />
+
+                <TextView
+                    android:id="@+id/empty_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:text="@string/yout_msg_nothing_found"
+                    android:textAlignment="center"
+                    android:visibility="@{empty ? android.view.View.VISIBLE : android.view.View.GONE}"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:visibility="@{loading ? android.view.View.VISIBLE : android.view.View.GONE}"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/loading_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/yout_loading_video"
+                    android:textAlignment="center"/>
+
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:max="100"
+                    android:indeterminate="true" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+    </android.support.design.widget.CoordinatorLayout>
+
+</layout>

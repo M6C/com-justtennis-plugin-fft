@@ -25,7 +25,7 @@
             android:layout_marginLeft="@dimen/fb_user_avatar_margin"
             android:layout_marginRight="@dimen/fb_user_avatar_margin"
             android:layout_gravity="center"
-            android:contentDescription="@string/defaultUserImage"
+            android:contentDescription="@string/youtDefaultContentDescription"
             style="@style/ItemListPublicationAvatar"
             app:srcCompat="@drawable/ic_default_user"
             tools:ignore="VectorDrawableCompat" />
@@ -42,7 +42,7 @@
                 android:id="@+id/publication_message"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/desc_publication_message"
+                android:hint="@string/yout_desc_publication_message"
                 android:layout_marginTop="@dimen/fb_text_vertical_margin"
                 android:textAppearance="@style/ItemListPublicationMessage" />
 
@@ -52,7 +52,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/fb_text_vertical_margin"
                 android:layout_marginBottom="@dimen/fb_text_vertical_margin"
-                android:hint="@string/desc_publication_date"
+                android:hint="@string/yout_desc_publication_date"
                 android:textAppearance="@style/ItemListPublicationDate"/>
 
         </LinearLayout>

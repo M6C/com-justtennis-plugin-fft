@@ -1,6 +1,7 @@
 package com.justtennis.plugin.yout.service;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
@@ -11,11 +12,17 @@ import com.justtennis.plugin.shared.exception.NotConnectedException;
 import com.justtennis.plugin.shared.network.model.ResponseHttp;
 import com.justtennis.plugin.shared.query.response.FormElement;
 import com.justtennis.plugin.shared.service.AbstractService;
+import com.justtennis.plugin.shared.tool.FileUtil;
 import com.justtennis.plugin.yout.query.request.YouTFindVideoFormRequest;
 import com.justtennis.plugin.yout.query.response.YoutFindVideoResponse;
 
 import org.jsoup.helper.StringUtil;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -62,7 +69,7 @@ public class YouTServiceFindVideo extends AbstractYouTService {
         JsonElement root = new JsonParser().parse(jsonString);
 
         Object[] pathNode = new Object[] {
-            "contents","twoColumnSearchResultsRenderer","primaryContents","sectionListRenderer","contents",
+            "contents",new String[]{"twoColumnSearchResultsRenderer","twoColumnBrowseResultsRenderer"},"primaryContents","sectionListRenderer","contents",
             0,
             "itemSectionRenderer", "contents"
         };
@@ -143,10 +150,21 @@ public class YouTServiceFindVideo extends AbstractYouTService {
     }
 
     private JsonElement parseJsonNode(JsonElement root, Object[] pathNode) {
+        if (root == null || pathNode == null || pathNode.length == 0) {
+            return root;
+        }
         JsonElement ret = root;
         for(Object node : pathNode) {
             if (node instanceof Integer) {
                 ret = ret.getAsJsonArray().get((Integer) node);
+            } else if (node instanceof String[]) {
+                JsonElement r = ret;
+                for(String n : (String[])node) {
+                    ret = r.getAsJsonObject().get(n);
+                    if (ret != null) {
+                        break;
+                    }
+                }
             } else {
                 ret = ret.getAsJsonObject().get(node.toString());
             }

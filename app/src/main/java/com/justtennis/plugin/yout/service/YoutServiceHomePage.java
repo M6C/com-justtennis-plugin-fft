@@ -18,9 +18,6 @@ public class YoutServiceHomePage extends AbstractYouTService {
 
     public ResponseHttp navigateToHomePage(ResponseHttp loginFormResponse) {
         logMethod("navigateToHomePage");
-        ResponseHttp ret = loginFormResponse != null ? loginFormResponse : new ResponseHttp();
-        ret.body = "";
-        ret.statusCode = 200;
-        return ret;
+        return doGet(URL_ROOT);
     }
 }

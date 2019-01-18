@@ -71,6 +71,13 @@ public class FragmentTool {
         }
     }
 
+    public static void enableFab(@NonNull FragmentActivity activity, boolean enable) {
+        View fab = activity.findViewById(R.id.fab);
+        if (fab != null) {
+            fab.setEnabled(enable);
+        }
+    }
+
     public static void finish(Activity activity) {
         Objects.requireNonNull(activity).onBackPressed();
     }
