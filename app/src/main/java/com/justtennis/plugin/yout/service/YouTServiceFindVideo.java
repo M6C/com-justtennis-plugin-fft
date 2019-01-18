@@ -41,11 +41,7 @@ public class YouTServiceFindVideo extends AbstractYouTService {
             ret = GenericFormParser.getInstance().parseForm(responseHttp.body, new YouTFindVideoFormRequest());
             Map<String, FormElement> fieldValue = ret.fieldValue;
             fieldValue.get(YouTFindVideoFormRequest.KEY_FIELD_SEARCH).value = search;
-
-            for(String key : fieldValue.keySet()) {
-                FormElement val = fieldValue.get(key);
-                System.out.println("==============> new form element key:" + key + "  name:" + val.name + " value:" + val.value);
-            }
+            GenericFormParser.getInstance().showResponse(ret);
         }
 
         return ret;

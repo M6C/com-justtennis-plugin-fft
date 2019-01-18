@@ -21,6 +21,8 @@ public class YoutFindVideoListAdapter extends RecyclerViewAdapter<VideoDto, Recy
 
     private OnListFragmentInteractionListener mListener;
 
+    private boolean showCheck;
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     public YoutFindVideoListAdapter(@Nullable Consumer<VideoDto> listener) {
         super(listener);
@@ -59,7 +61,22 @@ public class YoutFindVideoListAdapter extends RecyclerViewAdapter<VideoDto, Recy
                 }
             });
         }
-        return new VideoViewHolder(view);
+
+        view.setLongClickable(true);
+        view.setOnLongClickListener(v -> {
+            setShowCheck(!isShowCheck());
+            notifyDataSetChanged();
+            return true;
+        });
+
+        return new VideoViewHolder(view, this);
     }
 
+    public boolean isShowCheck() {
+        return showCheck;
+    }
+
+    public void setShowCheck(boolean showCheck) {
+        this.showCheck = showCheck;
+    }
 }

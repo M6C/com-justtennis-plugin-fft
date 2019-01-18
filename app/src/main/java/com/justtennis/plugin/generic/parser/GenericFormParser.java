@@ -5,6 +5,7 @@ import com.justtennis.plugin.generic.query.response.GenericFormResponse;
 import com.justtennis.plugin.shared.parser.AbstractFormParser;
 import com.justtennis.plugin.shared.query.request.AbstractFormRequest;
 import com.justtennis.plugin.shared.query.response.AbstractFormResponse;
+import com.justtennis.plugin.shared.query.response.FormElement;
 
 import org.jsoup.nodes.Element;
 
@@ -35,5 +36,13 @@ public class GenericFormParser extends AbstractFormParser {
 
     public GenericFormResponse parseForm(String content, GenericFormRequest request) {
         return (GenericFormResponse) parseForm(content, request, new GenericFormResponse());
+    }
+
+    public void showResponse(GenericFormResponse response) {
+        Map<String, FormElement> fieldValue = response.fieldValue;
+        for(String key : fieldValue.keySet()) {
+            FormElement val = fieldValue.get(key);
+            System.out.println("==============> new form element key:" + key + "  name:" + val.name + " value:" + val.value);
+        }
     }
 }

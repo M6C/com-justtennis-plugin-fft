@@ -1,6 +1,7 @@
 package com.justtennis.plugin.yout.dto;
 
 import com.justtennis.plugin.yout.enums.MEDIA_TYPE;
+import com.justtennis.plugin.yout.viewholder.VideoViewHolder;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import java.util.List;
  */
 public class VideoDto implements Serializable {
 
+    public boolean checked;
     public final String id;
     public final String url;
     public final String title;
@@ -20,6 +22,8 @@ public class VideoDto implements Serializable {
     public String publishedTime;
     public MEDIA_TYPE type;
     public List<String> thumbnails = new ArrayList<>();
+
+    public VideoViewHolder viewHolder;
 
     public VideoDto(String id, String url, String title, String subTitle, String length, String publishedTime, MEDIA_TYPE type) {
         this.id = id;

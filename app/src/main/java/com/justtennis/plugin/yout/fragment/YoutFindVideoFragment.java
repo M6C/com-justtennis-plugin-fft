@@ -15,7 +15,9 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
+import android.widget.LinearLayout;
 
 import com.justtennis.plugin.common.tool.FragmentTool;
 import com.justtennis.plugin.fft.R;
@@ -44,6 +46,7 @@ public class YoutFindVideoFragment extends AppFragment {
     private List<VideoDto> listDto = new ArrayList<>();
     private AsyncTask<Void, String, YoutFindVideoResponse> youtFindVideoTask;
     private FragmentActivity activity;
+    private LinearLayout llContent;
 
     public static Fragment newInstance() {
         return new YoutFindVideoFragment();
@@ -55,6 +58,7 @@ public class YoutFindVideoFragment extends AppFragment {
         activity = getActivity();
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_yout_video_list, container, false);
         textView = binding.publicationMessage;
+        llContent = binding.llContent;
         binding.setLoading(false);
 
         initializePublicationMessage();
@@ -103,8 +107,12 @@ public class YoutFindVideoFragment extends AppFragment {
     }
 
     private void updPublicationMessage(VideoDto dto) {
-        if (dto.type == MEDIA_TYPE.VIDEO) {
-            watchYoutubeVideo(activity, dto.id);
+        if (!publicationListAdapter.isShowCheck()) {
+            if (dto.type == MEDIA_TYPE.VIDEO) {
+                watchYoutubeVideo(activity, dto.id);
+            }
+        } else {
+            dto.viewHolder.check();
         }
     }
 
@@ -129,7 +137,14 @@ public class YoutFindVideoFragment extends AppFragment {
         updButtonStat();
     }
 
+    private void closeKeyboard() {
+        InputMethodManager imm =  (InputMethodManager) Objects.requireNonNull(getContext()).getSystemService(Context.INPUT_METHOD_SERVICE);
+        assert imm != null;
+        imm.hideSoftInputFromWindow(llContent.getWindowToken(), 0);
+    }
+
     private void onClickFab(View view) {
+        closeKeyboard();
         final Context context = getContext();
         youtFindVideoTask = new YoutFindVideoTask(context, textView.getText().toString()) {
             @Override
@@ -137,6 +152,7 @@ public class YoutFindVideoFragment extends AppFragment {
                 super.onPreExecute();
                 binding.setLoading(true);
                 listDto.clear();
+                publicationListAdapter.setShowCheck(false);
             }
 
             @Override
