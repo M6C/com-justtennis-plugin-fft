@@ -6,7 +6,7 @@ import com.justtennis.plugin.shared.network.model.ResponseHttp;
 import com.justtennis.plugin.shared.query.response.FormElement;
 import com.justtennis.plugin.shared.skeleton.IProxy;
 import com.justtennis.plugin.yout.query.request.YouTFindVideoFormRequest;
-import com.justtennis.plugin.yout.query.response.FindVideoResponse;
+import com.justtennis.plugin.yout.query.response.YoutFindVideoResponse;
 
 import org.junit.Test;
 
@@ -50,10 +50,10 @@ public class YouTServiceFindVideoTest extends AbstractYouTServiceTest {
             writeResourceFile(submitForm.body, "YouTServiceFindVideoTest_testSubmitFindForm.html");
             assertNotNull(submitForm.body);
 
-            FindVideoResponse findCompetitionResponse = youTServiceFindVideo.getFind(submitForm);
+            YoutFindVideoResponse findCompetitionResponse = youTServiceFindVideo.getFind(submitForm);
             assertNotNull(findCompetitionResponse);
             assertTrue("Video List must be not empty", findCompetitionResponse.videoList.size() > 0);
-            for (FindVideoResponse.VideoItem item : findCompetitionResponse.videoList) {
+            for (YoutFindVideoResponse.VideoItem item : findCompetitionResponse.videoList) {
                 if(item.videoId != null) {
                     assertNotNull(item.url);
                     assertNotNull(item.title);

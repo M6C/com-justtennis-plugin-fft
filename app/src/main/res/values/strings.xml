@@ -47,6 +47,9 @@
     <string name="drawer_item_mon_espace_fft">Mon Espace FFT</string>
     <string name="drawer_item_disconnect">Disconnect</string>
 
+    <string name="drawer_item_login">Login</string>
+    <string name="drawer_item_youtube">YouTube</string>
+
     <string name="view_hint_lastname">Lastname</string>
     <string name="view_hint_firstname">Firstname</string>
     <string name="view_hint_city">City</string>

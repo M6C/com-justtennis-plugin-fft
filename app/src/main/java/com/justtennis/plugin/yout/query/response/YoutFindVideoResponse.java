@@ -1,10 +1,12 @@
 package com.justtennis.plugin.yout.query.response;
 
+import com.justtennis.plugin.yout.enums.MEDIA_TYPE;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FindVideoResponse {
+public class YoutFindVideoResponse {
 
     public List<VideoItem> videoList = new ArrayList<>();
 
@@ -27,6 +29,14 @@ public class FindVideoResponse {
             this.title = title;
             this.subTitle = subTitle;
             this.url = url;
+        }
+
+        public String getId() {
+            return videoId!=null ? videoId : channelId!=null ? channelId : playlistId;
+        }
+
+        public MEDIA_TYPE getType() {
+            return videoId!=null ? MEDIA_TYPE.VIDEO : channelId!=null ? MEDIA_TYPE.CHANNEL : MEDIA_TYPE.PLAYLIST;
         }
 
         @Override

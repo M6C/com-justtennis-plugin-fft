@@ -12,7 +12,7 @@ import com.justtennis.plugin.shared.network.model.ResponseHttp;
 import com.justtennis.plugin.shared.query.response.FormElement;
 import com.justtennis.plugin.shared.service.AbstractService;
 import com.justtennis.plugin.yout.query.request.YouTFindVideoFormRequest;
-import com.justtennis.plugin.yout.query.response.FindVideoResponse;
+import com.justtennis.plugin.yout.query.response.YoutFindVideoResponse;
 
 import org.jsoup.helper.StringUtil;
 
@@ -56,8 +56,8 @@ public class YouTServiceFindVideo extends AbstractYouTService {
         return doPostConnected(URL_ROOT, "/results", data, form);
     }
 
-    public FindVideoResponse getFind(ResponseHttp findResponseHttp) {
-        FindVideoResponse ret = new FindVideoResponse();
+    public YoutFindVideoResponse getFind(ResponseHttp findResponseHttp) {
+        YoutFindVideoResponse ret = new YoutFindVideoResponse();
         String jsonString = parseRegexData(findResponseHttp.body);
         JsonElement root = new JsonParser().parse(jsonString);
 
@@ -71,7 +71,7 @@ public class YouTServiceFindVideo extends AbstractYouTService {
         JsonElement elem = parseJsonNode(root, pathNode);
         if (elem != null) {
             for (JsonElement e : elem.getAsJsonArray()) {
-                FindVideoResponse.VideoItem video = new FindVideoResponse.VideoItem();
+                YoutFindVideoResponse.VideoItem video = new YoutFindVideoResponse.VideoItem();
                 for(String renderer : contentRenderer) {
                     JsonElement videoRenderer = e.getAsJsonObject().get(renderer);
                     if (videoRenderer != null) {
@@ -87,7 +87,7 @@ public class YouTServiceFindVideo extends AbstractYouTService {
         return ret;
     }
 
-    private void parseVideo(FindVideoResponse.VideoItem video, JsonElement videoRenderer) {
+    private void parseVideo(YoutFindVideoResponse.VideoItem video, JsonElement videoRenderer) {
         video.videoId = parseJsonNodeToString(videoRenderer, new String[]{"videoId"});
         if (video.videoId == null) {
             return;
@@ -100,7 +100,7 @@ public class YouTServiceFindVideo extends AbstractYouTService {
         parseJsonNodeToArray(videoRenderer, new String[]{"thumbnail", "thumbnails"}, video.thumbnails);
     }
 
-    private void parseChannel(FindVideoResponse.VideoItem video, JsonElement videoRenderer) {
+    private void parseChannel(YoutFindVideoResponse.VideoItem video, JsonElement videoRenderer) {
         video.channelId = parseJsonNodeToString(videoRenderer, new String[]{"channelId"});
         if (video.channelId == null) {
             return;
@@ -112,7 +112,7 @@ public class YouTServiceFindVideo extends AbstractYouTService {
         parseJsonNodeToArray(videoRenderer, new String[]{"thumbnail", "thumbnails"}, video.thumbnails);
     }
 
-    private void parsePlaylist(FindVideoResponse.VideoItem video, JsonElement videoRenderer) {
+    private void parsePlaylist(YoutFindVideoResponse.VideoItem video, JsonElement videoRenderer) {
         video.playlistId = parseJsonNodeToString(videoRenderer, new String[]{"playlistId"});
         if (video.playlistId == null) {
             return;

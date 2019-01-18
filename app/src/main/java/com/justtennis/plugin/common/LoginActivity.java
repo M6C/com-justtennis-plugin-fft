@@ -13,9 +13,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
@@ -31,8 +36,10 @@ import android.widget.TextView;
 import com.justtennis.plugin.common.manager.ServiceManager;
 import com.justtennis.plugin.common.task.UserLoginServiceTask;
 import com.justtennis.plugin.common.task.UserLoginTask;
+import com.justtennis.plugin.common.tool.FragmentTool;
 import com.justtennis.plugin.common.tool.ProgressTool;
 import com.justtennis.plugin.fft.R;
+import com.justtennis.plugin.fft.fragment.MillesimeMatchFragment;
 import com.justtennis.plugin.shared.manager.NotificationManager;
 import com.justtennis.plugin.shared.preference.LoginSharedPref;
 import com.justtennis.plugin.shared.preference.ProxySharedPref;
@@ -46,7 +53,7 @@ import static android.Manifest.permission.READ_CONTACTS;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
+public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor>, NavigationView.OnNavigationItemSelectedListener {
 
     /**
      * Id to identity READ_CONTACTS permission request.
@@ -74,6 +81,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mProxyLogin;
     private EditText mProxyPassword;
     private Spinner mService;
+    private NavigationView navigationView;
 
     private Bundle bundle;
 
@@ -117,7 +125,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // Something to do
         }
 
+        navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
         LoginSharedPref.cleanSecurity(context);
+
+        ServiceManager.getInstance().initializeNavigation(navigationView);
+        ServiceManager.getInstance().initializeFragment(this, bundle);
     }
 
     private void populateAutoComplete() {
@@ -224,6 +238,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
+
+            ServiceManager.getInstance().setService(mService.getSelectedItemPosition());
             mAuthTask = new MyUserLoginTask(email, password, mService.getSelectedItem().toString());
             mAuthTask.execute((Void) null);
         }
@@ -319,16 +335,21 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         ArrayAdapter<String> adpService = new ArrayAdapter<>(context, android.R.layout.simple_list_item_1, ServiceManager.getServiceLabel());
         mService.setAdapter(adpService);
 
-        mService.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                ServiceManager.getInstance().setService(position);
-            }
+//        mService.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                ServiceManager.getInstance().setService(position);
+//            }
+//
+//            @Override
+//            public void onNothingSelected(AdapterView<?> parent) {
+//            }
+//        });
+    }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        return ServiceManager.getInstance().onNavigationItemSelected(this, navigationView, item);
     }
 
     private interface ProfileQuery {
