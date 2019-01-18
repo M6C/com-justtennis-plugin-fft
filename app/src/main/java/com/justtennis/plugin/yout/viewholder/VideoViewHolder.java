@@ -37,13 +37,7 @@ public class VideoViewHolder extends RecyclerViewHolder<VideoDto> {
         mDate.setText(dto.publishedTime);
         mProgress.setVisibility(View.GONE);
 
-        if (dto.thumbnails.size() > 0) {
-            Picasso.get()
-                    .load(dto.thumbnails.get(0))
-                    .fit()
-                    .centerCrop()
-                    .into(mImageView);
-        } else if (dto.type == MEDIA_TYPE.PLAYLIST) {
+        if (dto.type == MEDIA_TYPE.PLAYLIST) {
             Picasso.get()
                     .load(R.drawable.ic_playlist)
                     .fit()
@@ -52,6 +46,12 @@ public class VideoViewHolder extends RecyclerViewHolder<VideoDto> {
             Picasso.get()
                     .load(R.drawable.ic_channel)
                     .fit()
+                    .into(mImageView);
+        } else if (dto.thumbnails.size() > 0) {
+            Picasso.get()
+                    .load(dto.thumbnails.get(0))
+                    .fit()
+                    .centerCrop()
                     .into(mImageView);
         }
     }

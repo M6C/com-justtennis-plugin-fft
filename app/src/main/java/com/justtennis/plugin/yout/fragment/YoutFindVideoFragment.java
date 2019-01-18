@@ -1,7 +1,10 @@
 package com.justtennis.plugin.yout.fragment;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -23,6 +26,7 @@ import com.justtennis.plugin.shared.manager.NotificationManager;
 import com.justtennis.plugin.yout.adapter.YoutFindVideoListAdapter;
 import com.justtennis.plugin.yout.dto.VideoContent;
 import com.justtennis.plugin.yout.dto.VideoDto;
+import com.justtennis.plugin.yout.enums.MEDIA_TYPE;
 import com.justtennis.plugin.yout.query.response.YoutFindVideoResponse;
 import com.justtennis.plugin.yout.task.YoutFindVideoTask;
 
@@ -99,10 +103,21 @@ public class YoutFindVideoFragment extends AppFragment {
     }
 
     private void updPublicationMessage(VideoDto dto) {
-        textView.requestFocus();
-        textView.setText(dto.url);
+        if (dto.type == MEDIA_TYPE.VIDEO) {
+            watchYoutubeVideo(activity, dto.id);
+        }
     }
 
+    public static void watchYoutubeVideo(Context context, String id){
+        Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + id));
+        Intent webIntent = new Intent(Intent.ACTION_VIEW,
+                Uri.parse("http://www.youtube.com/watch?v=" + id));
+        try {
+            context.startActivity(appIntent);
+        } catch (ActivityNotFoundException ex) {
+            context.startActivity(webIntent);
+        }
+    }
     private void updButtonStat() {
         boolean check = youtFindVideoTask == null && textView.getText().length() > 0;
         FragmentTool.enableFab(activity, check);
