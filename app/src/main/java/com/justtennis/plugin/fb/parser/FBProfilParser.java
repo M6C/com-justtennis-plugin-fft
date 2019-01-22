@@ -1,7 +1,5 @@
 package com.justtennis.plugin.fb.parser;
 
-import android.support.annotation.NonNull;
-
 import com.justtennis.plugin.fb.query.request.FBProfilPublicationRequest;
 import com.justtennis.plugin.fb.query.response.FBProfilPublicationResponse;
 import com.justtennis.plugin.shared.parser.AbstractParser;
@@ -47,13 +45,5 @@ public class FBProfilParser extends AbstractParser {
             }
         }
         return ret;
-    }
-
-    @NonNull
-    private static String activateForm(String content) {
-        // Uncomment form
-        return content
-                .replaceAll("<!-- <", "")
-                .replaceAll("> -->", "");
     }
 }

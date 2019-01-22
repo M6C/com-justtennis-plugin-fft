@@ -28,10 +28,13 @@ public abstract class AbstractParser {
 
     @NonNull
     protected static String activateHtml(String content) {
+        if (content.isEmpty()) {
+            return content;
+        }
         // Uncomment htlm
         return content
-                .replaceAll("<!-- <", "<")
-                .replaceAll("> -->", ">");
+                .replaceAll("<!--\\s*<", "<")
+                .replaceAll(">\\s*-->", ">");
     }
 
     protected static void logItem(String title, Object item) {
