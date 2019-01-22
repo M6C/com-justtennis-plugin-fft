@@ -44,6 +44,7 @@ public class VideoViewHolder extends RecyclerViewHolder<VideoDto> {
         mDate.setText(dto.publishedTime);
         mProgress.setVisibility(View.GONE);
         mCheck.setVisibility(adapter.isShowCheck() ? View.VISIBLE : View.GONE);
+        mCheck.setChecked(dto.checked);
 
         if (dto.type == MEDIA_TYPE.PLAYLIST) {
             mCheck.setEnabled(false);

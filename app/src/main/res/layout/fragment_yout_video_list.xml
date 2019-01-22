@@ -39,10 +39,9 @@
                     android:layout_weight="1"
                     android:layout_gravity="center"
                     android:hint="@string/hint_yout_text_find_video"
-                    android:minLines="1"
-                    android:maxLines="4"
+                    android:singleLine="true"
                     android:gravity="top"
-                    android:inputType="textMultiLine|textCapSentences"
+                    android:inputType="textCapSentences"
                     android:padding="5dp"
                     android:background="@drawable/fb_message_background"/>
 

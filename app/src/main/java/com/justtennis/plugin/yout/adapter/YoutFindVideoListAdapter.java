@@ -13,6 +13,7 @@ import com.justtennis.plugin.shared.adapter.RecyclerViewAdapter;
 import com.justtennis.plugin.shared.adapter.RecyclerViewHolder;
 import com.justtennis.plugin.shared.interfaces.interfaces.OnListFragmentInteractionListener;
 import com.justtennis.plugin.yout.dto.VideoDto;
+import com.justtennis.plugin.yout.enums.MEDIA_TYPE;
 import com.justtennis.plugin.yout.viewholder.VideoViewHolder;
 
 import java.util.function.Consumer;
@@ -63,8 +64,16 @@ public class YoutFindVideoListAdapter extends RecyclerViewAdapter<VideoDto, Recy
         }
 
         view.setLongClickable(true);
-        view.setOnLongClickListener(v -> {
+        view.setOnLongClickListener((View v) -> {
             setShowCheck(!isShowCheck());
+            if (isShowCheck()) {
+                VideoDto dto = (VideoDto) v.getTag();
+                dto.checked = MEDIA_TYPE.VIDEO == dto.type;
+            } else {
+                for(VideoDto dto : getList()) {
+                    dto.checked = false;
+                }
+            }
             notifyDataSetChanged();
             return true;
         });
