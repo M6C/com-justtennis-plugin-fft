@@ -3,7 +3,6 @@ package com.justtennis.plugin.yout.viewholder;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.justtennis.plugin.fft.R;
@@ -17,17 +16,21 @@ public class VideoViewHolder extends RecyclerViewHolder<VideoDto> {
 
     private final TextView mMessage;
     private final TextView mDate;
-    private final ProgressBar mProgress;
+    private final TextView mLength;
+    private final View mProgress;
     private final ImageView mImageView;
     private final CheckBox mCheck;
-    private View mView;
-    private YoutFindVideoListAdapter adapter;
+    private final TextView mProgressTv;
+    private final View mView;
+    private final YoutFindVideoListAdapter adapter;
 
     public VideoViewHolder(View view, YoutFindVideoListAdapter adapter) {
         super(view);
         mMessage= view.findViewById(R.id.publication_message);
         mDate = view.findViewById(R.id.publication_date);
-        mProgress = view.findViewById(R.id.publication_progress);
+        mLength = view.findViewById(R.id.publication_length);
+        mProgress = view.findViewById(R.id.download_progress);
+        mProgressTv = view.findViewById(R.id.progressTv);
         mImageView = view.findViewById(R.id.imageView);
         mCheck = view.findViewById(R.id.check);
         this.mView = view;
@@ -42,38 +45,72 @@ public class VideoViewHolder extends RecyclerViewHolder<VideoDto> {
 
         mMessage.setText(dto.title);
         mDate.setText(dto.publishedTime);
+        mDate.setVisibility(dto.type == MEDIA_TYPE.VIDEO ? View.VISIBLE : View.INVISIBLE);
+        mLength.setText(dto.length);
         mProgress.setVisibility(View.GONE);
         mCheck.setVisibility(adapter.isShowCheck() ? View.VISIBLE : View.GONE);
-        mCheck.setChecked(dto.checked);
+        check(dto.checked);
 
         if (dto.type == MEDIA_TYPE.PLAYLIST) {
-            mCheck.setEnabled(false);
+            enableCheck(false);
             Picasso.get()
                     .load(R.drawable.ic_playlist)
                     .fit()
                     .into(mImageView);
         } else if (dto.type == MEDIA_TYPE.CHANNEL) {
-            mCheck.setEnabled(false);
+            enableCheck(false);
             Picasso.get()
                     .load(R.drawable.ic_channel)
                     .fit()
                     .into(mImageView);
         } else if (dto.thumbnails.size() > 0) {
-            mCheck.setEnabled(true);
+            enableCheck(true);
             Picasso.get()
                     .load(dto.thumbnails.get(0))
                     .fit()
                     .centerCrop()
                     .into(mImageView);
         }
+
+        mCheck.setOnCheckedChangeListener((buttonView, isChecked) -> dto.checked = isChecked);
     }
 
     public void check() {
         VideoDto dto = (VideoDto) mView.getTag();
         if (dto.type == MEDIA_TYPE.VIDEO) {
-            mCheck.setChecked(!mCheck.isChecked());
+            check(!mCheck.isChecked());
         } else {
-            mCheck.setChecked(false);
+            check(false);
         }
+    }
+
+    public void updateDownloadStatus(VideoDto.STATUS_DOWNLOAD status) {
+        switch (status) {
+            case PENDING:
+            case DOWNLOADING:
+                enableCheck(false);
+                mProgress.setVisibility(View.VISIBLE);
+                mProgressTv.setText(status == VideoDto.STATUS_DOWNLOAD.PENDING ? R.string.yout_waiting_video : R.string.yout_downloading_video);
+                break;
+            case DOWNLOADED:
+            case DOWNLOAD_ERROR:
+                enableCheck(true);
+                check(true);
+                mProgress.setVisibility(View.GONE);
+                break;
+            case NO:
+            default:
+                enableCheck(true);
+                mProgress.setVisibility(View.GONE);
+                break;
+        }
+    }
+
+    private void check(boolean b) {
+        mCheck.setChecked(b);
+    }
+
+    private void enableCheck(boolean b) {
+        mCheck.setEnabled(b);
     }
 }

@@ -13,6 +13,14 @@ import java.util.List;
  */
 public class VideoDto implements Serializable {
 
+    public enum STATUS_DOWNLOAD {
+        NO,
+        PENDING,
+        DOWNLOADING,
+        DOWNLOADED,
+        DOWNLOAD_ERROR
+    }
+
     public boolean checked;
     public final String id;
     public final String url;
@@ -22,6 +30,9 @@ public class VideoDto implements Serializable {
     public String publishedTime;
     public MEDIA_TYPE type;
     public List<String> thumbnails = new ArrayList<>();
+
+    public STATUS_DOWNLOAD downloadStatus = STATUS_DOWNLOAD.NO;
+    public String downloadPath;
 
     public VideoViewHolder viewHolder;
 
@@ -33,6 +44,11 @@ public class VideoDto implements Serializable {
         this.length = length;
         this.publishedTime = publishedTime;
         this.type = type;
+    }
+
+    public void updateDownloadStatus(STATUS_DOWNLOAD status) {
+        downloadStatus = status;
+        viewHolder.updateDownloadStatus(status);
     }
 
     @Override

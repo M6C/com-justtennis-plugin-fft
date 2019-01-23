@@ -5,7 +5,6 @@ import android.content.Context;
 import com.justtennis.plugin.eytm.query.request.EasyYouTMp3Request;
 import com.justtennis.plugin.generic.parser.GenericParser;
 import com.justtennis.plugin.generic.query.response.GenericResponse;
-import com.justtennis.plugin.shared.exception.NotConnectedException;
 import com.justtennis.plugin.shared.network.model.ResponseHttp;
 import com.justtennis.plugin.shared.tool.FileUtil;
 
@@ -36,17 +35,21 @@ public class EasyYouTMp3Service extends AbstractEasyYouTMp3Service {
         return ret;
     }
 
-    public void downloadLink(GenericResponse findResponse) throws NotConnectedException {
+    public String downloadLink(GenericResponse findResponse, String title) {
         for(GenericResponse.Item item : findResponse.data) {
-            int i=0;
             for(String link : item.itemValue.values()) {
                 ResponseHttp resp = doGet(link);
                 try {
-                    FileUtil.writeBinaryFile(getClass().getClassLoader(), resp.raw, "test"+(i++)+".mp3");
+                    return FileUtil.writeBinaryFile(getClass().getClassLoader(), resp.raw, title);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    logMe(e);
                 }
             }
         }
+        return null;
+    }
+
+    private static void logMe(Exception e) {
+        e.printStackTrace();
     }
 }

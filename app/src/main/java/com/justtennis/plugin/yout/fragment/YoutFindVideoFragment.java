@@ -12,7 +12,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +19,6 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.justtennis.plugin.common.MainActivity;
 import com.justtennis.plugin.common.tool.FragmentTool;
@@ -33,9 +31,14 @@ import com.justtennis.plugin.yout.adapter.YoutFindVideoListAdapter;
 import com.justtennis.plugin.yout.dto.VideoContent;
 import com.justtennis.plugin.yout.dto.VideoDto;
 import com.justtennis.plugin.yout.enums.MEDIA_TYPE;
+import com.justtennis.plugin.yout.preference.YouTubeSharedPref;
 import com.justtennis.plugin.yout.query.response.YoutFindVideoResponse;
+import com.justtennis.plugin.yout.task.YoutDownVideoTask;
 import com.justtennis.plugin.yout.task.YoutFindVideoTask;
 
+import org.jsoup.helper.StringUtil;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -48,6 +51,7 @@ public class YoutFindVideoFragment extends AppFragment {
     private AutoCompleteTextView textView;
     private YoutFindVideoListAdapter publicationListAdapter;
     private List<VideoDto> listDto = new ArrayList<>();
+    private YoutDownVideoTask youtDownVideoTask;
     private AsyncTask<Void, String, YoutFindVideoResponse> youtFindVideoTask;
     private FragmentActivity activity;
     private LinearLayout llContent;
@@ -90,12 +94,6 @@ public class YoutFindVideoFragment extends AppFragment {
         binding.publicationList.setNestedScrollingEnabled(false);
     }
 
-    private void clear() {
-        AutoCompleteTextView textView = binding.publicationMessage;
-        textView.clearFocus();
-        textView.setText("");
-    }
-
     private void initializePublicationMessage() {
         AutoCompleteTextView textView = binding.publicationMessage;
         textView.addTextChangedListener(new TextWatcher() {
@@ -120,11 +118,30 @@ public class YoutFindVideoFragment extends AppFragment {
     private void updPublicationMessage(VideoDto dto) {
         if (!publicationListAdapter.isShowCheck()) {
             if (dto.type == MEDIA_TYPE.VIDEO) {
-                watchYoutubeVideo(activity, dto.id);
+                boolean playYoutube  = true;
+                if (dto.downloadPath == null || dto.downloadPath.isEmpty()) {
+                    dto.downloadPath = YouTubeSharedPref.getVideoPath(activity, dto.id);
+                }
+                if (dto.downloadPath != null && !dto.downloadPath.isEmpty()) {
+                    File file = new File(dto.downloadPath);
+                    if (file.exists()) {
+                        playYoutube = false;
+                        watchPlayerVideo(activity, file);
+                    }
+                }
+                if (playYoutube){
+                    watchYoutubeVideo(activity, dto.id);
+                }
             }
         } else {
             dto.viewHolder.check();
         }
+    }
+
+    public static void watchPlayerVideo(Context context, File file){
+        Intent viewIntent = new Intent(Intent.ACTION_VIEW);
+        viewIntent.setDataAndType(Uri.fromFile(file), "audio/*");
+        context.startActivity(Intent.createChooser(viewIntent, null));
     }
 
     public static void watchYoutubeVideo(Context context, String id){
@@ -137,6 +154,7 @@ public class YoutFindVideoFragment extends AppFragment {
             context.startActivity(webIntent);
         }
     }
+
     private void updButtonStat() {
         boolean check = youtFindVideoTask == null && textView.getText().length() > 0;
         FragmentTool.enableFab(activity, check);
@@ -156,10 +174,47 @@ public class YoutFindVideoFragment extends AppFragment {
 
     private void onClickFab(View view) {
         closeKeyboard();
+        final Context context = getContext();
         if (publicationListAdapter.isShowCheck()) {
-            ((MainActivity)activity).showMessage("Starting Download MP3. Soon...");
+            if (youtDownVideoTask != null) {
+                return;
+            }
+            ((MainActivity)activity).showMessage("Starting Download MP3.");
+            youtDownVideoTask = new YoutDownVideoTask(context, listDto) {
+                @Override
+                protected void onPreExecute() {
+                    super.onPreExecute();
+                    for(VideoDto dto : listDto) {
+                        if (dto.checked) {
+                            dto.updateDownloadStatus(VideoDto.STATUS_DOWNLOAD.PENDING);
+                        }
+                    }
+                }
+
+                @Override
+                protected void onPostExecute(List<VideoDto> list) {
+                    super.onPostExecute(list);
+                    for(VideoDto dto : list) {
+                        dto.updateDownloadStatus(dto.downloadStatus);
+                        if (dto.downloadPath != null && !dto.downloadPath.isEmpty()) {
+                            YouTubeSharedPref.setVideoPath(activity, dto.id, dto.downloadPath);
+                        }
+                    }
+                    publicationListAdapter.notifyDataSetChanged();
+                    youtDownVideoTask = null;
+                }
+
+                @Override
+                protected void onProgressUpdate(String... values) {
+                    super.onProgressUpdate(values);
+                    NotificationManager.onTaskProcessUpdate(activity, values);
+                }
+            };
+            youtDownVideoTask.execute();
         } else {
-            final Context context = getContext();
+            if (youtFindVideoTask != null) {
+                return;
+            }
             youtFindVideoTask = new YoutFindVideoTask(context, textView.getText().toString()) {
                 @Override
                 protected void onPreExecute() {

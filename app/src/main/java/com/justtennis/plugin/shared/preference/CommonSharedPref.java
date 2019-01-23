@@ -6,13 +6,13 @@ import android.support.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 
-class CommonSharedPref {
+public class CommonSharedPref {
 
     private static final String TAG = CommonSharedPref.class.getName();
     private static final Map<String, Object> cacheNoContext = new HashMap<>();
 
     @Nullable
-    static String getString(Context context, String method, String key) {
+    public static String getString(Context context, String method, String key) {
         if (context == null) {
             logMe(method + " context is null");
             return (String)cacheNoContext.get(key);
@@ -21,7 +21,7 @@ class CommonSharedPref {
         }
     }
 
-    static void setString(Context context, String value, String method, String key) {
+    public static void setString(Context context, String value, String method, String key) {
         if (context == null) {
             logMe(method + " context is null");
             cacheNoContext.put(key, value);

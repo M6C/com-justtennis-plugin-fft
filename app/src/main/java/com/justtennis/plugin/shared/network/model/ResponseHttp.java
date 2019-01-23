@@ -1,5 +1,6 @@
 package com.justtennis.plugin.shared.network.model;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,7 +10,7 @@ public class ResponseHttp {
     public List<ResponseElement> header = new ArrayList<>();
     public List<ResponseElement> headerCookie = new ArrayList<>();
     public String body;
-    public byte[] raw;
+    public InputStream raw;
 
 
     public String getHeader(String name) {

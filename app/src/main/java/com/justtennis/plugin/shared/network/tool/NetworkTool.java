@@ -102,12 +102,13 @@ public class NetworkTool {
         ret.statusCode = response.code();
         try {
             if (response.body() != null) {
-                if ("application/octet-stream".equals(response.header("Content-Type"))) {
-                    ret.raw = response.body().bytes();
+                String contentType = response.header("Content-Type");
+                if ("application/octet-stream".equals(contentType) || "audio/mpeg3".equals(contentType)) {
+                    ret.raw = response.body().byteStream();
                 } else{
                     ret.body = response.body().string();
+                    response.body().close();
                 }
-                response.body().close();
             }
         } catch (IOException e) {
             logMe(e);

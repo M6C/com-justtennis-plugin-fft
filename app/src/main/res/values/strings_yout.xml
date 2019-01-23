@@ -8,4 +8,6 @@
     <string name="yout_msg_nothing_found">Nothing found</string>
     <string name="yout_desc_publication_message">Publication Message</string>
     <string name="yout_desc_publication_date">Publication Date</string>
+    <string name="yout_waiting_video">Waiting…</string>
+    <string name="yout_downloading_video">Downloading…</string>
 </resources>
