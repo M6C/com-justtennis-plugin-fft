@@ -9,6 +9,7 @@ public class ResponseHttp {
     public List<ResponseElement> header = new ArrayList<>();
     public List<ResponseElement> headerCookie = new ArrayList<>();
     public String body;
+    public byte[] raw;
 
 
     public String getHeader(String name) {

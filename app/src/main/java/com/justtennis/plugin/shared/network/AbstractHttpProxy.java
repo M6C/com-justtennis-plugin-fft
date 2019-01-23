@@ -89,7 +89,8 @@ public class AbstractHttpProxy implements IProxy {
     void logResponse(String TAG, ResponseHttp ret, String hearder) {
         System.out.println(hearder +
                 "\r\n"+TAG+" - Status Code = " + ret.statusCode +
-                "\r\n"+TAG+" - Response = " + (doLogBody ? ret.body : "Disabled - doLogBody=false - length:" + ret.body.length())+
+                "\r\n"+TAG+" - Response Body = " + (doLogBody ? ret.body : "Disabled - doLogBody=false - length:" + (ret.body == null ? 0 : ret.body.length()))+
+                "\r\n"+TAG+" - Response Raw length:" + (ret.raw == null ? 0 : ret.raw.length)+
                 "\r\n"+TAG+" - Response Length = " + (ret.body != null ? ret.body.length() : 0) +
                 "\r\n"+TAG+" - Response Header = " + (ret.header != null ? ret.header.size() : 0)
         );

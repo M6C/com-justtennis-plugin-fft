@@ -102,7 +102,11 @@ public class NetworkTool {
         ret.statusCode = response.code();
         try {
             if (response.body() != null) {
-                ret.body = response.body().string();
+                if ("application/octet-stream".equals(response.header("Content-Type"))) {
+                    ret.raw = response.body().bytes();
+                } else{
+                    ret.body = response.body().string();
+                }
                 response.body().close();
             }
         } catch (IOException e) {
