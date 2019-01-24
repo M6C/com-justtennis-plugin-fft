@@ -13,25 +13,30 @@ import com.justtennis.plugin.shared.adapter.RecyclerViewAdapter;
 import com.justtennis.plugin.shared.adapter.RecyclerViewHolder;
 import com.justtennis.plugin.shared.interfaces.interfaces.OnListFragmentInteractionListener;
 import com.justtennis.plugin.yout.dto.VideoDto;
-import com.justtennis.plugin.yout.enums.MEDIA_TYPE;
 import com.justtennis.plugin.yout.viewholder.VideoViewHolder;
 
 import java.util.function.Consumer;
 
 public class YoutFindVideoListAdapter extends RecyclerViewAdapter<VideoDto, RecyclerViewHolder<VideoDto>> {
 
+    private final OnListFragmentInteractionListener longClickListener;
+    private OnListFragmentInteractionListener checkListener;
     private OnListFragmentInteractionListener mListener;
 
     private boolean showCheck;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public YoutFindVideoListAdapter(@Nullable Consumer<VideoDto> listener) {
+    public YoutFindVideoListAdapter(@Nullable Consumer<VideoDto> listener, OnListFragmentInteractionListener longClickListener, OnListFragmentInteractionListener checkListener) {
         super(listener);
+        this.longClickListener = longClickListener;
+        this.checkListener = checkListener;
     }
 
-    public YoutFindVideoListAdapter(OnListFragmentInteractionListener listener) {
+    public YoutFindVideoListAdapter(OnListFragmentInteractionListener listener, OnListFragmentInteractionListener longClickListener, OnListFragmentInteractionListener checkListener) {
         super(null);
         mListener = listener;
+        this.longClickListener = longClickListener;
+        this.checkListener = checkListener;
     }
 
     @Override
@@ -64,21 +69,12 @@ public class YoutFindVideoListAdapter extends RecyclerViewAdapter<VideoDto, Recy
         }
 
         view.setLongClickable(true);
-        view.setOnLongClickListener((View v) -> {
-            setShowCheck(!isShowCheck());
-            if (isShowCheck()) {
-                VideoDto dto = (VideoDto) v.getTag();
-                dto.checked = MEDIA_TYPE.VIDEO == dto.type;
-            } else {
-                for(VideoDto dto : getList()) {
-                    dto.checked = false;
-                }
-            }
-            notifyDataSetChanged();
+        view.setOnLongClickListener(v -> {
+            longClickListener.onListFragmentInteraction(view.getTag());
             return true;
         });
 
-        return new VideoViewHolder(view, this);
+        return new VideoViewHolder(view, this, checkListener);
     }
 
     public boolean isShowCheck() {

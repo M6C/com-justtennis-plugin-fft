@@ -13,7 +13,9 @@ public class VideoContent {
         List<VideoDto> ret = new ArrayList<>();
         long i=1;
         for(YoutFindVideoResponse.VideoItem item : list) {
-            ret.add(createDto(item));
+            if (item.url != null && !item.url.isEmpty()) {
+                ret.add(createDto(item));
+            }
         }
         return ret;
     }

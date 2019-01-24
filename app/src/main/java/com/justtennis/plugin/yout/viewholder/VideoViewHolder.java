@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import com.justtennis.plugin.fft.R;
 import com.justtennis.plugin.shared.adapter.RecyclerViewHolder;
+import com.justtennis.plugin.shared.interfaces.interfaces.OnListFragmentInteractionListener;
 import com.justtennis.plugin.yout.adapter.YoutFindVideoListAdapter;
 import com.justtennis.plugin.yout.dto.VideoDto;
 import com.justtennis.plugin.yout.enums.MEDIA_TYPE;
@@ -23,8 +24,9 @@ public class VideoViewHolder extends RecyclerViewHolder<VideoDto> {
     private final TextView mProgressTv;
     private final View mView;
     private final YoutFindVideoListAdapter adapter;
+    private OnListFragmentInteractionListener checkListener;
 
-    public VideoViewHolder(View view, YoutFindVideoListAdapter adapter) {
+    public VideoViewHolder(View view, YoutFindVideoListAdapter adapter, OnListFragmentInteractionListener checkListener) {
         super(view);
         mMessage= view.findViewById(R.id.publication_message);
         mDate = view.findViewById(R.id.publication_date);
@@ -35,6 +37,7 @@ public class VideoViewHolder extends RecyclerViewHolder<VideoDto> {
         mCheck = view.findViewById(R.id.check);
         this.mView = view;
         this.adapter = adapter;
+        this.checkListener = checkListener;
     }
 
     @Override
@@ -57,22 +60,27 @@ public class VideoViewHolder extends RecyclerViewHolder<VideoDto> {
                     .load(R.drawable.ic_playlist)
                     .fit()
                     .into(mImageView);
+            mCheck.setOnCheckedChangeListener(null);
         } else if (dto.type == MEDIA_TYPE.CHANNEL) {
             enableCheck(false);
             Picasso.get()
                     .load(R.drawable.ic_channel)
                     .fit()
                     .into(mImageView);
-        } else if (dto.thumbnails.size() > 0) {
+            mCheck.setOnCheckedChangeListener(null);
+        } else if (!dto.thumbnails.isEmpty()) {
             enableCheck(true);
             Picasso.get()
                     .load(dto.thumbnails.get(0))
                     .fit()
                     .centerCrop()
                     .into(mImageView);
-        }
 
-        mCheck.setOnCheckedChangeListener((buttonView, isChecked) -> dto.checked = isChecked);
+            mCheck.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                dto.checked = isChecked;
+                checkListener.onListFragmentInteraction(dto);
+            });
+        }
     }
 
     public void check() {

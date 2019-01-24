@@ -22,15 +22,25 @@ public class FileUtil {
 //            String expectedFilePath = "/storage/emulated/0/Download";
             String expectedFilePath = resource.getFile();
             File expected = new File(expectedFilePath, filename);
-            System.err.println("==========> writeResourceFile:" + expected.getAbsolutePath());
-            PrintWriter pw = null;
-            try {
-                pw = new PrintWriter(expected);
-                pw.print(text);
-            } finally {
-                if (pw != null) {
-                    pw.close();
-                }
+            writeResourceFile(classLoader, text, expected);
+        }
+    }
+
+    public static void writeDownloadFile(ClassLoader classLoader, @NonNull String text, String filename) throws FileNotFoundException {
+        File expectedFilePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        File expected = new File(expectedFilePath, filename);
+        writeResourceFile(classLoader, text, expected);
+    }
+
+    public static void writeResourceFile(ClassLoader classLoader, @NonNull String text, File expected) throws FileNotFoundException {
+        System.err.println("==========> writeResourceFile:" + expected.getAbsolutePath());
+        PrintWriter pw = null;
+        try {
+            pw = new PrintWriter(expected);
+            pw.print(text);
+        } finally {
+            if (pw != null) {
+                pw.close();
             }
         }
     }

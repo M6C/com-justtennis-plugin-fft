@@ -52,24 +52,61 @@ public class YouTServiceFindVideo extends AbstractYouTService {
         return doPostConnected(URL_ROOT, "/results", data, form);
     }
 
+    public ResponseHttp gotoUrl(ResponseHttp form, String url) throws NotConnectedException {
+        return doGetConnected(URL_ROOT, url, form);
+    }
+
     public YoutFindVideoResponse getFind(ResponseHttp findResponseHttp) {
+        Object[] pathNode = new Object[] {
+                "contents",new String[]{"twoColumnSearchResultsRenderer","twoColumnBrowseResultsRenderer"},"primaryContents","sectionListRenderer","contents",
+                0,
+                "itemSectionRenderer", "contents"
+        };
+
+        Object[] contentRenderer = new Object[]{"videoRenderer","channelRenderer","playlistRenderer"};
+
+        return commonFindPlaylist(findResponseHttp, pathNode, contentRenderer);
+    }
+
+    public YoutFindVideoResponse getFindPlaylist(ResponseHttp findResponseHttp) {
+//        Object[] pathNode = new Object[] {
+//                "contents","twoColumnWatchNextResults","secondaryResults","secondaryResults","results"
+//        };
+//        String[] contentRenderer = new String[]{"compactVideoRenderer"};
+        Object[] pathNode = new Object[] {
+                "contents","twoColumnWatchNextResults","playlist","playlist","contents"
+        };
+
+        Object[] contentRenderer = new Object[]{"playlistPanelVideoRenderer"};
+
+        return commonFindPlaylist(findResponseHttp, pathNode, contentRenderer);
+    }
+
+    public YoutFindVideoResponse getFindChannel(ResponseHttp findResponseHttp) {
+        Object[] pathNode = new Object[] {
+                "contents","twoColumnBrowseResultsRenderer","tabs",0,"tabRenderer","contents","sectionListRenderer","contents"
+        };
+
+        Object[] contentRenderer = new Object[]{"itemSectionRenderer","contents",0,"shelfRenderer"};
+
+        Object[] contentRendererTitle = new Object[]{"title","runs",0,"text"};
+        Object[] contentRendererItems = new Object[]{"content","horizontalListRenderer","items"};
+        Object[] contentRendererItemsRenderer = new Object[]{"gridVideoRenderer"};
+
+        return commonFindPlaylist(findResponseHttp, pathNode, contentRenderer);
+    }
+
+    private YoutFindVideoResponse commonFindPlaylist(ResponseHttp findResponseHttp, Object[] pathNode, Object[] contentRenderer) {
         YoutFindVideoResponse ret = new YoutFindVideoResponse();
         String jsonString = parseRegexData(findResponseHttp.body);
         JsonElement root = new JsonParser().parse(jsonString);
 
-        Object[] pathNode = new Object[] {
-            "contents",new String[]{"twoColumnSearchResultsRenderer","twoColumnBrowseResultsRenderer"},"primaryContents","sectionListRenderer","contents",
-            0,
-            "itemSectionRenderer", "contents"
-        };
-
-        String[] contentRenderer = new String[]{"videoRenderer","channelRenderer","playlistRenderer"};
         JsonElement elem = parseJsonNode(root, pathNode);
         if (elem != null) {
             for (JsonElement e : elem.getAsJsonArray()) {
                 YoutFindVideoResponse.VideoItem video = new YoutFindVideoResponse.VideoItem();
-                for(String renderer : contentRenderer) {
-                    JsonElement videoRenderer = e.getAsJsonObject().get(renderer);
+                for(Object renderer : contentRenderer) {
+                    JsonElement videoRenderer = getNode(e, renderer);
                     if (videoRenderer != null) {
                         System.out.println("---------->renderer:"+renderer);
                         parseVideo(video, videoRenderer);
@@ -144,23 +181,29 @@ public class YouTServiceFindVideo extends AbstractYouTService {
         }
         JsonElement ret = root;
         for(Object node : pathNode) {
-            if (node instanceof Integer) {
-                ret = ret.getAsJsonArray().get((Integer) node);
-            } else if (node instanceof String[]) {
-                JsonElement r = ret;
-                for(String n : (String[])node) {
-                    ret = r.getAsJsonObject().get(n);
-                    if (ret != null) {
-                        break;
-                    }
+            ret = getNode(ret, node);
+            if (ret == null) break;
+        }
+        return ret;
+    }
+
+    private JsonElement getNode(JsonElement ret, Object node) {
+        if (node instanceof Integer) {
+            ret = ret.getAsJsonArray().get((Integer) node);
+        } else if (node instanceof String[]) {
+            JsonElement r = ret;
+            for(String n : (String[])node) {
+                ret = r.getAsJsonObject().get(n);
+                if (ret != null) {
+                    break;
                 }
-            } else {
-                ret = ret.getAsJsonObject().get(node.toString());
             }
-            if (ret == null) {
-                System.out.println("parseJsonNode node:'"+node+"' not found.");
-                break;
-            }
+        } else {
+            ret = ret.getAsJsonObject().get(node.toString());
+        }
+        if (ret == null) {
+            System.out.println("parseJsonNode node:'"+node+"' not found.");
+            return null;
         }
         return ret;
     }

@@ -75,4 +75,31 @@ public class YouTServiceFindVideoTest extends AbstractYouTServiceTest {
             assertTrue(item.thumbnails.size() > 0);
         }
     }
+
+    @Test
+    public void testGotoUrlPlaylist() throws NotConnectedException {
+        ResponseHttp form = doLogin();
+
+        ResponseHttp formRedirect = youTServiceFindVideo.gotoUrl(form, "/watch?v=pAgnJDJN4VA&start_radio=1&list=RDEMDs8vWIQKMflBG8QUQQaUrw");
+        checkGotoUrl(formRedirect);
+    }
+
+    @Test
+    public void testGotoUrlChannel() throws NotConnectedException {
+        ResponseHttp form = doLogin();
+
+        ResponseHttp formRedirect = youTServiceFindVideo.gotoUrl(form, "/user/acdc");
+        checkGotoUrl(formRedirect);
+    }
+
+    private void checkGotoUrl(ResponseHttp formRedirect) {
+        writeResourceFile(formRedirect.body, "YouTServiceFindVideoTest_testGotoUrl.html");
+        assertNotNull(formRedirect);
+        assertNotNull(formRedirect.body);
+        assertEquals(200, formRedirect.statusCode);
+
+        YoutFindVideoResponse findResponse = youTServiceFindVideo.getFindPlaylist(formRedirect);
+        assertNotNull(findResponse);
+        assertTrue(findResponse.videoList.size() > 0);
+    }
 }
