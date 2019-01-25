@@ -38,11 +38,13 @@ public class EasyYouTMp3Service extends AbstractEasyYouTMp3Service {
     public String downloadLink(GenericResponse findResponse, String title) {
         for(GenericResponse.Item item : findResponse.data) {
             for(String link : item.itemValue.values()) {
-                ResponseHttp resp = doGet(link);
-                try {
-                    return FileUtil.writeBinaryFile(getClass().getClassLoader(), resp.raw, title);
-                } catch (IOException e) {
-                    logMe(e);
+                if (link != null) {
+                    ResponseHttp resp = doGet(link);
+                    try {
+                        return FileUtil.writeBinaryFile(getClass().getClassLoader(), resp.raw, title);
+                    } catch (IOException e) {
+                        logMe(e);
+                    }
                 }
             }
         }

@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.READ_PROFILE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:allowBackup="true"
@@ -44,6 +45,15 @@
                 <data android:host="www.youtube.com" android:mimeType="text/*" />
             </intent-filter>
         </activity>>
+
+        <!--
+                    Because android:exported is set to "false",
+                    the service is only available to this app.
+                -->
+        <service
+            android:name="com.justtennis.plugin.yout.component.service.DownloadComponentService"
+            android:exported="false"/>
+
     </application>
 
 </manifest>

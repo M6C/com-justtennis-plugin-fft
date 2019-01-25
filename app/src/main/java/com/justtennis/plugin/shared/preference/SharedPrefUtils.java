@@ -19,9 +19,13 @@ final public class SharedPrefUtils {
      */
     public static String getStringPreference(Context context, String key) {
         String value = null;
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        if (preferences != null) {
-            value = preferences.getString(key, null);
+        try {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            if (preferences != null) {
+                value = preferences.getString(key, null);
+            }
+        } catch (RuntimeException ex) {
+            ex.printStackTrace();
         }
         return value;
     }
@@ -35,11 +39,15 @@ final public class SharedPrefUtils {
      * @return true if the new value was successfully written to persistent storage.
      */
     public static boolean setStringPreference(Context context, String key, String value) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        if (preferences != null && !TextUtils.isEmpty(key)) {
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putString(key, value);
-            return editor.commit();
+        try {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            if (preferences != null && !TextUtils.isEmpty(key)) {
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putString(key, value);
+                return editor.commit();
+            }
+        } catch (RuntimeException ex) {
+            ex.printStackTrace();
         }
         return false;
     }
@@ -54,9 +62,13 @@ final public class SharedPrefUtils {
      */
     public static float getFloatPreference(Context context, String key, float defaultValue) {
         float value = defaultValue;
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        if (preferences != null) {
-            value = preferences.getFloat(key, defaultValue);
+        try {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            if (preferences != null) {
+                value = preferences.getFloat(key, defaultValue);
+            }
+        } catch (RuntimeException ex) {
+            ex.printStackTrace();
         }
         return value;
     }
@@ -70,11 +82,15 @@ final public class SharedPrefUtils {
      * @return true if the new value was successfully written to persistent storage.
      */
     public static boolean setFloatPreference(Context context, String key, float value) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        if (preferences != null) {
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putFloat(key, value);
-            return editor.commit();
+        try {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            if (preferences != null) {
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putFloat(key, value);
+                return editor.commit();
+            }
+        } catch (RuntimeException ex) {
+            ex.printStackTrace();
         }
         return false;
     }
@@ -89,9 +105,13 @@ final public class SharedPrefUtils {
      */
     public static long getLongPreference(Context context, String key, long defaultValue) {
         long value = defaultValue;
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        if (preferences != null) {
-            value = preferences.getLong(key, defaultValue);
+        try {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            if (preferences != null) {
+                value = preferences.getLong(key, defaultValue);
+            }
+        } catch (RuntimeException ex) {
+            ex.printStackTrace();
         }
         return value;
     }
@@ -105,11 +125,15 @@ final public class SharedPrefUtils {
      * @return true if the new value was successfully written to persistent storage.
      */
     public static boolean setLongPreference(Context context, String key, long value) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        if (preferences != null) {
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putLong(key, value);
-            return editor.commit();
+        try {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            if (preferences != null) {
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putLong(key, value);
+                return editor.commit();
+            }
+        } catch (RuntimeException ex) {
+            ex.printStackTrace();
         }
         return false;
     }
@@ -124,9 +148,13 @@ final public class SharedPrefUtils {
      */
     public static int getIntegerPreference(Context context, String key, int defaultValue) {
         int value = defaultValue;
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        if (preferences != null) {
-            value = preferences.getInt(key, defaultValue);
+        try {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            if (preferences != null) {
+                value = preferences.getInt(key, defaultValue);
+            }
+        } catch (RuntimeException ex) {
+            ex.printStackTrace();
         }
         return value;
     }
@@ -140,11 +168,15 @@ final public class SharedPrefUtils {
      * @return true if the new value was successfully written to persistent storage.
      */
     public static boolean setIntegerPreference(Context context, String key, int value) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        if (preferences != null) {
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putInt(key, value);
-            return editor.commit();
+        try {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            if (preferences != null) {
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putInt(key, value);
+                return editor.commit();
+            }
+        } catch (RuntimeException ex) {
+            ex.printStackTrace();
         }
         return false;
     }
@@ -159,9 +191,13 @@ final public class SharedPrefUtils {
      */
     public static boolean getBooleanPreference(Context context, String key, boolean defaultValue) {
         boolean value = defaultValue;
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        if (preferences != null) {
-            value = preferences.getBoolean(key, defaultValue);
+        try {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            if (preferences != null) {
+                value = preferences.getBoolean(key, defaultValue);
+            }
+        } catch (RuntimeException ex) {
+            ex.printStackTrace();
         }
         return value;
     }
@@ -175,11 +211,15 @@ final public class SharedPrefUtils {
      * @return true if the new value was successfully written to persistent storage.
      */
     public static boolean setBooleanPreference(Context context, String key, boolean value) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        if (preferences != null) {
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putBoolean(key, value);
-            return editor.commit();
+        try {
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+            if (preferences != null) {
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putBoolean(key, value);
+                return editor.commit();
+            }
+        } catch (RuntimeException ex) {
+            ex.printStackTrace();
         }
         return false;
     }

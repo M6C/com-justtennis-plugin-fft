@@ -34,7 +34,7 @@ public class VideoDto implements Serializable {
     public STATUS_DOWNLOAD downloadStatus = STATUS_DOWNLOAD.NO;
     public String downloadPath;
 
-    public VideoViewHolder viewHolder;
+    public transient VideoViewHolder viewHolder;
 
     public VideoDto(String id, String url, String title, String subTitle, String length, String publishedTime, MEDIA_TYPE type) {
         this.id = id;
