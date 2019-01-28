@@ -3,6 +3,7 @@ package com.justtennis.plugin.shared.tool;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -12,6 +13,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.URL;
+
+import okio.BufferedSink;
+import okio.BufferedSource;
+import okio.Okio;
+import okio.Source;
 
 public class FileUtil {
     private FileUtil() {}
@@ -45,23 +51,41 @@ public class FileUtil {
         }
     }
 
-    public static String writeBinaryFile(ClassLoader classLoader, @NonNull InputStream in, String filename) throws IOException {
+    public static String writeBinaryFile(ClassLoader classLoader, @NonNull BufferedSource in, String filename) throws IOException {
+//        URL resource = classLoader.getResource(".");
+//        String expectedFilePath = resource.getFile();
         File expectedFilePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
         File expected = new File(expectedFilePath, filename);
 
+        BufferedSink sink = Okio.buffer(Okio.sink(expected));
+        sink.writeAll(in);
+        sink.close();
+
+        return expected.getAbsolutePath();
+    }
+
+    public static String writeBinaryFile(ClassLoader classLoader, @NonNull InputStream in, String filename) throws IOException {
+//        URL resource = classLoader.getResource(".");
+//        String expectedFilePath = resource.getFile();
+        File expectedFilePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        File expected = new File(expectedFilePath, filename);
+
+        InputStream bis = null;
         OutputStream out = null;
-        byte[] buffer = new byte[16384];
+        int bufferSize = 16384;
+        byte[] buffer = new byte[bufferSize];
 
         try {
-            out = new BufferedOutputStream(new FileOutputStream(expected));
+            bis = new BufferedInputStream(in);
+            out = new BufferedOutputStream(new FileOutputStream(expected), bufferSize);
 
-            while((in.read(buffer)) != -1)
-                out.write(buffer);
+            while((bis.read(buffer, 0, bufferSize)) != -1)
+                out.write(buffer,0, bufferSize);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            if(in != null){
-                in.close();
+            if (bis != null) {
+                bis.close();
             }
             if(out != null){
                 out.flush();

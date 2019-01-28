@@ -44,7 +44,6 @@
                     android:gravity="top"
                     android:inputType="textCapSentences"
                     android:padding="5dp"
-                    android:text="In flames live trust playlist"
                     android:background="@drawable/fb_message_background"/>
 
                 </LinearLayout>

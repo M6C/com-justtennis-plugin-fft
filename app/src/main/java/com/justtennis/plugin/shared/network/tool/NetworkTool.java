@@ -104,7 +104,7 @@ public class NetworkTool {
             if (response.body() != null) {
                 String contentType = response.header("Content-Type");
                 if ("application/octet-stream".equals(contentType) || "audio/mpeg3".equals(contentType)) {
-                    ret.raw = response.body().byteStream();
+                    ret.raw = response.body().source();
                 } else{
                     ret.body = response.body().string();
                     response.body().close();

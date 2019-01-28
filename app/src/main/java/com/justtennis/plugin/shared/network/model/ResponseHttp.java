@@ -1,8 +1,9 @@
 package com.justtennis.plugin.shared.network.model;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import okio.BufferedSource;
 
 public class ResponseHttp {
 
@@ -10,7 +11,7 @@ public class ResponseHttp {
     public List<ResponseElement> header = new ArrayList<>();
     public List<ResponseElement> headerCookie = new ArrayList<>();
     public String body;
-    public InputStream raw;
+    public BufferedSource raw;
 
 
     public String getHeader(String name) {

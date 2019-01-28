@@ -169,10 +169,16 @@ public class YoutFindVideoFragment extends AppFragment {
         publicationListAdapter.setShowCheck(!publicationListAdapter.isShowCheck());
         if (publicationListAdapter.isShowCheck()) {
             dto.checked = MEDIA_TYPE.VIDEO == dto.type;
+            if (dto.checked) {
+                countCheckedRow++;
+                updButtonStat();
+            }
         } else {
             for(VideoDto d : publicationListAdapter.getList()) {
                 d.checked = false;
             }
+            countCheckedRow=0;
+            updButtonStat();
         }
         publicationListAdapter.notifyDataSetChanged();
         return true;
