@@ -21,22 +21,25 @@ public class YoutFindVideoListAdapter extends RecyclerViewAdapter<VideoDto, Recy
 
     private final OnListFragmentInteractionListener longClickListener;
     private OnListFragmentInteractionListener checkListener;
+    private OnListFragmentInteractionListener checkLongClickListener;
     private OnListFragmentInteractionListener mListener;
 
     private boolean showCheck;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public YoutFindVideoListAdapter(@Nullable Consumer<VideoDto> listener, OnListFragmentInteractionListener longClickListener, OnListFragmentInteractionListener checkListener) {
+    public YoutFindVideoListAdapter(@Nullable Consumer<VideoDto> listener, OnListFragmentInteractionListener longClickListener, OnListFragmentInteractionListener checkListener, OnListFragmentInteractionListener checkLongClickListener) {
         super(listener);
         this.longClickListener = longClickListener;
         this.checkListener = checkListener;
+        this.checkLongClickListener = checkLongClickListener;
     }
 
-    public YoutFindVideoListAdapter(OnListFragmentInteractionListener listener, OnListFragmentInteractionListener longClickListener, OnListFragmentInteractionListener checkListener) {
+    public YoutFindVideoListAdapter(OnListFragmentInteractionListener listener, OnListFragmentInteractionListener longClickListener, OnListFragmentInteractionListener checkListener, OnListFragmentInteractionListener checkLongClickListener) {
         super(null);
         mListener = listener;
         this.longClickListener = longClickListener;
         this.checkListener = checkListener;
+        this.checkLongClickListener = checkLongClickListener;
     }
 
     @Override
@@ -74,7 +77,7 @@ public class YoutFindVideoListAdapter extends RecyclerViewAdapter<VideoDto, Recy
             return true;
         });
 
-        return new VideoViewHolder(view, this, checkListener);
+        return new VideoViewHolder(view, this, checkListener, checkLongClickListener);
     }
 
     public boolean isShowCheck() {

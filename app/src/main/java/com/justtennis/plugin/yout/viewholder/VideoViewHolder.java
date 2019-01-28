@@ -25,8 +25,9 @@ public class VideoViewHolder extends RecyclerViewHolder<VideoDto> {
     private final View mView;
     private final YoutFindVideoListAdapter adapter;
     private OnListFragmentInteractionListener checkListener;
+    private OnListFragmentInteractionListener checkLongClickListener;
 
-    public VideoViewHolder(View view, YoutFindVideoListAdapter adapter, OnListFragmentInteractionListener checkListener) {
+    public VideoViewHolder(View view, YoutFindVideoListAdapter adapter, OnListFragmentInteractionListener checkListener, OnListFragmentInteractionListener checkLongClickListener) {
         super(view);
         mMessage= view.findViewById(R.id.publication_message);
         mDate = view.findViewById(R.id.publication_date);
@@ -38,6 +39,7 @@ public class VideoViewHolder extends RecyclerViewHolder<VideoDto> {
         this.mView = view;
         this.adapter = adapter;
         this.checkListener = checkListener;
+        this.checkLongClickListener = checkLongClickListener;
     }
 
     @Override
@@ -51,6 +53,7 @@ public class VideoViewHolder extends RecyclerViewHolder<VideoDto> {
         mDate.setVisibility(dto.type == MEDIA_TYPE.VIDEO ? View.VISIBLE : View.INVISIBLE);
         mLength.setText(dto.length);
         mProgress.setVisibility(View.GONE);
+
         mCheck.setVisibility(adapter.isShowCheck() ? View.VISIBLE : View.GONE);
         check(dto.checked);
 
@@ -79,6 +82,10 @@ public class VideoViewHolder extends RecyclerViewHolder<VideoDto> {
             mCheck.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 dto.checked = isChecked;
                 checkListener.onListFragmentInteraction(dto);
+            });
+            mCheck.setOnLongClickListener(v -> {
+                checkLongClickListener.onListFragmentInteraction(dto);
+                return true;
             });
         }
     }

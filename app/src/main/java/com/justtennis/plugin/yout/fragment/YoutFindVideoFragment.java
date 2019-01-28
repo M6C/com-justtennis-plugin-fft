@@ -105,9 +105,9 @@ public class YoutFindVideoFragment extends AppFragment {
 
     private void initializePublicationList() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            publicationListAdapter = new YoutFindVideoListAdapter(this::updPublicationMessage, item -> onLongClickRow((VideoDto)item), item -> onCheckRow((VideoDto)item));
+            publicationListAdapter = new YoutFindVideoListAdapter(this::updPublicationMessage, item -> onLongClickRow((VideoDto)item), item -> onCheckRow((VideoDto)item), item -> onCheckLongClick((VideoDto)item));
         } else {
-            publicationListAdapter = new YoutFindVideoListAdapter((OnListFragmentInteractionListener) item -> updPublicationMessage((VideoDto)item), item -> onLongClickRow((VideoDto)item), item -> onCheckRow((VideoDto)item));
+            publicationListAdapter = new YoutFindVideoListAdapter((OnListFragmentInteractionListener) item -> updPublicationMessage((VideoDto)item), item -> onLongClickRow((VideoDto)item), item -> onCheckRow((VideoDto)item), item -> onCheckLongClick((VideoDto)item));
         }
         publicationListAdapter.setList(listDto);
         binding.publicationList.setAdapter(publicationListAdapter);
@@ -174,7 +174,7 @@ public class YoutFindVideoFragment extends AppFragment {
                 updButtonStat();
             }
         } else {
-            for(VideoDto d : publicationListAdapter.getList()) {
+            for(VideoDto d : listDto) {
                 d.checked = false;
             }
             countCheckedRow=0;
@@ -187,6 +187,16 @@ public class YoutFindVideoFragment extends AppFragment {
     private boolean onCheckRow(VideoDto dto) {
         countCheckedRow += dto.checked ? 1 : -1;
         updButtonStat();
+        return true;
+    }
+
+    private boolean onCheckLongClick(VideoDto dto) {
+        for(VideoDto d : listDto) {
+            d.checked = dto.checked;
+        }
+        countCheckedRow = dto.checked ? listDto.size() : 0;
+        updButtonStat();
+        publicationListAdapter.notifyDataSetChanged();
         return true;
     }
 
