@@ -3,8 +3,13 @@ package com.justtennis.plugin.yout.component.service;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v4.app.JobIntentService;
 
@@ -15,8 +20,10 @@ import com.justtennis.plugin.generic.query.response.GenericResponse;
 import com.justtennis.plugin.shared.network.model.ResponseHttp;
 import com.justtennis.plugin.yout.dto.VideoDto;
 
+import java.io.File;
 import java.io.Serializable;
 import java.text.MessageFormat;
+import java.util.Calendar;
 import java.util.List;
 
 public class DownloadComponentService extends JobIntentService {
@@ -39,7 +46,7 @@ public class DownloadComponentService extends JobIntentService {
     protected void onHandleWork(@NonNull Intent intent) {
         // Gets data from the incoming Intent
         Serializable data = intent.getSerializableExtra(PARAM_LIST_DTO);
-        if (data != null && data instanceof List<?>) {
+        if (data instanceof List<?>) {
             List<VideoDto> listDto = (List<VideoDto>) data;
 
             int cnt = 0;
@@ -47,13 +54,20 @@ public class DownloadComponentService extends JobIntentService {
                 cnt += dto.checked ? 1 : 0;
             }
 
+            if (cnt==0) {
+                return;
+            }
+
             int i = 1;
+            int id = (int) Calendar.getInstance().getTimeInMillis();
+            VideoDto dto2 = null;
             for(VideoDto dto : listDto) {
                 if (dto.checked) {
+                    dto2 = dto;
                     boolean success = false;
-                    int id = 0;
                     dto.downloadStatus = VideoDto.STATUS_DOWNLOAD.DOWNLOADING;
-                    notifyProgress(id, getString(R.string.app_name), MessageFormat.format(getString(R.string.yout_notification_downloading), i++, cnt, dto.title));
+                    String message = cnt > 1 ? MessageFormat.format(getString(R.string.yout_notification_downloading_multi), i++, cnt, dto.title) : MessageFormat.format(getString(R.string.yout_notification_downloading), dto.title);
+                    notifyProgress(id, getString(R.string.app_name), message, createIntentVlc(id+1,dto.title + ".mp3"));
                     try {
                         this.publishProgress("Info - Navigate to Video '" + dto.title + "'");
                         ResponseHttp response = service.navigateToVideo(dto.id);
@@ -65,6 +79,7 @@ public class DownloadComponentService extends JobIntentService {
                             if (find != null) {
                                 dto.downloadPath = service.downloadLink(find, dto.title + ".mp3");
                                 this.publishProgress("Successfull - Download '" + dto.title + "'");
+                                success = true;
                             } else {
                                 this.publishProgress("Failed - Parsing Video '" + dto.title + "'");
                             }
@@ -78,7 +93,7 @@ public class DownloadComponentService extends JobIntentService {
                     }
                 }
             }
-            notifyProgress(0, getString(R.string.app_name), MessageFormat.format(getString(R.string.yout_notification_downloading_finished), cnt));
+            notifyProgress(id, getString(R.string.app_name), MessageFormat.format(getString(R.string.yout_notification_downloading_finished), cnt), createIntentVlc(id+1,dto2.title + ".mp3"));
         }
     }
 
@@ -99,37 +114,27 @@ public class DownloadComponentService extends JobIntentService {
         notificationManager.cancel(id);
     }
 
-    private void notifyProgress(int id, String title, String subject) {
-        // prepare intent which is triggered if the
-        // notification is selected
-
+    private void notifyProgress(int id, String title, String subject, PendingIntent vlcIntent) {
         Intent intent = new Intent(this, MainActivity.class);
         intent.setAction(Intent.ACTION_MAIN);
         intent.addCategory(Intent.CATEGORY_LAUNCHER);
-//        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        File expectedFilePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-//        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-//        intent.addCategory(Intent.CATEGORY_OPENABLE);
-//        intent.setDataAndType(Uri.fromFile(expectedFilePath), "*/*");
-//        intent = Intent.createChooser(intent, "Select a File to Upload");
-//        Intent intent = new Intent("android.intent.action.OPEN_DOCUMENT");
-//        intent.setType("*/*");
-//        intent.setDataAndType(Uri.fromFile(expectedFilePath), "*/*");
 
         PendingIntent pIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         // build notification
         // the addAction re-use the same intent to keep the example short
-        Notification n = new Notification.Builder(this)
+        Notification.Builder nB = new Notification.Builder(this)
                 .setContentTitle(title)
                 .setContentText(subject)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setWhen(System.currentTimeMillis())
                 .setContentIntent(pIntent)
                 .setAutoCancel(true)
-                .addAction(R.drawable.ic_menu_camera, "Call", pIntent)
-                .addAction(R.drawable.ic_menu_share, "More", pIntent)
-                .addAction(R.drawable.ic_menu_send, "And more", pIntent).build();
+                ;
+        if (vlcIntent != null) {
+            nB.addAction(R.drawable.ic_menu_camera, "Vlc", vlcIntent);
+        }
+        Notification n = nB.build();
 
 
         NotificationManager notificationManager =
@@ -137,6 +142,35 @@ public class DownloadComponentService extends JobIntentService {
 
         assert notificationManager != null;
         notificationManager.notify(id, n);
+    }
+
+    private PendingIntent createIntentVlc(int id, String title) {
+        ApplicationInfo vlcInfo = null;
+        PackageManager packageManager = getPackageManager();
+        List<ApplicationInfo> list = packageManager.getInstalledApplications(PackageManager.GET_META_DATA);
+        for(ApplicationInfo info : list) {
+            System.out.println(info.toString());
+            if (info.packageName.equals("org.videolan.vlc")) {
+                vlcInfo = info;
+                break;
+            } else if (info.packageName.startsWith("org.videolan.vlc")) {
+                vlcInfo = info;
+            }
+        }
+        if (vlcInfo != null) {
+            System.err.println("Found : " + vlcInfo.toString());
+            File expectedFilePath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+            Uri uri = Uri.fromFile(new File(expectedFilePath, title));
+            Intent intent = packageManager.getLaunchIntentForPackage(vlcInfo.packageName);
+            intent.setComponent(new ComponentName(vlcInfo.packageName, vlcInfo.packageName+".gui.video.VideoPlayerActivity"));
+            // https://wiki.videolan.org/Android_Player_Intents/
+            intent.setDataAndTypeAndNormalize(uri, "audio/*");
+            intent.putExtra("title", title);
+            intent.putExtra("from_start", true);
+
+            return PendingIntent.getActivity(this, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        }
+        return null;
     }
 
     private EasyYouTMp3Service newEasyYouTMp3Service(Context context) {

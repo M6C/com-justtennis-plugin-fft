@@ -10,6 +10,7 @@
     <string name="yout_desc_publication_date">Publication Date</string>
     <string name="yout_waiting_video">Waiting…</string>
     <string name="yout_downloading_video">Downloading…</string>
-    <string name="yout_notification_downloading">{0}/{1} - {2}</string>
+    <string name="yout_notification_downloading">{0}</string>
+    <string name="yout_notification_downloading_multi">{0}/{1} - {2}</string>
     <string name="yout_notification_downloading_finished">{0} Download finished</string>
 </resources>
