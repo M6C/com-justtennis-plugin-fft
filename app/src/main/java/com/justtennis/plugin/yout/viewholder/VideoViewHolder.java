@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import com.justtennis.plugin.fft.R;
 import com.justtennis.plugin.shared.adapter.RecyclerViewHolder;
+import com.justtennis.plugin.shared.interfaces.interfaces.OnListFragmentCheckListener;
 import com.justtennis.plugin.shared.interfaces.interfaces.OnListFragmentInteractionListener;
 import com.justtennis.plugin.yout.adapter.YoutFindVideoListAdapter;
 import com.justtennis.plugin.yout.dto.VideoDto;
@@ -24,10 +25,10 @@ public class VideoViewHolder extends RecyclerViewHolder<VideoDto> {
     private final TextView mProgressTv;
     private final View mView;
     private final YoutFindVideoListAdapter adapter;
-    private OnListFragmentInteractionListener checkListener;
+    private OnListFragmentCheckListener checkListener;
     private OnListFragmentInteractionListener checkLongClickListener;
 
-    public VideoViewHolder(View view, YoutFindVideoListAdapter adapter, OnListFragmentInteractionListener checkListener, OnListFragmentInteractionListener checkLongClickListener) {
+    public VideoViewHolder(View view, YoutFindVideoListAdapter adapter, OnListFragmentCheckListener checkListener, OnListFragmentInteractionListener checkLongClickListener) {
         super(view);
         mMessage= view.findViewById(R.id.publication_message);
         mDate = view.findViewById(R.id.publication_date);
@@ -35,7 +36,7 @@ public class VideoViewHolder extends RecyclerViewHolder<VideoDto> {
         mProgress = view.findViewById(R.id.download_progress);
         mProgressTv = view.findViewById(R.id.progressTv);
         mImageView = view.findViewById(R.id.imageView);
-        mCheck = view.findViewById(R.id.check);
+        mCheck = view.findViewById(R.id.checkBox);
         this.mView = view;
         this.adapter = adapter;
         this.checkListener = checkListener;
@@ -54,6 +55,7 @@ public class VideoViewHolder extends RecyclerViewHolder<VideoDto> {
         mLength.setText(dto.length);
         mProgress.setVisibility(View.GONE);
 
+        mCheck.setTag(dto);
         mCheck.setVisibility(adapter.isShowCheck() ? View.VISIBLE : View.GONE);
         check(dto.checked);
 
@@ -80,11 +82,10 @@ public class VideoViewHolder extends RecyclerViewHolder<VideoDto> {
                     .into(mImageView);
 
             mCheck.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                dto.checked = isChecked;
-                checkListener.onListFragmentInteraction(dto);
+                checkListener.onListFragmentInteraction(buttonView.getTag(), isChecked);
             });
             mCheck.setOnLongClickListener(v -> {
-                checkLongClickListener.onListFragmentInteraction(dto);
+                checkLongClickListener.onListFragmentInteraction(mCheck.getTag());
                 return true;
             });
         }

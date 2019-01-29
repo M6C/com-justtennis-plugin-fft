@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import com.justtennis.plugin.fft.R;
 import com.justtennis.plugin.shared.adapter.RecyclerViewAdapter;
 import com.justtennis.plugin.shared.adapter.RecyclerViewHolder;
+import com.justtennis.plugin.shared.interfaces.interfaces.OnListFragmentCheckListener;
 import com.justtennis.plugin.shared.interfaces.interfaces.OnListFragmentInteractionListener;
 import com.justtennis.plugin.yout.dto.VideoDto;
 import com.justtennis.plugin.yout.viewholder.VideoViewHolder;
@@ -20,21 +21,21 @@ import java.util.function.Consumer;
 public class YoutFindVideoListAdapter extends RecyclerViewAdapter<VideoDto, RecyclerViewHolder<VideoDto>> {
 
     private final OnListFragmentInteractionListener longClickListener;
-    private OnListFragmentInteractionListener checkListener;
-    private OnListFragmentInteractionListener checkLongClickListener;
+    private final OnListFragmentCheckListener checkListener;
+    private final OnListFragmentInteractionListener checkLongClickListener;
     private OnListFragmentInteractionListener mListener;
 
     private boolean showCheck;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    public YoutFindVideoListAdapter(@Nullable Consumer<VideoDto> listener, OnListFragmentInteractionListener longClickListener, OnListFragmentInteractionListener checkListener, OnListFragmentInteractionListener checkLongClickListener) {
+    public YoutFindVideoListAdapter(@Nullable Consumer<VideoDto> listener, OnListFragmentInteractionListener longClickListener, OnListFragmentCheckListener checkListener, OnListFragmentInteractionListener checkLongClickListener) {
         super(listener);
         this.longClickListener = longClickListener;
         this.checkListener = checkListener;
         this.checkLongClickListener = checkLongClickListener;
     }
 
-    public YoutFindVideoListAdapter(OnListFragmentInteractionListener listener, OnListFragmentInteractionListener longClickListener, OnListFragmentInteractionListener checkListener, OnListFragmentInteractionListener checkLongClickListener) {
+    public YoutFindVideoListAdapter(OnListFragmentInteractionListener listener, OnListFragmentInteractionListener longClickListener, OnListFragmentCheckListener checkListener, OnListFragmentInteractionListener checkLongClickListener) {
         super(null);
         mListener = listener;
         this.longClickListener = longClickListener;

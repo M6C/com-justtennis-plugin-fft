@@ -19,6 +19,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.justtennis.plugin.common.MainActivity;
@@ -59,6 +60,7 @@ public class YoutFindVideoFragment extends AppFragment {
     private FragmentActivity activity;
     private LinearLayout llContent;
     private int countCheckedRow;
+    private TextView checkCount;
 
     public static Fragment newInstance() {
         return new YoutFindVideoFragment();
@@ -79,6 +81,7 @@ public class YoutFindVideoFragment extends AppFragment {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_yout_video_list, container, false);
         textView = binding.publicationMessage;
         llContent = binding.llContent;
+        checkCount = binding.checkCount;
         binding.setLoading(false);
 
         textView.setOnEditorActionListener((v, actionId, event) -> {
@@ -105,9 +108,9 @@ public class YoutFindVideoFragment extends AppFragment {
 
     private void initializePublicationList() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            publicationListAdapter = new YoutFindVideoListAdapter(this::updPublicationMessage, item -> onLongClickRow((VideoDto)item), item -> onCheckRow((VideoDto)item), item -> onCheckLongClick((VideoDto)item));
+            publicationListAdapter = new YoutFindVideoListAdapter(this::updPublicationMessage, item -> onLongClickRow((VideoDto)item), (item, isCheck) -> onCheckRow((VideoDto)item, isCheck), item -> onCheckLongClick((VideoDto)item));
         } else {
-            publicationListAdapter = new YoutFindVideoListAdapter((OnListFragmentInteractionListener) item -> updPublicationMessage((VideoDto)item), item -> onLongClickRow((VideoDto)item), item -> onCheckRow((VideoDto)item), item -> onCheckLongClick((VideoDto)item));
+            publicationListAdapter = new YoutFindVideoListAdapter((OnListFragmentInteractionListener) item -> updPublicationMessage((VideoDto)item), item -> onLongClickRow((VideoDto)item), (item, isCheck) -> onCheckRow((VideoDto)item, isCheck), item -> onCheckLongClick((VideoDto)item));
         }
         publicationListAdapter.setList(listDto);
         binding.publicationList.setAdapter(publicationListAdapter);
@@ -170,32 +173,41 @@ public class YoutFindVideoFragment extends AppFragment {
         if (publicationListAdapter.isShowCheck()) {
             dto.checked = MEDIA_TYPE.VIDEO == dto.type;
             if (dto.checked) {
-                countCheckedRow++;
-                updButtonStat();
+                setCountCheckedRow(1);
             }
         } else {
             for(VideoDto d : listDto) {
                 d.checked = false;
             }
-            countCheckedRow=0;
-            updButtonStat();
+            setCountCheckedRow(0);
         }
+        checkCount.setVisibility(publicationListAdapter.isShowCheck() ? View.VISIBLE : View.GONE);
         publicationListAdapter.notifyDataSetChanged();
         return true;
     }
 
-    private boolean onCheckRow(VideoDto dto) {
-        countCheckedRow += dto.checked ? 1 : -1;
-        updButtonStat();
+    private boolean onCheckRow(VideoDto dto, boolean isCheck) {
+        if (dto.checked != isCheck) {
+            dto.checked = isCheck;
+            incCountCheckedRow(dto.checked ? 1 : -1);
+        }
         return true;
     }
 
     private boolean onCheckLongClick(VideoDto dto) {
-        for(VideoDto d : listDto) {
-            d.checked = dto.checked;
+        boolean checked = dto.checked;
+        int cnt = 0;
+        if (checked) {
+            for (VideoDto d : listDto) {
+                d.checked = (MEDIA_TYPE.VIDEO == d.type);
+                cnt += (d.checked ? 1 : 0);
+            }
+        } else {
+            for (VideoDto d : listDto) {
+                d.checked = false;
+            }
         }
-        countCheckedRow = dto.checked ? listDto.size() : 0;
-        updButtonStat();
+        setCountCheckedRow(cnt);
         publicationListAdapter.notifyDataSetChanged();
         return true;
     }
@@ -220,7 +232,7 @@ public class YoutFindVideoFragment extends AppFragment {
     private void updButtonStat() {
         boolean check = false;
         if (publicationListAdapter.isShowCheck()) {
-            check = countCheckedRow > 0;
+            check = getCountCheckedRow() > 0;
         } else {
             check = youtFindVideoTask == null && textView.getText().length() > 0;
         }
@@ -247,6 +259,20 @@ public class YoutFindVideoFragment extends AppFragment {
         } else {
             executeFindVideo(context);
         }
+    }
+
+    public int getCountCheckedRow() {
+        return countCheckedRow;
+    }
+
+    public void setCountCheckedRow(int countCheckedRow) {
+        this.countCheckedRow = countCheckedRow;
+        checkCount.setText(String.format("%d", countCheckedRow));
+        updButtonStat();
+    }
+
+    public void incCountCheckedRow(int nb) {
+        setCountCheckedRow(countCheckedRow+nb);
     }
 
     private void executeGotoUrl(Context context, VideoDto dto) {

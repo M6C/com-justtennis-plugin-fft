@@ -54,13 +54,18 @@ public class VideoDto implements Serializable {
     @Override
     public String toString() {
         return "VideoDto{" +
-                "id='" + id + '\'' +
+                "checked=" + checked +
+                ", id='" + id + '\'' +
                 ", url='" + url + '\'' +
                 ", title='" + title + '\'' +
                 ", subTitle='" + subTitle + '\'' +
                 ", length='" + length + '\'' +
                 ", publishedTime='" + publishedTime + '\'' +
                 ", type=" + type +
+                ", thumbnails=" + thumbnails +
+                ", downloadStatus=" + downloadStatus +
+                ", downloadPath='" + downloadPath + '\'' +
+                ", viewHolder=" + viewHolder +
                 '}';
     }
 }

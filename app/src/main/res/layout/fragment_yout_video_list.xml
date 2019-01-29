@@ -33,18 +33,26 @@
                     android:layout_margin="@dimen/fb_field_margin"
                     android:orientation="horizontal">
 
-                <AutoCompleteTextView
-                    android:id="@+id/publication_message"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:layout_gravity="center"
-                    android:hint="@string/hint_yout_text_find_video"
-                    android:singleLine="true"
-                    android:gravity="top"
-                    android:inputType="textCapSentences"
-                    android:padding="5dp"
-                    android:background="@drawable/fb_message_background"/>
+                    <TextView
+                        android:id="@+id/check_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="5dp"
+                        android:gravity="center"
+                        android:visibility="gone"/>
+
+                    <AutoCompleteTextView
+                        android:id="@+id/publication_message"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_gravity="center"
+                        android:hint="@string/hint_yout_text_find_video"
+                        android:singleLine="true"
+                        android:gravity="top"
+                        android:inputType="textCapSentences"
+                        android:padding="5dp"
+                        android:background="@drawable/fb_message_background"/>
 
                 </LinearLayout>
             </LinearLayout>
