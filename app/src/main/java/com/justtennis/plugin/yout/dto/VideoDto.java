@@ -1,11 +1,16 @@
 package com.justtennis.plugin.yout.dto;
 
+import android.os.Build;
+import android.support.annotation.RequiresApi;
+
 import com.justtennis.plugin.yout.enums.MEDIA_TYPE;
 import com.justtennis.plugin.yout.viewholder.VideoViewHolder;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Publication resource
@@ -67,5 +72,26 @@ public class VideoDto implements Serializable {
                 ", downloadPath='" + downloadPath + '\'' +
                 ", viewHolder=" + viewHolder +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        VideoDto videoDto = (VideoDto) o;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            return Objects.equals(id, videoDto.id);
+        } else {
+            return videoDto.id.equals(id);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            return Objects.hash(id);
+        } else {
+            return Arrays.hashCode(new String[]{id});
+        }
     }
 }

@@ -19,6 +19,7 @@ import com.justtennis.plugin.fft.R;
 import com.justtennis.plugin.generic.query.response.GenericResponse;
 import com.justtennis.plugin.shared.network.model.ResponseHttp;
 import com.justtennis.plugin.yout.dto.VideoDto;
+import com.justtennis.plugin.yout.rxjava.RxFindVideo;
 
 import java.io.File;
 import java.io.Serializable;
@@ -51,7 +52,10 @@ public class DownloadComponentService extends JobIntentService {
 
             int cnt = 0;
             for(VideoDto dto : listDto) {
-                cnt += dto.checked ? 1 : 0;
+                if (dto.checked) {
+                    cnt++;
+                    updateDownloadStatus(dto, VideoDto.STATUS_DOWNLOAD.PENDING);
+                }
             }
 
             if (cnt==0) {
@@ -65,7 +69,7 @@ public class DownloadComponentService extends JobIntentService {
                 if (dto.checked) {
                     dto2 = dto;
                     boolean success = false;
-                    dto.downloadStatus = VideoDto.STATUS_DOWNLOAD.DOWNLOADING;
+                    updateDownloadStatus(dto, VideoDto.STATUS_DOWNLOAD.DOWNLOADING);
                     String message = cnt > 1 ? MessageFormat.format(getString(R.string.yout_notification_downloading_multi), i++, cnt, dto.title) : MessageFormat.format(getString(R.string.yout_notification_downloading), dto.title);
                     notifyProgress(id, getString(R.string.app_name), message, createIntentVlc(id+1,dto.title + ".mp3"));
                     try {
@@ -88,13 +92,18 @@ public class DownloadComponentService extends JobIntentService {
                             break;
                         }
                     } finally {
-                        dto.downloadStatus = success ? VideoDto.STATUS_DOWNLOAD.DOWNLOADED : VideoDto.STATUS_DOWNLOAD.DOWNLOAD_ERROR;
+                        updateDownloadStatus(dto, success ? VideoDto.STATUS_DOWNLOAD.DOWNLOADED : VideoDto.STATUS_DOWNLOAD.DOWNLOAD_ERROR);
                         notifyResume(id);
                     }
                 }
             }
             notifyProgress(id, getString(R.string.app_name), MessageFormat.format(getString(R.string.yout_notification_downloading_finished), cnt), createIntentVlc(id+1,dto2.title + ".mp3"));
         }
+    }
+
+    private void updateDownloadStatus(VideoDto dto, VideoDto.STATUS_DOWNLOAD status) {
+        dto.downloadStatus = status;
+        RxFindVideo.publish(RxFindVideo.SUBJECT_UPDATE_DOWNLOAD_STATUS_VIDEO, dto);
     }
 
     public static void start(Context context, List<VideoDto> listDto) {

@@ -63,20 +63,22 @@ public class YoutFindVideoListAdapter extends RecyclerViewAdapter<VideoDto, Recy
     public VideoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.yout_video_list_content, parent, false);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
-            view.setOnClickListener(v -> {
-                if (null != mListener) {
+            if (null != mListener) {
+                view.setOnClickListener(v -> {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
                     mListener.onListFragmentInteraction(view.getTag());
-                }
-            });
+                });
+            }
         }
 
         view.setLongClickable(true);
-        view.setOnLongClickListener(v -> {
-            longClickListener.onListFragmentInteraction(view.getTag());
-            return true;
-        });
+        if (longClickListener  != null) {
+            view.setOnLongClickListener(v -> {
+                longClickListener.onListFragmentInteraction(view.getTag());
+                return true;
+            });
+        }
 
         return new VideoViewHolder(view, this, checkListener, checkLongClickListener);
     }

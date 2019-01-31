@@ -17,7 +17,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_margin="@dimen/text_margin"
+            android:layout_margin="@dimen/text_margin_small"
             android:scaleX="1.50"
             android:scaleY="1.50" />
 
@@ -36,8 +36,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/fb_user_avatar_margin"
-            android:paddingRight="@dimen/fb_user_avatar_margin"
+            android:paddingLeft="@dimen/fb_text_horizontal_margin_small"
+            android:paddingRight="@dimen/fb_text_horizontal_margin_small"
             android:orientation="vertical">
 
             <TextView
@@ -45,14 +45,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/yout_desc_publication_message"
-                android:layout_marginTop="@dimen/fb_text_vertical_margin"
-                android:textAppearance="@style/ItemListPublicationMessage" />
+                android:maxLines="2"
+                android:layout_marginTop="@dimen/fb_text_vertical_margin_small"
+                android:textAppearance="@style/ItemListPublicationMessage"
+                android:ellipsize="end"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/fb_text_vertical_margin"
-                android:layout_marginBottom="@dimen/fb_text_vertical_margin"
+                android:layout_marginTop="@dimen/fb_text_vertical_margin_small"
+                android:layout_marginBottom="@dimen/fb_text_vertical_margin_small"
                 android:orientation="horizontal">
 
                 <TextView
@@ -60,46 +62,51 @@
                     android:layout_width="0dp"
                     android:layout_weight=".5"
                     android:layout_height="match_parent"
+                    android:maxLines="1"
                     android:hint="@string/yout_desc_publication_date"
-                    android:textAppearance="@style/ItemListPublicationDate" />
+                    android:textAppearance="@style/ItemListPublicationDate"
+                    android:ellipsize="end"/>
 
                 <TextView
                     android:id="@+id/publication_length"
                     android:layout_width="0dp"
                     android:layout_weight=".5"
                     android:layout_height="match_parent"
+                    android:maxLines="1"
                     android:hint="@string/yout_desc_publication_date"
                     android:gravity="end"
-                    android:textAppearance="@style/ItemListPublicationDate"/>
+                    android:textAppearance="@style/ItemListPublicationDate"
+                    android:ellipsize="end"/>
 
             </LinearLayout>
 
         </LinearLayout>
     </LinearLayout>
 
-    <LinearLayout
+    <FrameLayout
         android:id="@+id/download_progress"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
+        android:layout_height="25dp"
         android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/progressTv"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/fb_publication_loader_horizontal_size"
-            android:text="@string/yout_waiting_video"
-            android:textAlignment="center"/>
 
         <ProgressBar
             android:id="@+id/progressBar"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="@dimen/fb_publication_loader_horizontal_size"
+            android:layout_gravity="bottom"
             android:foregroundGravity="fill"
             android:max="100"
             android:indeterminate="true" />
 
-    </LinearLayout >
+        <TextView
+            android:id="@+id/progressTv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/yout_waiting_video"
+            android:gravity="top"
+            android:textAlignment="center"/>
+
+    </FrameLayout >
 
 </LinearLayout>

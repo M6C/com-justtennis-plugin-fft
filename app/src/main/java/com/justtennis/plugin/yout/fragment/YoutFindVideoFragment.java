@@ -27,15 +27,17 @@ import com.justtennis.plugin.common.tool.FragmentTool;
 import com.justtennis.plugin.fft.R;
 import com.justtennis.plugin.fft.databinding.FragmentYoutVideoListBinding;
 import com.justtennis.plugin.shared.fragment.AppFragment;
+import com.justtennis.plugin.shared.interfaces.interfaces.OnListFragmentCheckListener;
 import com.justtennis.plugin.shared.interfaces.interfaces.OnListFragmentInteractionListener;
 import com.justtennis.plugin.shared.manager.NotificationManager;
 import com.justtennis.plugin.yout.adapter.YoutFindVideoListAdapter;
+import com.justtennis.plugin.yout.component.service.DownloadComponentService;
 import com.justtennis.plugin.yout.dto.VideoContent;
 import com.justtennis.plugin.yout.dto.VideoDto;
 import com.justtennis.plugin.yout.enums.MEDIA_TYPE;
 import com.justtennis.plugin.yout.preference.YouTubeSharedPref;
 import com.justtennis.plugin.yout.query.response.YoutFindVideoResponse;
-import com.justtennis.plugin.yout.task.YoutDownVideoTask;
+import com.justtennis.plugin.yout.rxjava.RxFindVideo;
 import com.justtennis.plugin.yout.task.YoutFindVideoTask;
 import com.justtennis.plugin.yout.task.YoutGotoUrlTask;
 
@@ -55,7 +57,7 @@ public class YoutFindVideoFragment extends AppFragment {
     private YoutFindVideoListAdapter publicationListAdapter;
     private List<VideoDto> listDto = new ArrayList<>();
     private List<VideoDto> listDtoArg;
-    private YoutDownVideoTask youtDownVideoTask;
+    private boolean withArg;
     private AsyncTask<Void, String, YoutFindVideoResponse> youtFindVideoTask;
     private FragmentActivity activity;
     private LinearLayout llContent;
@@ -98,46 +100,68 @@ public class YoutFindVideoFragment extends AppFragment {
                 listDto.addAll(listDtoArg);
             }
         }
+        withArg = listDtoArg != null && !listDtoArg.isEmpty();
 
-        initializePublicationMessage();
         initializePublicationList();
+        initializePublicationMessage();
         initializeFabValidate();
 
         return binding.getRoot();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        RxFindVideo.subscribe(RxFindVideo.SUBJECT_UPDATE_DOWNLOAD_STATUS_VIDEO, this, o -> updateDownloadStatus((VideoDto) o));
+    }
+
+    @Override
+    public void onPause() {
+        RxFindVideo.unregister(this);
+        super.onPause();
+    }
+
     private void initializePublicationList() {
+        OnListFragmentInteractionListener longClickListener = withArg ? null : item -> onLongClickRow((VideoDto) item);
+        OnListFragmentCheckListener checkListener = (item, isCheck) -> onCheckRow((VideoDto) item, isCheck);
+        OnListFragmentInteractionListener checkLongClickListener = item -> onCheckLongClick((VideoDto) item);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            publicationListAdapter = new YoutFindVideoListAdapter(this::updPublicationMessage, item -> onLongClickRow((VideoDto)item), (item, isCheck) -> onCheckRow((VideoDto)item, isCheck), item -> onCheckLongClick((VideoDto)item));
+            publicationListAdapter = new YoutFindVideoListAdapter(this::updPublicationMessage, longClickListener, checkListener, checkLongClickListener);
         } else {
-            publicationListAdapter = new YoutFindVideoListAdapter((OnListFragmentInteractionListener) item -> updPublicationMessage((VideoDto)item), item -> onLongClickRow((VideoDto)item), (item, isCheck) -> onCheckRow((VideoDto)item, isCheck), item -> onCheckLongClick((VideoDto)item));
+            publicationListAdapter = new YoutFindVideoListAdapter((OnListFragmentInteractionListener) item -> updPublicationMessage((VideoDto)item), longClickListener, checkListener, checkLongClickListener);
         }
         publicationListAdapter.setList(listDto);
+        publicationListAdapter.setShowCheck(withArg);
         binding.publicationList.setAdapter(publicationListAdapter);
         binding.publicationList.setNestedScrollingEnabled(false);
     }
 
     private void initializePublicationMessage() {
-        AutoCompleteTextView textView = binding.publicationMessage;
-        textView.addTextChangedListener(new TextWatcher() {
+        checkCount.setVisibility(withArg ? View.VISIBLE : View.GONE);
+        if (withArg) {
+            textView.setText(listDtoArg.get(0).title);
+            textView.setEnabled(false);
+        } else {
+            textView.setEnabled(true);
+            textView.addTextChangedListener(new TextWatcher() {
 
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                // Nothing here
-            }
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                    // Nothing here
+                }
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                updButtonStat();
-            }
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    updButtonStat();
+                }
 
-            @Override
-            public void afterTextChanged(Editable s) {
-                // Nothing  here
-            }
-        });
-
-        binding.searchBar.setVisibility((listDtoArg != null && !listDtoArg.isEmpty()) ? View.GONE : View.VISIBLE);
+                @Override
+                public void afterTextChanged(Editable s) {
+                    // Nothing  here
+                }
+            });
+        }
     }
 
     private void updPublicationMessage(VideoDto dto) {
@@ -145,30 +169,34 @@ public class YoutFindVideoFragment extends AppFragment {
             executeGotoUrl(getContext(), dto);
         }
         else if (dto.type == MEDIA_TYPE.VIDEO) {
-            if (!publicationListAdapter.isShowCheck()) {
-                boolean playYoutube = true;
-                if (dto.downloadPath == null || dto.downloadPath.isEmpty()) {
-                    dto.downloadPath = YouTubeSharedPref.getVideoPath(activity, dto.id);
-                }
-                if (dto.downloadPath != null && !dto.downloadPath.isEmpty()) {
-                    File file = new File(dto.downloadPath);
-                    if (file.exists()) {
-                        playYoutube = false;
-                        watchPlayerVideo(activity, file);
-                    }
-                }
-                if (playYoutube) {
-                    watchYoutubeVideo(activity, dto.id);
-                }
-            } else {
-                dto.viewHolder.check();
-            }
+            updPulicationMessageVideo(dto);
         } else {
             Toast.makeText(activity, dto.url, Toast.LENGTH_SHORT).show();
         }
     }
 
-    private boolean onLongClickRow(VideoDto dto) {
+    private void updPulicationMessageVideo(VideoDto dto) {
+        if (!publicationListAdapter.isShowCheck()) {
+            boolean playYoutube = true;
+            if (dto.downloadPath == null || dto.downloadPath.isEmpty()) {
+                dto.downloadPath = YouTubeSharedPref.getVideoPath(activity, dto.id);
+            }
+            if (dto.downloadPath != null && !dto.downloadPath.isEmpty()) {
+                File file = new File(dto.downloadPath);
+                if (file.exists()) {
+                    playYoutube = false;
+                    watchPlayerVideo(activity, file);
+                }
+            }
+            if (playYoutube) {
+                watchYoutubeVideo(activity, dto.id);
+            }
+        } else {
+            dto.viewHolder.check();
+        }
+    }
+
+    private void onLongClickRow(VideoDto dto) {
         publicationListAdapter.setShowCheck(!publicationListAdapter.isShowCheck());
         if (publicationListAdapter.isShowCheck()) {
             dto.checked = MEDIA_TYPE.VIDEO == dto.type;
@@ -183,18 +211,16 @@ public class YoutFindVideoFragment extends AppFragment {
         }
         checkCount.setVisibility(publicationListAdapter.isShowCheck() ? View.VISIBLE : View.GONE);
         publicationListAdapter.notifyDataSetChanged();
-        return true;
     }
 
-    private boolean onCheckRow(VideoDto dto, boolean isCheck) {
+    private void onCheckRow(VideoDto dto, boolean isCheck) {
         if (dto.checked != isCheck) {
             dto.checked = isCheck;
             incCountCheckedRow(dto.checked ? 1 : -1);
         }
-        return true;
     }
 
-    private boolean onCheckLongClick(VideoDto dto) {
+    private void onCheckLongClick(VideoDto dto) {
         boolean checked = dto.checked;
         int cnt = 0;
         if (checked) {
@@ -209,7 +235,6 @@ public class YoutFindVideoFragment extends AppFragment {
         }
         setCountCheckedRow(cnt);
         publicationListAdapter.notifyDataSetChanged();
-        return true;
     }
 
     public static void watchPlayerVideo(Context context, File file){
@@ -303,42 +328,21 @@ public class YoutFindVideoFragment extends AppFragment {
         }.execute();
     }
 
+    private void updateDownloadStatus(VideoDto dto) {
+        activity.runOnUiThread(() -> {
+            for (VideoDto d : listDto) {
+                if (d.equals(dto)) {
+                    d.updateDownloadStatus(dto.downloadStatus);
+                    break;
+                }
+            }
+        });
+    }
+
     private void executeDownVideo(Context context) {
-        if (youtDownVideoTask != null) {
-            return;
-        }
         ((MainActivity)activity).showMessage("Starting Download to MP3.");
-        youtDownVideoTask = new YoutDownVideoTask(context, listDto) {
-            @Override
-            protected void onPreExecute() {
-                super.onPreExecute();
-                for(VideoDto dto : listDto) {
-                    if (dto.checked) {
-                        dto.updateDownloadStatus(VideoDto.STATUS_DOWNLOAD.PENDING);
-                    }
-                }
-            }
 
-            @Override
-            protected void onPostExecute(List<VideoDto> list) {
-                super.onPostExecute(list);
-                for(VideoDto dto : list) {
-                    dto.updateDownloadStatus(dto.downloadStatus);
-                    if (dto.downloadPath != null && !dto.downloadPath.isEmpty()) {
-                        YouTubeSharedPref.setVideoPath(activity, dto.id, dto.downloadPath);
-                    }
-                }
-                publicationListAdapter.notifyDataSetChanged();
-                youtDownVideoTask = null;
-            }
-
-            @Override
-            protected void onProgressUpdate(String... values) {
-                super.onProgressUpdate(values);
-                NotificationManager.onTaskProcessUpdate(activity, values);
-            }
-        };
-        youtDownVideoTask.execute();
+        DownloadComponentService.start(context, listDto);
     }
 
     private void executeFindVideo(Context context) {

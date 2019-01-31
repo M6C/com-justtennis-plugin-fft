@@ -8,6 +8,8 @@
 
     <dimen name="fb_text_vertical_margin">12dp</dimen>
     <dimen name="fb_text_horizontal_margin">12dp</dimen>
+    <dimen name="fb_text_vertical_margin_small">8dp</dimen>
+    <dimen name="fb_text_horizontal_margin_small">8dp</dimen>
     <dimen name="fb_list_item_padding">@dimen/app_list_item_padding</dimen>
     <dimen name="fb_create_layout_margin">@dimen/default_layout_margin</dimen>
     <dimen name="fb_field_margin">@dimen/default_field_margin</dimen>

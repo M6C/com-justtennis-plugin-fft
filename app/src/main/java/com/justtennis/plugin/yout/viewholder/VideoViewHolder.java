@@ -20,9 +20,10 @@ public class VideoViewHolder extends RecyclerViewHolder<VideoDto> {
     private final TextView mDate;
     private final TextView mLength;
     private final View mProgress;
+    private final View mProgressBar;
+    private final TextView mProgressTv;
     private final ImageView mImageView;
     private final CheckBox mCheck;
-    private final TextView mProgressTv;
     private final View mView;
     private final YoutFindVideoListAdapter adapter;
     private OnListFragmentCheckListener checkListener;
@@ -34,6 +35,7 @@ public class VideoViewHolder extends RecyclerViewHolder<VideoDto> {
         mDate = view.findViewById(R.id.publication_date);
         mLength = view.findViewById(R.id.publication_length);
         mProgress = view.findViewById(R.id.download_progress);
+        mProgressBar = view.findViewById(R.id.progressBar);
         mProgressTv = view.findViewById(R.id.progressTv);
         mImageView = view.findViewById(R.id.imageView);
         mCheck = view.findViewById(R.id.checkBox);
@@ -81,13 +83,17 @@ public class VideoViewHolder extends RecyclerViewHolder<VideoDto> {
                     .centerCrop()
                     .into(mImageView);
 
-            mCheck.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                checkListener.onListFragmentInteraction(buttonView.getTag(), isChecked);
-            });
-            mCheck.setOnLongClickListener(v -> {
-                checkLongClickListener.onListFragmentInteraction(mCheck.getTag());
-                return true;
-            });
+            if (checkListener != null) {
+                mCheck.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                    checkListener.onListFragmentInteraction(buttonView.getTag(), isChecked);
+                });
+            }
+            if (checkLongClickListener != null) {
+                mCheck.setOnLongClickListener(v -> {
+                    checkLongClickListener.onListFragmentInteraction(mCheck.getTag());
+                    return true;
+                });
+            }
         }
     }
 
@@ -111,8 +117,9 @@ public class VideoViewHolder extends RecyclerViewHolder<VideoDto> {
             case DOWNLOADED:
             case DOWNLOAD_ERROR:
                 enableCheck(true);
-                check(true);
-                mProgress.setVisibility(View.GONE);
+                check(status == VideoDto.STATUS_DOWNLOAD.DOWNLOAD_ERROR);
+                mProgressTv.setText(status == VideoDto.STATUS_DOWNLOAD.DOWNLOADED ? R.string.yout_downloaded_video : R.string.yout_download_error_video);
+                mProgressBar.setVisibility(View.GONE);
                 break;
             case NO:
             default:
