@@ -12,9 +12,9 @@ import com.justtennis.plugin.fb.dto.PublicationDto;
 import com.justtennis.plugin.fb.fragment.FBPublishFragment;
 import com.justtennis.plugin.fb.viewholder.PublicationViewHolder;
 import com.justtennis.plugin.fft.R;
-import com.justtennis.plugin.shared.adapter.RecyclerViewAdapter;
-import com.justtennis.plugin.shared.adapter.RecyclerViewHolder;
-import com.justtennis.plugin.shared.interfaces.interfaces.OnListFragmentInteractionListener;
+import org.cameleon.android.shared.adapter.RecyclerViewAdapter;
+import org.cameleon.android.shared.adapter.RecyclerViewHolder;
+import org.cameleon.android.shared.interfaces.interfaces.OnListFragmentInteractionListener;
 
 import java.util.function.Consumer;
 

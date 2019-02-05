@@ -2,10 +2,10 @@ package com.justtennis.plugin.fft.network.tool;
 
 import android.content.Context;
 
-import com.justtennis.plugin.shared.query.response.LoginFormResponse;
+import org.cameleon.android.shared.query.response.LoginFormResponse;
 import com.justtennis.plugin.fft.service.FFTServiceLogin;
-import com.justtennis.plugin.shared.network.model.ResponseHttp;
-import com.justtennis.plugin.shared.network.tool.NetworkTool;
+import org.cameleon.android.shared.network.model.ResponseHttp;
+import org.cameleon.android.shared.network.tool.NetworkTool;
 
 import junit.framework.TestCase;
 

@@ -6,8 +6,8 @@ import android.util.Log;
 import com.justtennis.plugin.fft.common.FFTConfiguration;
 import com.justtennis.plugin.fft.dto.MatchContent;
 import com.justtennis.plugin.fft.manager.InviteManager;
-import com.justtennis.plugin.shared.network.HttpPostProxy;
-import com.justtennis.plugin.shared.service.AbstractService;
+import org.cameleon.android.shared.network.HttpPostProxy;
+import org.cameleon.android.shared.service.AbstractService;
 
 import java.text.MessageFormat;
 import java.text.ParseException;

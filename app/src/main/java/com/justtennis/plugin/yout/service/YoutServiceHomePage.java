@@ -2,7 +2,7 @@ package com.justtennis.plugin.yout.service;
 
 import android.content.Context;
 
-import com.justtennis.plugin.shared.network.model.ResponseHttp;
+import org.cameleon.android.shared.network.model.ResponseHttp;
 
 public class YoutServiceHomePage extends AbstractYouTService {
 

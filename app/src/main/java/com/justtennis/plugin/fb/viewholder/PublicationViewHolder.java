@@ -7,7 +7,7 @@ import android.widget.TextView;
 import com.justtennis.plugin.fb.dto.PublicationDto;
 import com.justtennis.plugin.fb.enums.STATUS_PUBLICATION;
 import com.justtennis.plugin.fft.R;
-import com.justtennis.plugin.shared.adapter.RecyclerViewHolder;
+import org.cameleon.android.shared.adapter.RecyclerViewHolder;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

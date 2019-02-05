@@ -4,13 +4,13 @@ import android.content.Context;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import com.justtennis.plugin.generic.converter.GenericFormResponseConverter;
-import com.justtennis.plugin.generic.parser.GenericFormParser;
-import com.justtennis.plugin.generic.query.response.GenericFormResponse;
-import com.justtennis.plugin.shared.exception.NotConnectedException;
-import com.justtennis.plugin.shared.network.model.ResponseHttp;
-import com.justtennis.plugin.shared.query.response.FormElement;
-import com.justtennis.plugin.shared.service.AbstractService;
+import org.cameleon.android.generic.converter.GenericFormResponseConverter;
+import org.cameleon.android.generic.parser.GenericFormParser;
+import org.cameleon.android.generic.query.response.GenericFormResponse;
+import org.cameleon.android.shared.exception.NotConnectedException;
+import org.cameleon.android.shared.network.model.ResponseHttp;
+import org.cameleon.android.shared.query.response.FormElement;
+import org.cameleon.android.shared.service.AbstractService;
 import com.justtennis.plugin.yout.query.request.YouTFindVideoFormRequest;
 import com.justtennis.plugin.yout.query.response.YoutFindVideoResponse;
 

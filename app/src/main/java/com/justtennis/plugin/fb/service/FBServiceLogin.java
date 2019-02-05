@@ -3,13 +3,13 @@ package com.justtennis.plugin.fb.service;
 import android.content.Context;
 
 import com.justtennis.plugin.fb.query.request.FBLoginFormRequest;
-import com.justtennis.plugin.shared.converter.LoginFormResponseConverter;
-import com.justtennis.plugin.shared.network.model.ResponseHttp;
-import com.justtennis.plugin.shared.network.tool.NetworkTool;
-import com.justtennis.plugin.shared.parser.FormLoginParser;
-import com.justtennis.plugin.shared.preference.LoginSharedPref;
-import com.justtennis.plugin.shared.query.response.LoginFormResponse;
-import com.justtennis.plugin.shared.service.IServiceLogin;
+import org.cameleon.android.shared.converter.LoginFormResponseConverter;
+import org.cameleon.android.shared.network.model.ResponseHttp;
+import org.cameleon.android.shared.network.tool.NetworkTool;
+import org.cameleon.android.shared.parser.FormLoginParser;
+import org.cameleon.android.shared.preference.LoginSharedPref;
+import org.cameleon.android.shared.query.response.LoginFormResponse;
+import org.cameleon.android.shared.service.IServiceLogin;
 
 import org.jsoup.helper.StringUtil;
 

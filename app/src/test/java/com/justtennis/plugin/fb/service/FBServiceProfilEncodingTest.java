@@ -2,9 +2,9 @@ package com.justtennis.plugin.fb.service;
 
 import com.justtennis.plugin.fb.query.response.FBHomePageResponse;
 import com.justtennis.plugin.fb.query.response.FBProfilPublicationResponse;
-import com.justtennis.plugin.shared.exception.NotConnectedException;
-import com.justtennis.plugin.shared.network.model.ResponseHttp;
-import com.justtennis.plugin.shared.skeleton.IProxy;
+import org.cameleon.android.shared.exception.NotConnectedException;
+import org.cameleon.android.shared.network.model.ResponseHttp;
+import org.cameleon.android.shared.skeleton.IProxy;
 
 import java.io.UnsupportedEncodingException;
 

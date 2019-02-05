@@ -1,7 +1,7 @@
 package com.justtennis.plugin.fb.manager;
 
-import com.justtennis.plugin.shared.network.tool.NetworkTool;
-import com.justtennis.plugin.shared.service.AbstractServiceTest;
+import org.cameleon.android.shared.network.tool.NetworkTool;
+import org.cameleon.android.shared.service.AbstractServiceTest;
 
 import java.io.IOException;
 import java.util.List;

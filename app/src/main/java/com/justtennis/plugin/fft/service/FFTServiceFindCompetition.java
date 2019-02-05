@@ -11,8 +11,8 @@ import com.justtennis.plugin.fft.query.request.FFTFindCompetitionAjaxRequest;
 import com.justtennis.plugin.fft.query.request.FFTFindCompetitionFormRequest;
 import com.justtennis.plugin.fft.query.response.FindCompetitionFormResponse;
 import com.justtennis.plugin.fft.query.response.FindCompetitionResponse;
-import com.justtennis.plugin.shared.exception.NotConnectedException;
-import com.justtennis.plugin.shared.network.model.ResponseHttp;
+import org.cameleon.android.shared.exception.NotConnectedException;
+import org.cameleon.android.shared.network.model.ResponseHttp;
 
 import org.jsoup.helper.StringUtil;
 

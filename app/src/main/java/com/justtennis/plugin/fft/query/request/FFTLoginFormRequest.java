@@ -1,6 +1,6 @@
 package com.justtennis.plugin.fft.query.request;
 
-import com.justtennis.plugin.shared.query.request.LoginFormRequest;
+import org.cameleon.android.shared.query.request.LoginFormRequest;
 
 public class FFTLoginFormRequest extends LoginFormRequest {
 

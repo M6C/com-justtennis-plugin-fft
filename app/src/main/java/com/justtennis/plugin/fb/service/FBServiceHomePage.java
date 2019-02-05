@@ -5,8 +5,8 @@ import android.content.Context;
 import com.justtennis.plugin.fb.parser.FBHomePageParser;
 import com.justtennis.plugin.fb.query.request.FBHomePageRequest;
 import com.justtennis.plugin.fb.query.response.FBHomePageResponse;
-import com.justtennis.plugin.shared.exception.NotConnectedException;
-import com.justtennis.plugin.shared.network.model.ResponseHttp;
+import org.cameleon.android.shared.exception.NotConnectedException;
+import org.cameleon.android.shared.network.model.ResponseHttp;
 
 import java.util.HashMap;
 

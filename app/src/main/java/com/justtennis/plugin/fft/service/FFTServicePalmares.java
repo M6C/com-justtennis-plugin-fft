@@ -11,8 +11,8 @@ import com.justtennis.plugin.fft.query.request.PalmaresRequest;
 import com.justtennis.plugin.fft.query.response.MillesimeMatchResponse;
 import com.justtennis.plugin.fft.query.response.PalmaresMillesimeResponse;
 import com.justtennis.plugin.fft.query.response.PalmaresResponse;
-import com.justtennis.plugin.shared.exception.NotConnectedException;
-import com.justtennis.plugin.shared.network.model.ResponseHttp;
+import org.cameleon.android.shared.exception.NotConnectedException;
+import org.cameleon.android.shared.network.model.ResponseHttp;
 
 import org.jsoup.helper.StringUtil;
 

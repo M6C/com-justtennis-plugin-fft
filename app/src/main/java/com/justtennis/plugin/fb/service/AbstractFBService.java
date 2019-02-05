@@ -2,8 +2,8 @@ package com.justtennis.plugin.fb.service;
 
 import android.content.Context;
 
-import com.justtennis.plugin.shared.network.HttpPostProxy;
-import com.justtennis.plugin.shared.service.AbstractService;
+import org.cameleon.android.shared.network.HttpPostProxy;
+import org.cameleon.android.shared.service.AbstractService;
 
 public class AbstractFBService extends AbstractService {
 

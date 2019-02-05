@@ -3,8 +3,8 @@ package com.justtennis.plugin.fft.parser;
 import com.justtennis.plugin.fft.query.request.FFTFindCompetitionAjaxRequest;
 import com.justtennis.plugin.fft.query.request.FFTFindCompetitionRequest;
 import com.justtennis.plugin.fft.query.response.FindCompetitionResponse;
-import com.justtennis.plugin.shared.parser.AbstractParser;
-import com.justtennis.plugin.shared.tool.JsonUtil;
+import org.cameleon.android.shared.parser.AbstractParser;
+import org.cameleon.android.shared.tool.JsonUtil;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

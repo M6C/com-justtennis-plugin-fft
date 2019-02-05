@@ -2,7 +2,7 @@ package com.justtennis.plugin.eytm.service;
 
 import android.content.Context;
 
-import com.justtennis.plugin.shared.network.model.ResponseHttp;
+import org.cameleon.android.shared.network.model.ResponseHttp;
 
 public class EasyYouTMp3ServiceLogin extends AbstractEasyYouTMp3Service {
 

@@ -23,9 +23,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.cameleon.common.android.factory.FactoryDialog;
-import com.justtennis.plugin.common.ApplicationConfig;
-import com.justtennis.plugin.common.tool.FragmentTool;
-import com.justtennis.plugin.common.tool.ProgressTool;
+import org.cameleon.android.common.ApplicationConfig;
+import org.cameleon.android.common.tool.FragmentTool;
+import org.cameleon.android.common.tool.ProgressTool;
 import com.justtennis.plugin.fft.R;
 import com.justtennis.plugin.fft.adapter.FindCompetitionAdapter;
 import com.justtennis.plugin.fft.common.FFTConfiguration;
@@ -34,8 +34,8 @@ import com.justtennis.plugin.fft.dto.CompetitionDto;
 import com.justtennis.plugin.fft.model.enums.EnumCompetition;
 import com.justtennis.plugin.fft.query.response.FindCompetitionResponse;
 import com.justtennis.plugin.fft.task.FindCompetitionTask;
-import com.justtennis.plugin.shared.interfaces.interfaces.OnListFragmentInteractionListener;
-import com.justtennis.plugin.shared.manager.NotificationManager;
+import org.cameleon.android.shared.interfaces.interfaces.OnListFragmentInteractionListener;
+import org.cameleon.android.common.manager.NotificationManager;
 
 import java.text.ParseException;
 import java.util.ArrayList;

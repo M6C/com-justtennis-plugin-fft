@@ -2,7 +2,7 @@ package com.justtennis.plugin.fft.parser;
 
 import com.justtennis.plugin.fft.query.request.FFTMillessimeMatchRequest;
 import com.justtennis.plugin.fft.query.response.MillesimeMatchResponse;
-import com.justtennis.plugin.shared.parser.AbstractParser;
+import org.cameleon.android.shared.parser.AbstractParser;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

@@ -2,7 +2,7 @@ package com.justtennis.plugin.yout.rxjava;
 
 import android.support.annotation.IntDef;
 
-import com.justtennis.plugin.common.rxjava.RxBus;
+import org.cameleon.android.common.rxjava.RxBus;
 
 import java.lang.annotation.Retention;
 

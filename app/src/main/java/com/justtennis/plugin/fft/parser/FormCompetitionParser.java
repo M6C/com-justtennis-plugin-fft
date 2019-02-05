@@ -2,9 +2,9 @@ package com.justtennis.plugin.fft.parser;
 
 import com.justtennis.plugin.fft.query.request.FFTFindCompetitionFormRequest;
 import com.justtennis.plugin.fft.query.response.FindCompetitionFormResponse;
-import com.justtennis.plugin.shared.parser.AbstractFormParser;
-import com.justtennis.plugin.shared.query.request.AbstractFormRequest;
-import com.justtennis.plugin.shared.query.response.AbstractFormResponse;
+import org.cameleon.android.shared.parser.AbstractFormParser;
+import org.cameleon.android.shared.query.request.AbstractFormRequest;
+import org.cameleon.android.shared.query.response.AbstractFormResponse;
 
 import org.jsoup.nodes.Element;
 

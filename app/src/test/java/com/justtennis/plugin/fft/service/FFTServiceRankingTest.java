@@ -1,10 +1,10 @@
 package com.justtennis.plugin.fft.service;
 
-import com.justtennis.plugin.shared.exception.NotConnectedException;
-import com.justtennis.plugin.shared.network.model.ResponseHttp;
+import org.cameleon.android.shared.exception.NotConnectedException;
+import org.cameleon.android.shared.network.model.ResponseHttp;
 import com.justtennis.plugin.fft.query.response.RankingListResponse;
 import com.justtennis.plugin.fft.query.response.RankingMatchResponse;
-import com.justtennis.plugin.shared.skeleton.IProxy;
+import org.cameleon.android.shared.skeleton.IProxy;
 
 import org.junit.Test;
 

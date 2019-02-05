@@ -1,9 +1,9 @@
 package com.justtennis.plugin.mytd.service;
 
-import com.justtennis.plugin.shared.network.model.ResponseHttp;
-import com.justtennis.plugin.shared.query.response.LoginFormResponse;
-import com.justtennis.plugin.shared.service.AbstractLoginServiceTest;
-import com.justtennis.plugin.shared.skeleton.IProxy;
+import org.cameleon.android.shared.network.model.ResponseHttp;
+import org.cameleon.android.shared.query.response.LoginFormResponse;
+import org.cameleon.android.shared.service.AbstractLoginServiceTest;
+import org.cameleon.android.shared.skeleton.IProxy;
 
 abstract class AbstractMp3YouTDwnServiceTest extends AbstractLoginServiceTest {
 

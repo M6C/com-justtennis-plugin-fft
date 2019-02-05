@@ -3,10 +3,10 @@ package com.justtennis.plugin.eytm.service;
 import android.content.Context;
 
 import com.justtennis.plugin.eytm.query.request.EasyYouTMp3Request;
-import com.justtennis.plugin.generic.parser.GenericParser;
-import com.justtennis.plugin.generic.query.response.GenericResponse;
-import com.justtennis.plugin.shared.network.model.ResponseHttp;
-import com.justtennis.plugin.shared.tool.FileUtil;
+import org.cameleon.android.generic.parser.GenericParser;
+import org.cameleon.android.generic.query.response.GenericResponse;
+import org.cameleon.android.shared.network.model.ResponseHttp;
+import org.cameleon.android.shared.tool.FileUtil;
 
 import java.io.IOException;
 

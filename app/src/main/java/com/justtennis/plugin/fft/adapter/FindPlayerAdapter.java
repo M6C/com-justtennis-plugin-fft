@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 
 import com.justtennis.plugin.fft.R;
 import com.justtennis.plugin.fft.dto.PlayerDto;
-import com.justtennis.plugin.shared.interfaces.interfaces.OnListFragmentInteractionListener;
+import org.cameleon.android.shared.interfaces.interfaces.OnListFragmentInteractionListener;
 import com.justtennis.plugin.fft.viewholder.PlayerViewHolder;
 
 import java.util.List;

@@ -1,6 +1,6 @@
 package com.justtennis.plugin.fft.query.request;
 
-import com.justtennis.plugin.shared.query.request.AbstractFormRequest;
+import org.cameleon.android.shared.query.request.AbstractFormRequest;
 
 public class FFTFindPlayerFormRequest extends AbstractFormRequest {
 

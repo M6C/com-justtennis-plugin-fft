@@ -2,7 +2,7 @@ package com.justtennis.plugin.mytd.service;
 
 import android.content.Context;
 
-import com.justtennis.plugin.shared.service.AbstractService;
+import org.cameleon.android.shared.service.AbstractService;
 
 public abstract class AbstractMp3YouTDwnService extends AbstractService {
 

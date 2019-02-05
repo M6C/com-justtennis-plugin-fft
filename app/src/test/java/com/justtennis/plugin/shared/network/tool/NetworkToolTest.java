@@ -1,4 +1,4 @@
-package com.justtennis.plugin.shared.network.tool;
+package org.cameleon.android.shared.network.tool;
 
 import junit.framework.TestCase;
 

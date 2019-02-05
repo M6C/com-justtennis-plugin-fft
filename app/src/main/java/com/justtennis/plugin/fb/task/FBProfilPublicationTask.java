@@ -8,9 +8,9 @@ import com.justtennis.plugin.fb.query.response.FBHomePageResponse;
 import com.justtennis.plugin.fb.query.response.FBProfilPublicationResponse;
 import com.justtennis.plugin.fb.service.FBServiceHomePage;
 import com.justtennis.plugin.fb.service.FBServiceProfil;
-import com.justtennis.plugin.shared.exception.NotConnectedException;
-import com.justtennis.plugin.shared.network.model.ResponseHttp;
-import com.justtennis.plugin.shared.tool.FileUtil;
+import org.cameleon.android.shared.exception.NotConnectedException;
+import org.cameleon.android.shared.network.model.ResponseHttp;
+import org.cameleon.android.shared.tool.FileUtil;
 
 import java.io.BufferedInputStream;
 import java.io.FileNotFoundException;

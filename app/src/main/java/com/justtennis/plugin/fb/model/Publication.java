@@ -1,6 +1,6 @@
 package com.justtennis.plugin.fb.model;
 
-import com.justtennis.plugin.shared.model.ModelObject;
+import org.cameleon.android.shared.model.ModelObject;
 
 import java.util.Collections;
 import java.util.Date;

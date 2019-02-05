@@ -2,18 +2,18 @@ package com.justtennis.plugin.mytd.service;
 
 import android.content.Context;
 
-import com.justtennis.plugin.generic.converter.GenericFormResponseConverter;
-import com.justtennis.plugin.generic.parser.GenericFormParser;
-import com.justtennis.plugin.generic.parser.GenericParser;
-import com.justtennis.plugin.generic.query.response.GenericFormResponse;
-import com.justtennis.plugin.generic.query.response.GenericResponse;
+import org.cameleon.android.generic.converter.GenericFormResponseConverter;
+import org.cameleon.android.generic.parser.GenericFormParser;
+import org.cameleon.android.generic.parser.GenericParser;
+import org.cameleon.android.generic.query.response.GenericFormResponse;
+import org.cameleon.android.generic.query.response.GenericResponse;
 import com.justtennis.plugin.mytd.query.request.Mp3YouTDwnFormRequest;
 import com.justtennis.plugin.mytd.query.request.Mp3YouTDwnRequest;
-import com.justtennis.plugin.shared.exception.NotConnectedException;
-import com.justtennis.plugin.shared.network.model.ResponseHttp;
-import com.justtennis.plugin.shared.query.response.FormElement;
-import com.justtennis.plugin.shared.service.AbstractService;
-import com.justtennis.plugin.shared.tool.FileUtil;
+import org.cameleon.android.shared.exception.NotConnectedException;
+import org.cameleon.android.shared.network.model.ResponseHttp;
+import org.cameleon.android.shared.query.response.FormElement;
+import org.cameleon.android.shared.service.AbstractService;
+import org.cameleon.android.shared.tool.FileUtil;
 
 import org.jsoup.helper.StringUtil;
 

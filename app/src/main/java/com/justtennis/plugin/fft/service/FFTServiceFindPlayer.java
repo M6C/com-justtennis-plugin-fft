@@ -10,8 +10,8 @@ import com.justtennis.plugin.fft.query.request.FFTFindPlayerFormRequest;
 import com.justtennis.plugin.fft.query.request.FFTFindPlayerRequest;
 import com.justtennis.plugin.fft.query.response.FindPlayerFormResponse;
 import com.justtennis.plugin.fft.query.response.FindPlayerResponse;
-import com.justtennis.plugin.shared.exception.NotConnectedException;
-import com.justtennis.plugin.shared.network.model.ResponseHttp;
+import org.cameleon.android.shared.exception.NotConnectedException;
+import org.cameleon.android.shared.network.model.ResponseHttp;
 
 import org.jsoup.helper.StringUtil;
 

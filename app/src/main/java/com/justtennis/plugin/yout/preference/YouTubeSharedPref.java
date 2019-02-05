@@ -2,7 +2,7 @@ package com.justtennis.plugin.yout.preference;
 
 import android.content.Context;
 
-import com.justtennis.plugin.shared.preference.CommonSharedPref;
+import org.cameleon.android.shared.preference.CommonSharedPref;
 
 public class YouTubeSharedPref {
 

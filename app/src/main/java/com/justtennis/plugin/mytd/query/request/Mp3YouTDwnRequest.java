@@ -1,6 +1,6 @@
 package com.justtennis.plugin.mytd.query.request;
 
-import com.justtennis.plugin.generic.query.request.GenericRequest;
+import org.cameleon.android.generic.query.request.GenericRequest;
 
 import java.util.Arrays;
 

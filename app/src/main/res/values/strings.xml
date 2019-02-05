@@ -17,7 +17,6 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
-    <string name="title_activity_main">MainActivity</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Android Studio</string>
@@ -28,24 +27,16 @@
 
     <string name="msg_fft_must_connect_to_site">You must connect to <a href="https://mon-espace-tennis.fft.fr">fft site</a>.</string>
 
-    <string name="fft_format_date">dd/MM/yyyy</string>
     <string name="msg_common_format_date">EEEEE d MMMMM yyyy</string>
 
     <string name="msg_no_user_found_in_main_application">No user found in Just Tennis Application.</string>
-    <string name="msg_no_millesime_found">No millesime found.</string>
     <string name="msg_no_match_found">No match found.</string>
     <string name="msg_no_player_found">No player found.</string>
 
     <string name="dialog_confirm_check_match_already_exist_title">Confirm import</string>
     <string name="dialog_confirm_check_match_already_exist_message">This Match has been detected already exist. Confirm check ?</string>
 
-    <string name="drawer_item_millesime_match">Millesime Match</string>
-    <string name="drawer_item_ranking_match">Ranking Match</string>
-    <string name="drawer_item_find_player">Find Player</string>
-    <string name="drawer_item_find_competition">Find Competition</string>
     <string name="drawer_title_communicate">Communicate</string>
-    <string name="drawer_item_mon_espace_fft">Mon Espace FFT</string>
-    <string name="drawer_item_disconnect">Disconnect</string>
 
     <string name="drawer_item_login">Login</string>
     <string name="drawer_item_youtube">YouTube</string>

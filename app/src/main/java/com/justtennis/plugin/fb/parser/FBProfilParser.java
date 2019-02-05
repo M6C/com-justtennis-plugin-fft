@@ -2,7 +2,7 @@ package com.justtennis.plugin.fb.parser;
 
 import com.justtennis.plugin.fb.query.request.FBProfilPublicationRequest;
 import com.justtennis.plugin.fb.query.response.FBProfilPublicationResponse;
-import com.justtennis.plugin.shared.parser.AbstractParser;
+import org.cameleon.android.shared.parser.AbstractParser;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

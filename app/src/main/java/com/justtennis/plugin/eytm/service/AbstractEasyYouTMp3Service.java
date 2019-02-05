@@ -2,7 +2,7 @@ package com.justtennis.plugin.eytm.service;
 
 import android.content.Context;
 
-import com.justtennis.plugin.shared.service.AbstractService;
+import org.cameleon.android.shared.service.AbstractService;
 
 public abstract class AbstractEasyYouTMp3Service extends AbstractService {
 

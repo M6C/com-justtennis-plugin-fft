@@ -12,7 +12,7 @@ import com.cameleon.common.android.factory.FactoryDialog;
 import com.justtennis.plugin.fft.R;
 import com.justtennis.plugin.fft.dto.MatchContent;
 import com.justtennis.plugin.fft.dto.MatchDto;
-import com.justtennis.plugin.shared.interfaces.interfaces.OnListFragmentInteractionListener;
+import org.cameleon.android.shared.interfaces.interfaces.OnListFragmentInteractionListener;
 import com.justtennis.plugin.fft.model.Invite;
 import com.justtennis.plugin.fft.model.Player;
 import com.justtennis.plugin.fft.model.Saison;

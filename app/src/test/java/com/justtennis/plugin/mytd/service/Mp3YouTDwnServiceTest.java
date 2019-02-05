@@ -1,11 +1,11 @@
 package com.justtennis.plugin.mytd.service;
 
-import com.justtennis.plugin.generic.query.response.GenericFormResponse;
-import com.justtennis.plugin.generic.query.response.GenericResponse;
-import com.justtennis.plugin.shared.exception.NotConnectedException;
-import com.justtennis.plugin.shared.network.model.ResponseHttp;
-import com.justtennis.plugin.shared.query.response.FormElement;
-import com.justtennis.plugin.shared.skeleton.IProxy;
+import org.cameleon.android.generic.query.response.GenericFormResponse;
+import org.cameleon.android.generic.query.response.GenericResponse;
+import org.cameleon.android.shared.exception.NotConnectedException;
+import org.cameleon.android.shared.network.model.ResponseHttp;
+import org.cameleon.android.shared.query.response.FormElement;
+import org.cameleon.android.shared.skeleton.IProxy;
 import com.justtennis.plugin.yout.query.request.YouTFindVideoFormRequest;
 
 import org.junit.Test;

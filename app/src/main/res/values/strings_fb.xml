@@ -1,13 +1,6 @@
 <resources>
     <string name="defaultUserImage">defaultUserImage</string>
 
-    <string name="drawer_fb_item_publish">Publish</string>
-    <string name="drawer_fb_title_communicate">Communicate</string>
-    <string name="drawer_fb_item_fb">Facebook</string>
-    <string name="drawer_fb_item_disconnect">Disconnect</string>
-
-    <string name="desc_fb_post_date">Post date</string>
-    <string name="desc_fb_message">Message</string>
     <string name="hint_fb_text_create">Quoi de neuf ?</string>
     <string name="text_fb_button_create">Publish to %1$s</string>
     <string name="loading_publication">Loading publications…</string>

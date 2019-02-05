@@ -5,8 +5,8 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.justtennis.plugin.shared.exception.NotConnectedException;
-import com.justtennis.plugin.shared.network.model.ResponseHttp;
+import org.cameleon.android.shared.exception.NotConnectedException;
+import org.cameleon.android.shared.network.model.ResponseHttp;
 import com.justtennis.plugin.fft.query.response.PalmaresMillesimeResponse;
 import com.justtennis.plugin.fft.query.response.PalmaresResponse;
 import com.justtennis.plugin.fft.service.FFTServiceLogin;

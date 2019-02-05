@@ -13,11 +13,11 @@ import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v4.app.JobIntentService;
 
-import com.justtennis.plugin.common.MainActivity;
+import org.cameleon.android.common.MainActivity;
 import com.justtennis.plugin.eytm.service.EasyYouTMp3Service;
 import com.justtennis.plugin.fft.R;
-import com.justtennis.plugin.generic.query.response.GenericResponse;
-import com.justtennis.plugin.shared.network.model.ResponseHttp;
+import org.cameleon.android.generic.query.response.GenericResponse;
+import org.cameleon.android.shared.network.model.ResponseHttp;
 import com.justtennis.plugin.yout.dto.VideoDto;
 import com.justtennis.plugin.yout.rxjava.RxFindVideo;
 

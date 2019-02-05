@@ -9,10 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.justtennis.plugin.fft.R;
-import com.justtennis.plugin.shared.adapter.RecyclerViewAdapter;
-import com.justtennis.plugin.shared.adapter.RecyclerViewHolder;
-import com.justtennis.plugin.shared.interfaces.interfaces.OnListFragmentCheckListener;
-import com.justtennis.plugin.shared.interfaces.interfaces.OnListFragmentInteractionListener;
+import org.cameleon.android.shared.adapter.RecyclerViewAdapter;
+import org.cameleon.android.shared.adapter.RecyclerViewHolder;
+import org.cameleon.android.shared.interfaces.interfaces.OnListFragmentCheckListener;
+import org.cameleon.android.shared.interfaces.interfaces.OnListFragmentInteractionListener;
 import com.justtennis.plugin.yout.dto.VideoDto;
 import com.justtennis.plugin.yout.viewholder.VideoViewHolder;
 

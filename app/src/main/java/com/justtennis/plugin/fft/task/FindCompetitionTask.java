@@ -8,8 +8,8 @@ import com.justtennis.plugin.fft.model.enums.EnumCompetition;
 import com.justtennis.plugin.fft.query.response.FindCompetitionFormResponse;
 import com.justtennis.plugin.fft.query.response.FindCompetitionResponse;
 import com.justtennis.plugin.fft.service.FFTServiceFindCompetition;
-import com.justtennis.plugin.shared.exception.NotConnectedException;
-import com.justtennis.plugin.shared.network.model.ResponseHttp;
+import org.cameleon.android.shared.exception.NotConnectedException;
+import org.cameleon.android.shared.network.model.ResponseHttp;
 
 import java.util.ArrayList;
 import java.util.Date;

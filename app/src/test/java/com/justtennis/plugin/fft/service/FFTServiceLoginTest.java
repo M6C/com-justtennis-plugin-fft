@@ -1,8 +1,8 @@
 package com.justtennis.plugin.fft.service;
 
-import com.justtennis.plugin.shared.network.model.ResponseHttp;
-import com.justtennis.plugin.shared.query.response.LoginFormResponse;
-import com.justtennis.plugin.shared.skeleton.IProxy;
+import org.cameleon.android.shared.network.model.ResponseHttp;
+import org.cameleon.android.shared.query.response.LoginFormResponse;
+import org.cameleon.android.shared.skeleton.IProxy;
 
 import org.junit.Test;
 

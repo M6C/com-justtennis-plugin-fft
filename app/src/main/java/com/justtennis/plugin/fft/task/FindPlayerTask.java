@@ -5,8 +5,8 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.justtennis.plugin.fft.model.enums.EnumPlayer;
-import com.justtennis.plugin.shared.exception.NotConnectedException;
-import com.justtennis.plugin.shared.network.model.ResponseHttp;
+import org.cameleon.android.shared.exception.NotConnectedException;
+import org.cameleon.android.shared.network.model.ResponseHttp;
 import com.justtennis.plugin.fft.query.response.FindPlayerFormResponse;
 import com.justtennis.plugin.fft.query.response.FindPlayerResponse;
 import com.justtennis.plugin.fft.service.FFTServiceFindPlayer;

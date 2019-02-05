@@ -1,7 +1,7 @@
-package com.justtennis.plugin.shared.service;
+package org.cameleon.android.shared.service;
 
-import com.justtennis.plugin.shared.network.model.ResponseHttp;
-import com.justtennis.plugin.shared.query.response.LoginFormResponse;
+import org.cameleon.android.shared.network.model.ResponseHttp;
+import org.cameleon.android.shared.query.response.LoginFormResponse;
 
 public abstract class AbstractLoginServiceTest extends AbstractServiceTest {
 

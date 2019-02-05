@@ -1,6 +1,6 @@
 package com.justtennis.plugin.fb.manager;
 
-import com.justtennis.plugin.shared.service.AbstractServiceTest;
+import org.cameleon.android.shared.service.AbstractServiceTest;
 
 public class SharingYoutubeManagerTest extends AbstractServiceTest {
 

@@ -5,9 +5,9 @@ import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
 
-import com.justtennis.plugin.shared.exception.NotConnectedException;
-import com.justtennis.plugin.shared.network.model.ResponseHttp;
-import com.justtennis.plugin.shared.tool.FileUtil;
+import org.cameleon.android.shared.exception.NotConnectedException;
+import org.cameleon.android.shared.network.model.ResponseHttp;
+import org.cameleon.android.shared.tool.FileUtil;
 import com.justtennis.plugin.yout.query.response.YoutFindVideoResponse;
 import com.justtennis.plugin.yout.service.YouTServiceFindVideo;
 

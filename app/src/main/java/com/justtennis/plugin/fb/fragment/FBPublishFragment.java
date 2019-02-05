@@ -16,7 +16,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.Toast;
 
-import com.justtennis.plugin.common.tool.FragmentTool;
+import org.cameleon.android.common.tool.FragmentTool;
 import com.justtennis.plugin.fb.adapter.PublicationListAdapter;
 import com.justtennis.plugin.fb.dto.PublicationContent;
 import com.justtennis.plugin.fb.dto.PublicationDto;
@@ -28,9 +28,9 @@ import com.justtennis.plugin.fb.task.FBPublishFormTask;
 import com.justtennis.plugin.fb.task.FBPublishTask;
 import com.justtennis.plugin.fft.R;
 import com.justtennis.plugin.fft.databinding.FragmentFbPublicationListBinding;
-import com.justtennis.plugin.shared.fragment.AppFragment;
-import com.justtennis.plugin.shared.interfaces.interfaces.OnListFragmentInteractionListener;
-import com.justtennis.plugin.shared.manager.NotificationManager;
+import org.cameleon.android.shared.fragment.AppFragment;
+import org.cameleon.android.shared.interfaces.interfaces.OnListFragmentInteractionListener;
+import org.cameleon.android.common.manager.NotificationManager;
 
 import java.io.Serializable;
 import java.util.ArrayList;

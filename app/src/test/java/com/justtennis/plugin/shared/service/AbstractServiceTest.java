@@ -1,10 +1,10 @@
-package com.justtennis.plugin.shared.service;
+package org.cameleon.android.shared.service;
 
 import android.support.annotation.NonNull;
 
-import com.justtennis.plugin.shared.network.model.ResponseHttp;
-import com.justtennis.plugin.shared.skeleton.IProxy;
-import com.justtennis.plugin.shared.tool.FileUtil;
+import org.cameleon.android.shared.network.model.ResponseHttp;
+import org.cameleon.android.shared.skeleton.IProxy;
+import org.cameleon.android.shared.tool.FileUtil;
 
 import junit.framework.TestCase;
 

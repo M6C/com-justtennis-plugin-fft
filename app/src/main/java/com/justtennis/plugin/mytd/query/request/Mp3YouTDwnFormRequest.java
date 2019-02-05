@@ -1,6 +1,6 @@
 package com.justtennis.plugin.mytd.query.request;
 
-import com.justtennis.plugin.generic.query.request.GenericFormRequest;
+import org.cameleon.android.generic.query.request.GenericFormRequest;
 
 public class Mp3YouTDwnFormRequest extends GenericFormRequest {
 

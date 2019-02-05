@@ -7,8 +7,8 @@ import android.util.Log;
 import com.justtennis.plugin.fb.query.response.FBPublishFormResponse;
 import com.justtennis.plugin.fb.service.FBServiceHomePage;
 import com.justtennis.plugin.fb.service.FBServicePublish;
-import com.justtennis.plugin.shared.exception.NotConnectedException;
-import com.justtennis.plugin.shared.network.model.ResponseHttp;
+import org.cameleon.android.shared.exception.NotConnectedException;
+import org.cameleon.android.shared.network.model.ResponseHttp;
 
 public abstract class FBPublishFormTask extends AsyncTask<Void, String, FBPublishFormResponse> {
 
