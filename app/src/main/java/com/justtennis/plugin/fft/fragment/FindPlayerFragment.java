@@ -21,18 +21,20 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.justtennis.plugin.fft.model.enums.EnumPlayer;
-import org.cameleon.android.shared.interfaces.interfaces.OnListFragmentInteractionListener;
-import org.cameleon.android.common.tool.FragmentTool;
-import org.cameleon.android.common.tool.ProgressTool;
 import com.justtennis.plugin.fft.R;
 import com.justtennis.plugin.fft.adapter.FindPlayerAdapter;
 import com.justtennis.plugin.fft.dto.MatchDto;
 import com.justtennis.plugin.fft.dto.PlayerContent;
 import com.justtennis.plugin.fft.dto.PlayerDto;
+import com.justtennis.plugin.fft.model.enums.EnumPlayer;
 import com.justtennis.plugin.fft.query.response.FindPlayerResponse;
 import com.justtennis.plugin.fft.task.FindPlayerTask;
-import org.cameleon.android.common.manager.NotificationManager;
+
+import org.cameleon.android.common.manager.IMainManager;
+import org.cameleon.android.common.manager.MainManager;
+import org.cameleon.android.common.tool.FragmentTool;
+import org.cameleon.android.common.tool.ProgressTool;
+import org.cameleon.android.shared.interfaces.interfaces.OnListFragmentInteractionListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -255,7 +257,7 @@ public class FindPlayerFragment extends Fragment implements OnListFragmentIntera
         @Override
         protected void onProgressUpdate(String... values) {
             super.onProgressUpdate(values);
-            NotificationManager.onTaskProcessUpdate(getActivity(), values);
+            getMainManager().getNotificationManager().onTaskProcessUpdate(getActivity(), values);
         }
 
         @Override
@@ -266,6 +268,10 @@ public class FindPlayerFragment extends Fragment implements OnListFragmentIntera
             initializeFabValidate();
             mFindPlayerTask = null;
         }
+    }
+
+    private IMainManager getMainManager() {
+        return MainManager.getInstance();
     }
 
     private static void logMe(String msg) {

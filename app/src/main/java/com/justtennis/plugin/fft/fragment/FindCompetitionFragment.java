@@ -23,9 +23,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.cameleon.common.android.factory.FactoryDialog;
-import org.cameleon.android.common.ApplicationConfig;
-import org.cameleon.android.common.tool.FragmentTool;
-import org.cameleon.android.common.tool.ProgressTool;
 import com.justtennis.plugin.fft.R;
 import com.justtennis.plugin.fft.adapter.FindCompetitionAdapter;
 import com.justtennis.plugin.fft.common.FFTConfiguration;
@@ -34,8 +31,13 @@ import com.justtennis.plugin.fft.dto.CompetitionDto;
 import com.justtennis.plugin.fft.model.enums.EnumCompetition;
 import com.justtennis.plugin.fft.query.response.FindCompetitionResponse;
 import com.justtennis.plugin.fft.task.FindCompetitionTask;
+
+import org.cameleon.android.common.ApplicationConfig;
+import org.cameleon.android.common.manager.IMainManager;
+import org.cameleon.android.common.manager.MainManager;
+import org.cameleon.android.common.tool.FragmentTool;
+import org.cameleon.android.common.tool.ProgressTool;
 import org.cameleon.android.shared.interfaces.interfaces.OnListFragmentInteractionListener;
-import org.cameleon.android.common.manager.NotificationManager;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -305,7 +307,7 @@ public class FindCompetitionFragment extends Fragment implements OnListFragmentI
         @Override
         protected void onProgressUpdate(String... values) {
             super.onProgressUpdate(values);
-            NotificationManager.onTaskProcessUpdate(getActivity(), values);
+            getMainManager().getNotificationManager().onTaskProcessUpdate(getActivity(), values);
         }
 
         @Override
@@ -316,6 +318,10 @@ public class FindCompetitionFragment extends Fragment implements OnListFragmentI
             initializeFabValidate();
             mFindTask = null;
         }
+    }
+
+    private IMainManager getMainManager() {
+        return MainManager.getInstance();
     }
 
     private static void logMe(String msg) {

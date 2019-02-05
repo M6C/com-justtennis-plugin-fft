@@ -28,8 +28,6 @@ import java.util.logging.Logger;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 
-import io.fabric.sdk.android.services.network.HttpRequest;
-
 public class ProxiedHttpsConnection extends HttpURLConnection {
 
     private final String proxyHost;
@@ -54,8 +52,9 @@ public class ProxiedHttpsConnection extends HttpURLConnection {
         this.proxyPort = proxyPort;
 //        String encoded = Base64.encodeToString((username + ":" + password).getBytes(), Base64.DEFAULT)
 //                .replace("\r\n", "");
-        String encoded = HttpRequest.Base64.encode(username + ":" + password)
-                .replace("\r\n", "");
+//        String encoded = io.fabric.sdk.android.services.network.HttpRequest.Base64.encode(username + ":" + password)
+//                .replace("\r\n", "");
+        String encoded = (username + ":" + password).replace("\r\n", "");
         proxyheaders.put("Proxy-Authorization", new ArrayList<>(Arrays.asList("Basic " + encoded)));
     }
 

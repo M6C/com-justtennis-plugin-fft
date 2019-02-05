@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "115372997162",
+    "firebase_url": "https://com-justtennis-plugin-fft.firebaseio.com",
+    "project_id": "com-justtennis-plugin-fft",
+    "storage_bucket": "com-justtennis-plugin-fft.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:115372997162:android:eed50c11686d79e4",
+        "android_client_info": {
+          "package_name": "com.justtennis.plugin.fft"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "115372997162-rld0r42msa129tef5mbib7god4i2cdqr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDf9FhOJtrWvK5c0H4cwkLGXsCMPegGl-w"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -22,15 +22,17 @@ import com.justtennis.plugin.fft.R;
 import com.justtennis.plugin.fft.adapter.MatchAdapter;
 import com.justtennis.plugin.fft.dto.MatchContent;
 import com.justtennis.plugin.fft.dto.MatchDto;
-import org.cameleon.android.shared.interfaces.interfaces.OnListFragmentInteractionListener;
 import com.justtennis.plugin.fft.model.User;
 import com.justtennis.plugin.fft.query.response.MillesimeMatchResponse;
 import com.justtennis.plugin.fft.query.response.RankingMatchResponse;
 import com.justtennis.plugin.fft.resolver.UserResolver;
 import com.justtennis.plugin.fft.task.RankingMatchTask;
+
+import org.cameleon.android.common.manager.IMainManager;
+import org.cameleon.android.common.manager.MainManager;
 import org.cameleon.android.common.tool.FragmentTool;
 import org.cameleon.android.common.tool.ProgressTool;
-import org.cameleon.android.common.manager.NotificationManager;
+import org.cameleon.android.shared.interfaces.interfaces.OnListFragmentInteractionListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -232,7 +234,7 @@ public class RankingMatchFragment extends Fragment implements OnListFragmentInte
         @Override
         protected void onProgressUpdate(String... values) {
             super.onProgressUpdate(values);
-            NotificationManager.onTaskProcessUpdate(getActivity(), values);
+            getMainManager().getNotificationManager().onTaskProcessUpdate(getActivity(), values);
         }
 
         @Override
@@ -242,6 +244,10 @@ public class RankingMatchFragment extends Fragment implements OnListFragmentInte
             showProgressMatch(false);
             mRankingMatchTask = null;
         }
+    }
+
+    private IMainManager getMainManager() {
+        return MainManager.getInstance();
     }
 
     private static void logMe(String msg) {

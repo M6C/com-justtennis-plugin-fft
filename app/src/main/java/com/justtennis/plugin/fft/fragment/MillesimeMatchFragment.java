@@ -26,7 +26,6 @@ import com.justtennis.plugin.fft.R;
 import com.justtennis.plugin.fft.adapter.MatchAdapter;
 import com.justtennis.plugin.fft.dto.MatchContent;
 import com.justtennis.plugin.fft.dto.MatchDto;
-import org.cameleon.android.shared.interfaces.interfaces.OnListFragmentInteractionListener;
 import com.justtennis.plugin.fft.model.User;
 import com.justtennis.plugin.fft.query.response.MillesimeMatchResponse;
 import com.justtennis.plugin.fft.query.response.PalmaresMillesimeResponse;
@@ -34,9 +33,12 @@ import com.justtennis.plugin.fft.resolver.UserResolver;
 import com.justtennis.plugin.fft.task.CreateInviteTask;
 import com.justtennis.plugin.fft.task.MillesimeMatchTask;
 import com.justtennis.plugin.fft.task.MillesimeTask;
+
+import org.cameleon.android.common.manager.IMainManager;
+import org.cameleon.android.common.manager.MainManager;
 import org.cameleon.android.common.tool.FragmentTool;
 import org.cameleon.android.common.tool.ProgressTool;
-import org.cameleon.android.common.manager.NotificationManager;
+import org.cameleon.android.shared.interfaces.interfaces.OnListFragmentInteractionListener;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -369,7 +371,7 @@ public class MillesimeMatchFragment extends Fragment implements OnListFragmentIn
         @Override
         protected void onProgressUpdate(String... values) {
             super.onProgressUpdate(values);
-            NotificationManager.onTaskProcessUpdate(getActivity(), values);
+            getMainManager().getNotificationManager().onTaskProcessUpdate(getActivity(), values);
         }
 
         @Override
@@ -422,7 +424,7 @@ public class MillesimeMatchFragment extends Fragment implements OnListFragmentIn
         @Override
         protected void onProgressUpdate(String... values) {
             super.onProgressUpdate(values);
-            NotificationManager.onTaskProcessUpdate(getActivity(), values);
+            getMainManager().getNotificationManager().onTaskProcessUpdate(getActivity(), values);
         }
 
         @Override
@@ -432,6 +434,10 @@ public class MillesimeMatchFragment extends Fragment implements OnListFragmentIn
             showProgressMatch(false);
             mMillesimeMatchTask = null;
         }
+    }
+
+    private IMainManager getMainManager() {
+        return MainManager.getInstance();
     }
 
     private void showInformation() {

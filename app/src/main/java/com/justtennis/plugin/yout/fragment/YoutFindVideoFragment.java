@@ -22,14 +22,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.cameleon.android.common.MainActivity;
-import org.cameleon.android.common.tool.FragmentTool;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.justtennis.plugin.fft.R;
 import com.justtennis.plugin.fft.databinding.FragmentYoutVideoListBinding;
-import org.cameleon.android.shared.fragment.AppFragment;
-import org.cameleon.android.shared.interfaces.interfaces.OnListFragmentCheckListener;
-import org.cameleon.android.shared.interfaces.interfaces.OnListFragmentInteractionListener;
-import org.cameleon.android.common.manager.NotificationManager;
 import com.justtennis.plugin.yout.adapter.YoutFindVideoListAdapter;
 import com.justtennis.plugin.yout.component.service.DownloadComponentService;
 import com.justtennis.plugin.yout.dto.VideoContent;
@@ -40,6 +35,14 @@ import com.justtennis.plugin.yout.query.response.YoutFindVideoResponse;
 import com.justtennis.plugin.yout.rxjava.RxFindVideo;
 import com.justtennis.plugin.yout.task.YoutFindVideoTask;
 import com.justtennis.plugin.yout.task.YoutGotoUrlTask;
+
+import org.cameleon.android.common.MainActivity;
+import org.cameleon.android.common.manager.IMainManager;
+import org.cameleon.android.common.manager.MainManager;
+import org.cameleon.android.common.tool.FragmentTool;
+import org.cameleon.android.shared.fragment.AppFragment;
+import org.cameleon.android.shared.interfaces.interfaces.OnListFragmentCheckListener;
+import org.cameleon.android.shared.interfaces.interfaces.OnListFragmentInteractionListener;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -107,6 +110,16 @@ public class YoutFindVideoFragment extends AppFragment {
         initializeFabValidate();
 
         return binding.getRoot();
+    }
+
+    private void logFirebase(String event, String[] log) {
+        Bundle data = new Bundle();
+        if (log != null && log.length > 0) {
+            for(int i=0 ; i<log.length ; i++) {
+                data.putCharSequence("KEY_"+i, log[i]);
+            }
+        }
+        FirebaseAnalytics.getInstance(getContext()).logEvent(event, data);
     }
 
     @Override
@@ -323,9 +336,13 @@ public class YoutFindVideoFragment extends AppFragment {
             @Override
             protected void onProgressUpdate(String... values) {
                 super.onProgressUpdate(values);
-                NotificationManager.onTaskProcessUpdate(activity, values);
+                getMainManager().getNotificationManager().onTaskProcessUpdate(activity, values);
             }
         }.execute();
+    }
+
+    private IMainManager getMainManager() {
+        return MainManager.getInstance();
     }
 
     private void updateDownloadStatus(VideoDto dto) {
@@ -349,7 +366,9 @@ public class YoutFindVideoFragment extends AppFragment {
         if (youtFindVideoTask != null) {
             return;
         }
-        youtFindVideoTask = new YoutFindVideoTask(context, textView.getText().toString()) {
+        String query = textView.getText().toString();
+        logFirebase("YOUT_QUERY", new String[]{query});
+        youtFindVideoTask = new YoutFindVideoTask(context, query) {
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
@@ -372,7 +391,7 @@ public class YoutFindVideoFragment extends AppFragment {
             @Override
             protected void onProgressUpdate(String... values) {
                 super.onProgressUpdate(values);
-                NotificationManager.onTaskProcessUpdate(activity, values);
+                getMainManager().getNotificationManager().onTaskProcessUpdate(activity, values);
             }
         }.execute();
     }
