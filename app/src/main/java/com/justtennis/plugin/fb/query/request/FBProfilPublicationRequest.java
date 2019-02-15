@@ -8,7 +8,7 @@ public class FBProfilPublicationRequest {
     private static final String QUERY_TIMELINE = "code > div > div[data-ft*=mf_story_key]";
 
     private static final String QUERY_TIMELINE_ITEM_DATE = "abbr[class*=livetimestamp]#title";
-    private static final String QUERY_TIMELINE_ITEM_MESSAGE = "div[data-ad-preview$=message]";
+    private static final String QUERY_TIMELINE_ITEM_MESSAGE = "div[class*=userContentWrapper] div[class*=userContent]";
 
     public final String divMain;
     public final String timeline;

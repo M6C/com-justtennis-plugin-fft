@@ -57,7 +57,7 @@ public class FBServiceProfilTest extends AbstractFBServiceTest {
         assertNotNull(profileHttpResponse.body);
         assertEquals(200, profileHttpResponse.statusCode);
 
-        System.out.println("Test body:"+profileHttpResponse.body);
+//        System.out.println("Test body:"+profileHttpResponse.body);
 
         FBProfilPublicationResponse profilPublicationResponse = fbServiceProfil.getProfilPublication(profileHttpResponse);
         assertNotNull(profilPublicationResponse);
@@ -65,7 +65,7 @@ public class FBServiceProfilTest extends AbstractFBServiceTest {
         assertTrue(profilPublicationResponse.timeLineList.size() > 0);
 
         for(FBProfilPublicationResponse.TimeLineItem item : profilPublicationResponse.timeLineList) {
-            System.out.println("profilPublicationResponse.timeLineItem:"+item);
+            System.out.println("\r\nprofilPublicationResponse.timeLineItem:"+item);
         }
     }
 }
